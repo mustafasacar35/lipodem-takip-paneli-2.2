@@ -419,6 +419,19 @@
                 this._order = { column, ...options };
                 return this;
             }
+            async single() {
+                this._single = true;
+                const result = await this._execute('GET');
+                if (result.error) return result;
+                // If data is array, return first item
+                if (Array.isArray(result.data)) {
+                    if (result.data.length === 0) {
+                        return { data: null, error: { message: 'No rows found' } };
+                    }
+                    return { data: result.data[0], error: null };
+                }
+                return result;
+            }
         }
         window.supabase = {
             createClient: function(url, key) {
