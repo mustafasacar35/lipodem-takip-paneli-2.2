@@ -11002,6 +11002,12 @@
                 
                 if (existingFood) {
                     console.log('📝 Tab 5: Form doldurma başlıyor...');
+                    console.log('🔍 DEBUG - FORM DOLDURMA - existingFood.tags:', existingFood.tags);
+                    console.log('🔍 DEBUG - FORM DOLDURMA - existingFood.compatibilityTags:', existingFood.compatibilityTags);
+                    console.log('🔍 DEBUG - FORM DOLDURMA - existingFood.multiplier:', existingFood.multiplier);
+                    console.log('🔍 DEBUG - FORM DOLDURMA - existingFood.seasonRange:', existingFood.seasonRange);
+                    console.log('🔍 DEBUG - FORM DOLDURMA - existingFood.notes:', existingFood.notes);
+                    
                     // Tüm alanları doldur
                     safeSetValue('admin_db_ekle_protein', existingFood.protein || 0);
                     safeSetValue('admin_db_ekle_karb', existingFood.carbs || 0);
@@ -11024,9 +11030,17 @@
                         }
                     }
                     
-                    safeSetValue('admin_db_ekle_tags', (existingFood.tags || []).join(', '));
-                    safeSetValue('admin_db_ekle_compat', (existingFood.compatibilityTags || []).join(', '));
-                    safeSetValue('admin_db_ekle_incompat', (existingFood.incompatibilityTags || []).join(', '));
+                    const tagsValue = (existingFood.tags || []).join(', ');
+                    const compatValue = (existingFood.compatibilityTags || []).join(', ');
+                    const incompatValue = (existingFood.incompatibilityTags || []).join(', ');
+                    
+                    console.log('🔍 DEBUG - Tags input value:', tagsValue);
+                    console.log('🔍 DEBUG - Compat input value:', compatValue);
+                    console.log('🔍 DEBUG - Incompat input value:', incompatValue);
+                    
+                    safeSetValue('admin_db_ekle_tags', tagsValue);
+                    safeSetValue('admin_db_ekle_compat', compatValue);
+                    safeSetValue('admin_db_ekle_incompat', incompatValue);
                     safeSetValue('admin_db_ekle_notes', existingFood.notes || '');
                     
                     console.log('📋 MealType checkboxları ayarlanıyor...');

@@ -2127,47 +2127,40 @@ class DataAccessLayer {
                 firstCategoryItemsCount: foodListData?.categories?.[0]?.items?.length
             });
             
-            const upsertData = {
-                setting_key: 'food_list',
-                value: foodListData,
-                updated_at: new Date().toISOString()
-            };
+            // 🔥 RADİKAL FIX: JSONB'yi tamamen yeniden yaz - PostgreSQL JSON_BUILD_OBJECT kullan
+            console.log('🔥 [DAL] RADIKAL UPDATE: Tüm JSONB yeniden yazılıyor...');
             
-            console.log('🔍 [DAL] Supabase UPSERT çağrılıyor...');
-            console.log('🔍 [DAL] upsertData.value type:', typeof upsertData.value);
-            console.log('🔍 [DAL] upsertData.value.categories:', upsertData.value?.categories?.length);
+            // Önce mevcut kaydı sil
+            const { error: deleteError } = await this.supabaseClient
+                .from('app_settings')
+                .delete()
+                .eq('setting_key', 'food_list');
             
-            // 🔍 SAMPLE: İlk kategorideki ilk yemeği logla
-            if (upsertData.value?.categories?.[0]?.items?.[0]) {
-                const sampleFood = upsertData.value.categories[0].items[0];
-                console.log('🔍 [DAL] SAMPLE FOOD GÖNDERİLİYOR:', {
-                    name: sampleFood.name,
-                    dietTypes: sampleFood.dietTypes,
-                    tags: sampleFood.tags
-                });
+            if (deleteError) {
+                console.warn('⚠️ [DAL] Delete uyarısı (normal olabilir):', deleteError);
             }
             
-            // ⚠️ UPSERT yerine UPDATE kullan - mevcut kaydı TAM override et!
+            // Sonra tamamen yeni kayıt ekle
             const { data, error } = await this.supabaseClient
                 .from('app_settings')
-                .update({
+                .insert({
+                    setting_key: 'food_list',
                     value: foodListData,
                     updated_at: new Date().toISOString()
                 })
-                .eq('setting_key', 'food_list')
                 .select();
             
-            console.log('🔍 [DAL] Supabase UPDATE yanıtı - data:', data);
-            console.log('🔍 [DAL] Supabase UPDATE yanıtı - error:', error);
+            console.log('🔍 [DAL] Supabase INSERT yanıtı - data:', data);
+            console.log('🔍 [DAL] Supabase INSERT yanıtı - error:', error);
 
             if (error) {
-                console.error('❌ [DAL] Supabase UPDATE HATASI:', error);
+                console.error('❌ [DAL] Supabase INSERT HATASI:', error);
                 throw error;
             }
             
             // 🔍 Dönen veriyi kontrol et
             if (data && data[0]) {
-                console.log('🔍 [DAL] UPDATE sonucu dönen data.value.categories:', data[0].value?.categories?.length);
+                console.log('🔍 [DAL] INSERT sonucu dönen data.value.categories:', data[0].value?.categories?.length);
                 if (data[0].value?.categories?.[0]?.items?.[0]) {
                     const returnedSample = data[0].value.categories[0].items[0];
                     console.log('🔍 [DAL] DÖNEN SAMPLE FOOD:', {
@@ -2178,7 +2171,7 @@ class DataAccessLayer {
                 }
             }
             
-            console.log('✅ Food list updated in Supabase');
+            console.log('✅ Food list updated in Supabase (DELETE + INSERT)');
             
             // 🔍 DOĞRULAMA: Hemen geri oku ve kontrol et
             console.log('🔍 [DAL] DOĞRULAMA: Supabase\'den tekrar okuma...');
