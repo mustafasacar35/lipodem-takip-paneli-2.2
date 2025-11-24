@@ -5632,6 +5632,17 @@
             recalculateDayMacros(day);
             renderWeekContent();
             
+            // 💾 Supabase'e kaydet (yemek alternatifleri kalıcı olsun)
+            savePatientToSupabase().then(success => {
+                if (success) {
+                    console.log('💾 Yemek değişikliği Supabase\'e kaydedildi');
+                } else {
+                    console.error('❌ Yemek değişikliği kaydedilemedi');
+                }
+            }).catch(err => {
+                console.error('❌ Kayıt hatası:', err);
+            });
+            
             // Pozisyon bilgisini temizle
             localStorage.removeItem('foodReplacementPosition');
             
