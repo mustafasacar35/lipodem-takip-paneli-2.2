@@ -10985,9 +10985,12 @@
                         if (found) {
                             existingFood = found;
                             console.log('✅ Tab 5: Güncel yemek bulundu:', existingFood);
+                            console.log('🔍 DEBUG - existingFood FULL OBJECT:', JSON.stringify(existingFood, null, 2));
                             console.log('🔍 DEBUG - existingFood.keto:', existingFood.keto, '| type:', typeof existingFood.keto);
                             console.log('🔍 DEBUG - existingFood.lowcarb:', existingFood.lowcarb, '| type:', typeof existingFood.lowcarb);
                             console.log('🔍 DEBUG - existingFood.fillerLunch:', existingFood.fillerLunch, '| type:', typeof existingFood.fillerLunch);
+                            console.log('🔍 DEBUG - existingFood.dietTypes:', existingFood.dietTypes, '| type:', typeof existingFood.dietTypes, '| isArray:', Array.isArray(existingFood.dietTypes));
+                            console.log('🔍 DEBUG - existingFood.mealType:', existingFood.mealType, '| type:', typeof existingFood.mealType, '| isArray:', Array.isArray(existingFood.mealType));
                             break;
                         }
                     }
@@ -11024,12 +11027,16 @@
                     
                     console.log('📋 MealType checkboxları ayarlanıyor...');
                     const mealTypes = existingFood.mealType || [];
+                    console.log('🔍 DEBUG - existingFood.mealType:', existingFood.mealType, '| mealTypes array:', mealTypes);
                     safeSetChecked('admin_mealType_breakfast', mealTypes.includes('breakfast'));
                     safeSetChecked('admin_mealType_lunch', mealTypes.includes('lunch'));
                     safeSetChecked('admin_mealType_dinner', mealTypes.includes('dinner'));
                     
                     console.log('🥗 DietType checkboxları ayarlanıyor...');
                     const dietTypes = existingFood.dietTypes || [];
+                    console.log('🔍 DEBUG - existingFood.dietTypes:', existingFood.dietTypes, '| dietTypes array:', dietTypes);
+                    console.log('🔍 DEBUG - dietTypes.includes("ketojenik"):', dietTypes.includes('ketojenik'));
+                    console.log('🔍 DEBUG - dietTypes.includes("akdeniz"):', dietTypes.includes('akdeniz'));
                     safeSetChecked('admin_dietType_ketojenik', dietTypes.includes('ketojenik'));
                     safeSetChecked('admin_dietType_akdeniz', dietTypes.includes('akdeniz'));
                     safeSetChecked('admin_dietType_vegan', dietTypes.includes('vegan'));
