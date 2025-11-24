@@ -10948,7 +10948,10 @@
          * Tab 5 formunu yeniden yükle (kayıt sonrası güncel değerleri göster)
          */
         async function reloadTab5Form() {
+            console.log('🔄 reloadTab5Form() ÇAĞRILDI!');
+            
             const foodName = document.getElementById('admin_db_ekle_yemek_adi').value;
+            console.log('🔍 DEBUG - Yemek adı:', foodName);
             
             if (!foodName) {
                 console.warn('⚠️ Yemek adı yok, form yenileme atlandı');
@@ -10961,12 +10964,19 @@
             };
             const safeSetChecked = (id, checked) => {
                 const el = document.getElementById(id);
-                if (el) el.checked = checked || false;
+                console.log(`🔍 DEBUG - safeSetChecked(${id}, ${checked})`);
+                if (el) {
+                    el.checked = checked || false;
+                    console.log(`✅ Checkbox set: ${id} = ${el.checked}`);
+                } else {
+                    console.warn(`⚠️ Element bulunamadı: ${id}`);
+                }
             };
             
             try {
                 console.log('📥 Tab 5 için Supabase\'den food_list çekiliyor...');
                 const foodListFromDb = await window.DAL.getFoodList();
+                console.log('🔍 DEBUG - foodListFromDb:', foodListFromDb);
                 
                 let existingFood = null;
                 if (foodListFromDb && foodListFromDb.categories) {
@@ -10975,12 +10985,16 @@
                         if (found) {
                             existingFood = found;
                             console.log('✅ Tab 5: Güncel yemek bulundu:', existingFood);
+                            console.log('🔍 DEBUG - existingFood.keto:', existingFood.keto, '| type:', typeof existingFood.keto);
+                            console.log('🔍 DEBUG - existingFood.lowcarb:', existingFood.lowcarb, '| type:', typeof existingFood.lowcarb);
+                            console.log('🔍 DEBUG - existingFood.fillerLunch:', existingFood.fillerLunch, '| type:', typeof existingFood.fillerLunch);
                             break;
                         }
                     }
                 }
                 
                 if (existingFood) {
+                    console.log('📝 Tab 5: Form doldurma başlıyor...');
                     // Tüm alanları doldur
                     safeSetValue('admin_db_ekle_protein', existingFood.protein || 0);
                     safeSetValue('admin_db_ekle_karb', existingFood.carbs || 0);
@@ -11008,25 +11022,33 @@
                     safeSetValue('admin_db_ekle_incompat', (existingFood.incompatibilityTags || []).join(', '));
                     safeSetValue('admin_db_ekle_notes', existingFood.notes || '');
                     
+                    console.log('📋 MealType checkboxları ayarlanıyor...');
                     const mealTypes = existingFood.mealType || [];
                     safeSetChecked('admin_mealType_breakfast', mealTypes.includes('breakfast'));
                     safeSetChecked('admin_mealType_lunch', mealTypes.includes('lunch'));
                     safeSetChecked('admin_mealType_dinner', mealTypes.includes('dinner'));
                     
+                    console.log('🥗 DietType checkboxları ayarlanıyor...');
                     const dietTypes = existingFood.dietTypes || [];
                     safeSetChecked('admin_dietType_ketojenik', dietTypes.includes('ketojenik'));
                     safeSetChecked('admin_dietType_akdeniz', dietTypes.includes('akdeniz'));
                     safeSetChecked('admin_dietType_vegan', dietTypes.includes('vegan'));
                     safeSetChecked('admin_dietType_glutensiz', dietTypes.includes('glutensiz'));
                     
+                    console.log('🎯 Özel checkboxlar ayarlanıyor...');
+                    console.log('🔍 keto değeri:', existingFood.keto, '| === true:', existingFood.keto === true);
                     safeSetChecked('admin_keto', existingFood.keto === true);
+                    console.log('🔍 lowcarb değeri:', existingFood.lowcarb, '| === true:', existingFood.lowcarb === true);
                     safeSetChecked('admin_lowcarb', existingFood.lowcarb === true);
                     safeSetChecked('admin_portionFixed', existingFood.portionFixed === true);
+                    console.log('🔍 fillerLunch değeri:', existingFood.fillerLunch, '| === true:', existingFood.fillerLunch === true);
                     safeSetChecked('admin_fillerLunch', existingFood.fillerLunch === true);
                     safeSetChecked('admin_fillerDinner', existingFood.fillerDinner === true);
                     safeSetChecked('admin_reversedSeason', existingFood.isReversedSeason === true);
                     
                     console.log('✅ Tab 5 form güncellendi');
+                } else {
+                    console.warn('⚠️ Tab 5: Yemek bulunamadı:', foodName);
                 }
             } catch (error) {
                 console.error('❌ Tab 5 form yenileme hatası:', error);
@@ -11036,6 +11058,8 @@
         // Tab değiştir (5 TAB MODAL için)
         function switchAdminTab(tabName) {
             console.log('🔄 Tab değiştir:', tabName);
+            console.log('🔍 DEBUG - tabName tipi:', typeof tabName, '| değer:', JSON.stringify(tabName));
+            console.log('🔍 DEBUG - tabName === "db-ekle":', tabName === 'db-ekle');
             
             // Tüm tab içeriklerini gizle
             document.querySelectorAll('.admin-tab-content').forEach(content => {
@@ -11050,10 +11074,14 @@
             });
             
             // 🔄 TAB 5'E GEÇİLDİĞİNDE FORMU YENİDEN YÜKLE
+            console.log('🔍 DEBUG - Tab 5 kontrolü öncesi, tabName:', tabName);
             if (tabName === 'db-ekle') {
+                console.log('✅ DEBUG - Tab 5 koşulu GEÇTI!');
                 console.log('🔄 Tab 5 (Veritabanına Ekle) açılıyor, form yeniden yükleniyor...');
                 // Modal yeniden açılış kodunu çağır (sadece form doldurma kısmı)
                 reloadTab5Form();
+            } else {
+                console.log('❌ DEBUG - Tab 5 koşulu GEÇMEDİ! tabName:', tabName);
             }
             
             // Seçili tab'ı göster
