@@ -332,14 +332,131 @@
     </div>
 
     <!-- Auth Library -->
+    <!-- ✅ SUPABASE: Config ve DAL önce yüklensin -->
+    <script src="config.local.js"></script>
+    
+    <!-- Supabase Browser Shim - INLINE (CDN olmadan çalışır) -->
+    <script>
+    (function() {
+        'use strict';
+        class SupabaseClient {
+            constructor(supabaseUrl, supabaseKey) {
+                this.supabaseUrl = supabaseUrl.replace(/\/$/, '');
+                this.supabaseKey = supabaseKey;
+                this.headers = {
+                    'apikey': supabaseKey,
+                    'Authorization': `Bearer ${supabaseKey}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=representation'
+                };
+            }
+            from(table) { return new SupabaseQueryBuilder(this, table); }
+        }
+        class SupabaseQueryBuilder {
+            constructor(client, table) {
+                this.client = client;
+                this.table = table;
+                this.filters = [];
+                this.selectedColumns = '*';
+            }
+            select(columns = '*') { this.selectedColumns = columns; return this; }
+            eq(column, value) { this.filters.push(`${column}=eq.${value}`); return this; }
+            async _execute(method = 'GET', body = null) {
+                try {
+                    let url = `${this.client.supabaseUrl}/rest/v1/${this.table}`;
+                    const params = new URLSearchParams();
+                    params.append('select', this.selectedColumns);
+                    if (this.filters.length > 0) {
+                        this.filters.forEach(filter => {
+                            const [column, value] = filter.split('=');
+                            params.append(column, value);
+                        });
+                    }
+                    url += '?' + params.toString();
+                    const options = { method: method, headers: this.client.headers };
+                    if (body && (method === 'POST' || method === 'PATCH')) {
+                        options.body = JSON.stringify(body);
+                    }
+                    const response = await fetch(url, options);
+                    const data = await response.json();
+                    if (!response.ok) return { data: null, error: data };
+                    return { data: data, error: null };
+                } catch (error) {
+                    return { data: null, error: error };
+                }
+            }
+            async then(resolve, reject) {
+                const result = await this._execute('GET');
+                if (resolve) resolve(result);
+                return result;
+            }
+            async insert(data) { return await this._execute('POST', data); }
+            async update(data) { return await this._execute('PATCH', data); }
+            async upsert(data, options = {}) {
+                const headers = { ...this.client.headers };
+                if (options.onConflict) headers['Prefer'] = `resolution=merge-duplicates`;
+                const url = `${this.client.supabaseUrl}/rest/v1/${this.table}`;
+                const params = new URLSearchParams({ select: this.selectedColumns });
+                if (options.onConflict) params.append('on_conflict', options.onConflict);
+                try {
+                    const response = await fetch(url + '?' + params.toString(), {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify(data)
+                    });
+                    const responseData = await response.json();
+                    if (!response.ok) return { data: null, error: responseData };
+                    return { data: responseData, error: null };
+                } catch (error) {
+                    return { data: null, error: error };
+                }
+            }
+            async delete() { return await this._execute('DELETE'); }
+        }
+        window.supabase = {
+            createClient: function(url, key) {
+                console.log('[SupabaseShim] Creating client:', url);
+                return new SupabaseClient(url, key);
+            }
+        };
+        console.log('[SupabaseShim] ✅ Supabase browser shim loaded');
+    })();
+    </script>
+    <script>
+        // CONFIG yüklenince client oluştur
+        const waitForConfig = setInterval(() => {
+            if (window.CONFIG && window.CONFIG.supabase && window.supabase && window.supabase.createClient) {
+                clearInterval(waitForConfig);
+                try {
+                    const client = window.supabase.createClient(
+                        window.CONFIG.supabase.url,
+                        window.CONFIG.supabase.anonKey
+                    );
+                    window.supabase = client;
+                    console.log('[Supabase Browser] ✅ Client oluşturuldu');
+                } catch (error) {
+                    console.error('[Supabase Browser] ❌ Client oluşturma hatası:', error);
+                }
+            }
+        }, 10);
+    </script>
+    
+    <script src="data-access-layer.js"></script>
     <script src="auth.js"></script>
     <script src="device-manager.js"></script>
     <script src="ip-logger.js"></script>
     <script src="admin-notifier.js"></script>
 
     <script>
-        // Check if already logged in
-        window.addEventListener('DOMContentLoaded', () => {
+        // ✅ DAL'i initialize et
+        window.addEventListener('DOMContentLoaded', async () => {
+            // DAL instance oluştur
+            if (typeof DataAccessLayer !== 'undefined') {
+                window.DAL = new DataAccessLayer();
+                await window.DAL.initSupabase();
+                console.log('✅ DAL initialized for login page');
+            }
+            
             const session = PatientAuth.checkSession();
             if (session) {
                 // Already logged in, redirect to nutrition page (direkt)
@@ -531,6 +648,7 @@
                     });
                 `;
                 // ServiceWorker için ana service-worker.js dosyasını kullan (async wrapper)
+                /*
                 (async () => {
                     try {
                         // Cache bypass için timestamp ekle
@@ -541,6 +659,8 @@
                         console.log('⚠️ ServiceWorker registration failed:', err);
                     }
                 })();
+                */
+                console.log('ServiceWorker registration disabled in login.html');
             }
         }
 
@@ -591,6 +711,24 @@
             console.log('✅ Uygulama başarıyla yüklendi!');
             deferredPrompt = null;
         });
+    </script>
+
+    <!-- Force Unregister Service Workers to clear cache -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    console.log('Unregistering Service Worker:', registration);
+                    registration.unregister();
+                }
+            });
+            caches.keys().then(function(names) {
+                for (let name of names) {
+                    console.log('Deleting Cache:', name);
+                    caches.delete(name);
+                }
+            });
+        }
     </script>
 </body>
 </html>

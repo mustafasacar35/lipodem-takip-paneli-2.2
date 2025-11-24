@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Status Check</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .status { padding: 10px; margin: 5px; border-radius: 5px; }
+        .ok { background: #d4edda; color: #155724; }
+        .fail { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>System Status Check</h1>
+    <div id="results">Loading...</div>
+
+    <!-- Load dependencies -->
+    <script src="config.local.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Simulate the loading sequence
+        (async function() {
+            const results = document.getElementById('results');
+            let html = '';
+
+            function check(name, condition) {
+                const status = condition ? 'OK' : 'FAIL';
+                const cls = condition ? 'ok' : 'fail';
+                html += `<div class="status ${cls}"><strong>${name}:</strong> ${status}</div>`;
+            }
+
+            // Check Config
+            check('window.CONFIG', window.CONFIG);
+            if (window.CONFIG) {
+                check('Supabase Config URL', window.CONFIG.supabase && window.CONFIG.supabase.url);
+            }
+
+            // Check Supabase Library
+            check('window.supabase (Library)', window.supabase);
+
+            // Wait for Supabase Client
+            let retries = 0;
+            while ((!window.supabase || !window.supabase.from) && retries < 20) {
+                await new Promise(r => setTimeout(r, 100));
+                retries++;
+            }
+            check('Supabase Client (initialized)', window.supabase && window.supabase.from);
+
+            // Load DAL
+            const script = document.createElement('script');
+            script.src = "data-access-layer.js";
+            document.body.appendChild(script);
+
+            // Wait for DAL
+            retries = 0;
+            while (!window.DAL && retries < 20) {
+                await new Promise(r => setTimeout(r, 100));
+                retries++;
+            }
+            check('window.DAL', window.DAL);
+
+            if (window.DAL) {
+                try {
+                    const client = await window.DAL.initSupabase();
+                    check('DAL.initSupabase()', client);
+                } catch (e) {
+                    check('DAL.initSupabase() Error', false);
+                    html += `<div>Error: ${e.message}</div>`;
+                }
+            }
+
+            // Check Service Worker
+            if ('serviceWorker' in navigator) {
+                const regs = await navigator.serviceWorker.getRegistrations();
+                html += `<div class="status ${regs.length > 0 ? 'fail' : 'ok'}"><strong>Active Service Workers:</strong> ${regs.length} (Should be 0)</div>`;
+                regs.forEach(r => {
+                    html += `<div>Scope: ${r.scope}</div>`;
+                });
+            }
+
+            results.innerHTML = html;
+        })();
+    </script>
+</body>
+</html>

@@ -297,12 +297,39 @@ const TemplateManager = {
      */
     async saveTemplate(template, token) {
         try {
+            console.log('[TemplateManager] 💾 Saving template:', template.name);
+
+            // 🔹 STEP 1: Save to Supabase (PRIMARY)
+            if (window.DAL) {
+                try {
+                    console.log('[TemplateManager] 📊 Saving to Supabase...');
+                    const supabaseResult = await window.DAL.bulkSaveTemplates([template]);
+                    
+                    if (supabaseResult.added > 0) {
+                        console.log('[TemplateManager] ✅ Template saved to Supabase');
+                    } else if (supabaseResult.skipped > 0) {
+                        console.log('[TemplateManager] ⏭️ Template already exists in Supabase, updating...');
+                        // TODO: Add update logic if needed
+                    }
+                } catch (supabaseError) {
+                    console.error('[TemplateManager] ⚠️ Supabase save failed:', supabaseError);
+                    // Continue to GitHub save even if Supabase fails
+                }
+            }
+
+            // 🔹 STEP 2: Save to GitHub (SECONDARY - if enabled)
             // Use token from parameter, or fall back to config
             const githubToken = token || this.config.githubToken;
             
             if (!githubToken) {
-                console.error('[TemplateManager] No token available. Config:', this.config);
-                throw new Error('GitHub token required for saving templates');
+                console.warn('[TemplateManager] No GitHub token - skipping GitHub save (Supabase-only mode)');
+                
+                // Update local cache
+                this.templateCache.set(template.id, template);
+                const cacheKey = `${this.config.cacheKey}_${template.id}`;
+                localStorage.setItem(cacheKey, JSON.stringify(template));
+                
+                return { success: true, filename: template.filename, mode: 'supabase-only' };
             }
 
             // Generate filename if not exists

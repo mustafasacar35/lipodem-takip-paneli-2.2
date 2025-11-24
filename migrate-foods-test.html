@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍽️ Food List Migration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 { color: #667eea; margin: 0 0 10px 0; }
+        h2 { color: #333; margin: 20px 0 10px 0; border-bottom: 2px solid #667eea; padding-bottom: 5px; }
+        button {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #5568d3; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .success { color: #10b981; font-weight: bold; }
+        .error { color: #ef4444; font-weight: bold; }
+        .warning { color: #f59e0b; font-weight: bold; }
+        pre {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            max-height: 400px;
+        }
+        .log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat {
+            background: #e8eaff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        .progress {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>🍽️ ADIM 2: Food List Migration</h1>
+        <p>food_list.json dosyasını Supabase foods tablosuna aktar</p>
+        
+        <hr style="margin: 20px 0;">
+        
+        <h2>📊 İstatistikler</h2>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="totalFoods">0</div>
+                <div class="stat-label">Toplam Yemek</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="migratedFoods">0</div>
+                <div class="stat-label">Migrate Edilen</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="failedFoods">0</div>
+                <div class="stat-label">Başarısız</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="batchSize">100</div>
+                <div class="stat-label">Batch Boyutu</div>
+            </div>
+        </div>
+        
+        <div class="progress">
+            <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+        </div>
+        
+        <hr style="margin: 20px 0;">
+        
+        <h2>🎯 Aksiyonlar</h2>
+        <button onclick="loadFoodList()">📄 Food List'i Yükle</button>
+        <button onclick="startMigration()" id="migrateBtn" disabled>🚀 Migration Başlat</button>
+        <button onclick="verifyMigration()" id="verifyBtn" disabled>🔍 Doğrula</button>
+        <button onclick="clearDatabase()" id="clearBtn" style="background: #ef4444;">🗑️ Temizle (Supabase)</button>
+        
+        <div style="margin: 10px 0;">
+            <label>Batch Boyutu (kaç yemek birden?):</label>
+            <input type="number" id="batchSizeInput" value="100" min="10" max="500" style="padding: 8px; margin-left: 10px;">
+        </div>
+        
+        <hr style="margin: 20px 0;">
+        
+        <h2>📝 Log</h2>
+        <div class="log" id="log"></div>
+        
+        <hr style="margin: 20px 0;">
+        
+        <h2>🔍 Örnek Veriler</h2>
+        <div id="preview"></div>
+    </div>
+
+    <!-- Config & Dependencies -->
+    <script src="./config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        let foodList = null;
+        let supabaseClient = null;
+        let migratedCount = 0;
+        let failedCount = 0;
+        
+        // Log
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : type === 'warning' ? '#f59e0b' : '#3b82f6';
+            logDiv.innerHTML += `<div style="color: ${color}">[${time}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        // Progress güncelle
+        function updateProgress(current, total) {
+            const percent = Math.round((current / total) * 100);
+            const bar = document.getElementById('progressBar');
+            bar.style.width = percent + '%';
+            bar.textContent = percent + '%';
+            
+            document.getElementById('migratedFoods').textContent = current;
+        }
+        
+        // Supabase client
+        window.addEventListener('DOMContentLoaded', () => {
+            log('🏠 Sayfa yüklendi');
+            
+            if (typeof supabase === 'undefined') {
+                log('❌ Supabase kütüphanesi yüklenemedi!', 'error');
+                return;
+            }
+            
+            const config = window.APP_CONFIG.supabase;
+            supabaseClient = supabase.createClient(config.url, config.anonKey);
+            log('✅ Supabase client oluşturuldu', 'success');
+        });
+        
+        // Food list yükle
+        async function loadFoodList() {
+            try {
+                log('📄 food_list.json yükleniyor...');
+                
+                const response = await fetch('./food_list.json');
+                const foodData = await response.json();
+                
+                // Categories içindeki tüm items'ları birleştir
+                foodList = [];
+                if (foodData.categories && Array.isArray(foodData.categories)) {
+                    foodData.categories.forEach(category => {
+                        if (category.items && Array.isArray(category.items)) {
+                            foodList = foodList.concat(category.items);
+                        }
+                    });
+                }
+                
+                log(`✅ ${foodList.length} yemek yüklendi (${foodData.categories.length} kategori)`, 'success');
+                log(`📦 Versiyon: ${foodData.version}, Son Güncelleme: ${foodData.lastUpdated}`);
+                
+                document.getElementById('totalFoods').textContent = foodList.length;
+                
+                // Önizleme
+                const preview = document.getElementById('preview');
+                preview.innerHTML = `
+                    <h3>İlk 3 Yemek:</h3>
+                    <pre>${JSON.stringify(foodList.slice(0, 3), null, 2)}</pre>
+                `;
+                
+                document.getElementById('migrateBtn').disabled = false;
+                
+            } catch (error) {
+                log(`❌ Hata: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+        
+        // Migration başlat
+        async function startMigration() {
+            if (!foodList) {
+                log('❌ Önce food list yükle!', 'error');
+                return;
+            }
+            
+            try {
+                document.getElementById('migrateBtn').disabled = true;
+                migratedCount = 0;
+                failedCount = 0;
+                
+                const batchSize = parseInt(document.getElementById('batchSizeInput').value) || 100;
+                document.getElementById('batchSize').textContent = batchSize;
+                
+                log(`🚀 Migration başlatılıyor... (${foodList.length} yemek, ${batchSize} batch)`, 'success');
+                
+                // Batch'lere böl
+                const batches = [];
+                for (let i = 0; i < foodList.length; i += batchSize) {
+                    batches.push(foodList.slice(i, i + batchSize));
+                }
+                
+                log(`📦 ${batches.length} batch oluşturuldu`);
+                
+                // Her batch'i işle
+                for (let i = 0; i < batches.length; i++) {
+                    const batch = batches[i];
+                    log(`📤 Batch ${i + 1}/${batches.length} işleniyor... (${batch.length} yemek)`);
+                    
+                    const foodData = batch.map(food => ({
+                        name: food.name || 'İsimsiz',
+                        category: food.category || 'Diğer',
+                        calories: food.calories || 0,
+                        protein: food.protein || 0,
+                        carbs: food.carbs || 0,
+                        fat: food.fat || 0,
+                        data: food // 🆕 TÜM veriyi JSONB olarak sakla
+                    }));
+                    
+                    const { data, error } = await supabaseClient
+                        .from('foods')
+                        .insert(foodData)
+                        .select();
+                    
+                    if (error) {
+                        log(`❌ Batch ${i + 1} hatası: ${error.message}`, 'error');
+                        failedCount += batch.length;
+                    } else {
+                        migratedCount += data.length;
+                        log(`✅ Batch ${i + 1} başarılı: ${data.length} yemek eklendi`, 'success');
+                    }
+                    
+                    updateProgress(migratedCount, foodList.length);
+                    document.getElementById('failedFoods').textContent = failedCount;
+                    
+                    // Rate limiting için kısa bekle
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                
+                log(`🎉 Migration tamamlandı!`, 'success');
+                log(`✅ Başarılı: ${migratedCount}`, 'success');
+                if (failedCount > 0) {
+                    log(`⚠️ Başarısız: ${failedCount}`, 'warning');
+                }
+                
+                document.getElementById('verifyBtn').disabled = false;
+                
+            } catch (error) {
+                log(`❌ Migration hatası: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+        
+        // Doğrulama
+        async function verifyMigration() {
+            try {
+                log('🔍 Doğrulama başlatılıyor...');
+                
+                const { data, error, count } = await supabaseClient
+                    .from('foods')
+                    .select('*', { count: 'exact', head: true });
+                
+                if (error) throw error;
+                
+                log(`✅ Supabase'de ${count} yemek var`, 'success');
+                
+                if (count === foodList.length) {
+                    log(`🎉 BAŞARILI! Tüm yemekler migrate edildi!`, 'success');
+                } else {
+                    log(`⚠️ DİKKAT: ${foodList.length - count} yemek eksik`, 'warning');
+                }
+                
+                // İlk 5 yemek
+                const { data: samples } = await supabaseClient
+                    .from('foods')
+                    .select('*')
+                    .limit(5);
+                
+                const preview = document.getElementById('preview');
+                preview.innerHTML = `
+                    <h3>Supabase'den İlk 5 Yemek:</h3>
+                    <pre>${JSON.stringify(samples, null, 2)}</pre>
+                `;
+                
+            } catch (error) {
+                log(`❌ Doğrulama hatası: ${error.message}`, 'error');
+            }
+        }
+        
+        // Database temizle
+        async function clearDatabase() {
+            if (!confirm('⚠️ Supabase foods tablosundaki TÜM verileri silmek istediğinden emin misin?')) {
+                return;
+            }
+            
+            try {
+                log('🗑️ Supabase foods tablosu temizleniyor...');
+                
+                const { error } = await supabaseClient
+                    .from('foods')
+                    .delete()
+                    .neq('id', 0); // Tüm kayıtlar
+                
+                if (error) throw error;
+                
+                log('✅ Foods tablosu temizlendi', 'success');
+                
+                migratedCount = 0;
+                failedCount = 0;
+                updateProgress(0, 1);
+                document.getElementById('migratedFoods').textContent = 0;
+                document.getElementById('failedFoods').textContent = 0;
+                
+            } catch (error) {
+                log(`❌ Temizleme hatası: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

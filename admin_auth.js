@@ -201,11 +201,40 @@
   }
 
   async function verify(username, password){
-    const list = await loadAdmins();
     const uNorm = normalizeUsername(username);
     const inputHash = await sha256Hex(password);
+
+    // 1. Try Supabase (Priority)
+    if (window.supabase && window.supabase.from) {
+        try {
+            console.info('[AdminAuth] Checking Supabase for user:', uNorm);
+            const { data, error } = await window.supabase
+                .from('admins')
+                .select('*')
+                .eq('username', uNorm)
+                .eq('is_active', true)
+                .single();
+            
+            if (data) {
+                console.info('[AdminAuth] User found in Supabase');
+                if (data.password_hash.toLowerCase() === inputHash) {
+                     return { ok: true, admin: { username: data.username, roles: data.roles || ['admin'] } };
+                } else {
+                     console.warn('[AdminAuth] Password mismatch (Supabase)');
+                     return { ok: false, error: 'Şifre yanlış' };
+                }
+            } else {
+                console.info('[AdminAuth] User not found in Supabase, falling back to local file');
+            }
+        } catch (err) {
+            console.error('[AdminAuth] Supabase auth check failed:', err);
+        }
+    }
+
+    // 2. Fallback to local file (Legacy)
+    const list = await loadAdmins();
     const admins = Array.isArray(list.admins) ? list.admins : [];
-    console.info('[AdminAuth] Verifying user=', uNorm, 'available=', admins.map(a=>a.username));
+    console.info('[AdminAuth] Verifying user (Local)=', uNorm, 'available=', admins.map(a=>a.username));
     const found = admins.find(a => normalizeUsername(a.username) === uNorm);
     if(found){
       if((found.passwordHash||'').toLowerCase() !== inputHash){
@@ -339,7 +368,18 @@
           existingOverlay.remove();
         }
       } catch(_) {}
-      return true;
+      
+      // IMPORTANT: Execute afterLogin callback if session is valid
+      if (options && typeof options.afterLogin === 'function') {
+          console.info('[AdminAuth] Executing afterLogin callback immediately');
+          try {
+              options.afterLogin();
+          } catch (e) {
+              console.error('[AdminAuth] Error in afterLogin callback:', e);
+          }
+      }
+      
+      return sess;
     }
     console.info('[AdminAuth] No valid session, showing overlay');
     return await showOverlay();

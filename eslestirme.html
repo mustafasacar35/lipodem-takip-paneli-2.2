@@ -4,6 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🔗 Manuel Eşleştirme Paneli</title>
+    
+    <!-- Global App Config -->
+    <script src="config.js"></script>
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.48.0/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
+    
+    <!-- Initialize Supabase Client -->
+    <script>
+        // Supabase client'ı başlat (DAL'dan önce olmalı)
+        if (typeof supabase !== 'undefined' && CONFIG?.SUPABASE_URL && CONFIG?.SUPABASE_ANON_KEY) {
+            window.supabase = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+            console.log('✅ Supabase client başlatıldı (eslestirme.html)');
+        } else {
+            console.warn('⚠️ Supabase başlatılamadı - CONFIG veya SDK yok');
+        }
+    </script>
+    
+    <!-- Data Access Layer (DAL) - Supabase işlemleri için -->
+    <script src="data-access-layer.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -843,6 +864,8 @@
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
         }
     </style>
+    
+    <!-- DAL (Supabase zaten head'de başlatıldı) -->
 </head>
 <body>
     <!-- Test Önizleme Toggle Button -->
@@ -880,10 +903,7 @@
 
         <div style="text-align: center; margin-bottom: 15px;">
             <button class="btn btn-save" onclick="refreshData(event)" style="padding: 8px 20px;" id="btnRefreshData">
-                🔄 GitHub'dan Güncel Veriyi Çek
-            </button>
-            <button class="btn" onclick="openTokenModal()" style="padding: 8px 20px; background: #ffc107; color: #000; margin-left: 10px;">
-                🔑 GitHub Token
+                🔄 Supabase'den Güncel Veriyi Çek
             </button>
         </div>
 
@@ -966,8 +986,15 @@
                     <div id="matchInfoContent" style="margin-left: 34px;"></div>
                 </div>
                 
-                <div class="current-match" id="currentMatch" style="display: none;">
-                    <strong>Mevcut Manuel Eşleştirme:</strong> <span id="currentMatchName"></span>
+                <div class="current-match" id="currentMatch" style="display: none; background: #e7f3ff; border: 2px solid #2196F3; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 24px;">🍽️</span>
+                        <div>
+                            <strong style="color: #1976D2; font-size: 16px;">Seçili Yemek:</strong>
+                            <div style="color: #333; font-size: 18px; font-weight: bold; margin-top: 5px;" id="currentMatchName"></div>
+                            <div style="color: #666; font-size: 13px; margin-top: 5px;">Bu yemek için tarif kartları seçin</div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Arama Kutusu -->
@@ -996,15 +1023,22 @@
                         ❌ Eşleştirmeyi Kaldır
                     </button>
                     <button class="btn btn-save" onclick="saveManuelMatch(event)" id="btnSaveManuel">
-                        💾 GitHub'a Kaydet
+                        💾 Supabase'e Kaydet
                     </button>
                 </div>
             </div>
 
             <!-- Tab: Eşleşme Yasakları -->
             <div id="tabContentYasak" class="tab-content" style="display: none;">
-                <div class="current-match" id="currentYasak" style="display: none;">
-                    <strong>Mevcut Yasaklar:</strong> <span id="currentYasakName"></span>
+                <div class="current-match" id="currentYasak" style="display: none; background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 24px;">🍽️</span>
+                        <div>
+                            <strong style="color: #856404; font-size: 16px;">Seçili Yemek:</strong>
+                            <div style="color: #333; font-size: 18px; font-weight: bold; margin-top: 5px;" id="currentYasakName"></div>
+                            <div style="color: #666; font-size: 13px; margin-top: 5px;">Bu yemek için tarif kartı yasakları seçin</div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Arama Kutusu -->
@@ -1046,7 +1080,7 @@
                         <strong style="color: #1976D2; font-size: 16px;">Yemek Veritabanı Manuel Eşleştirme</strong>
                     </div>
                     <p style="margin: 0 0 10px 34px; color: #555; font-size: 14px;">
-                        Şablonlardaki yemek adlarını <code>food_list.json</code> veritabanındaki yemeklerle manuel olarak eşleştirin.
+                        Şablonlardaki yemek adlarını Supabase yemek veritabanındaki yemeklerle manuel olarak eşleştirin.
                     </p>
                     <ul style="margin: 0 0 0 50px; color: #666; font-size: 13px; line-height: 1.8;">
                         <li>"tahin ekmeği (1 dilim)" → "Tahin ekmeği" (parantez içi kaldırıldı)</li>
@@ -1064,7 +1098,7 @@
                                style="width: 100%; padding: 10px; border: 2px solid #2196F3; border-radius: 8px; font-size: 14px;">
                     </div>
                     <div style="flex: 1; position: relative;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Hedef Yemek (food_list.json):</label>
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Hedef Yemek (Supabase):</label>
                         <input type="text" 
                                id="yemekEslestirmeHedef" 
                                placeholder="🔍 Yemek ara ve seç..."
@@ -1104,7 +1138,7 @@
                         <strong style="color: #856404; font-size: 16px;">Yemek Veritabanı Yasak Eşleştirmeler</strong>
                     </div>
                     <p style="margin: 0 0 10px 34px; color: #555; font-size: 14px;">
-                        Şablonlardaki yemeklerin <code>food_list.json</code>'daki hangi yemeklerle eşleşMEMESİ gerektiğini belirleyin.
+                        Şablonlardaki yemeklerin Supabase yemek veritabanındaki hangi yemeklerle eşleşMEMESİ gerektiğini belirleyin.
                     </p>
                     <ul style="margin: 0 0 0 50px; color: #666; font-size: 13px; line-height: 1.8;">
                         <li>"zeytin" → "Zeytinli meze", "Zeytinli salata" 🚫 (çok genel kelime)</li>
@@ -1124,7 +1158,7 @@
                 </div>
 
                 <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 10px; font-weight: bold; color: #333;">Yasaklı Yemekler (food_list.json):</label>
+                    <label style="display: block; margin-bottom: 10px; font-weight: bold; color: #333;">Yasaklı Yemekler (Supabase):</label>
                     <div style="position: relative;">
                         <div style="display: flex; gap: 10px; margin-bottom: 10px;">
                             <div style="flex: 1; position: relative;">
@@ -1177,48 +1211,12 @@
         </div>
     </div>
 
-    <!-- GitHub Token Modal -->
-    <div class="modal" id="tokenModal">
-        <div class="modal-content" style="max-width: 500px;">
-            <div class="modal-header">
-                <h2>🔑 GitHub Token Gerekli</h2>
-                <button class="close-btn" onclick="closeTokenModal()">×</button>
-            </div>
-            
-            <div style="padding: 20px 0;">
-                <p style="margin-bottom: 15px; color: #666; line-height: 1.6;">
-                    GitHub'a kaydetmek için bir <strong>Personal Access Token</strong> gerekiyor.
-                </p>
-                
-                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                    <strong>Token Nasıl Alınır?</strong>
-                    <ol style="margin: 10px 0 0 20px; font-size: 13px; color: #666;">
-                        <li>GitHub → Settings → Developer settings</li>
-                        <li>Personal access tokens → Tokens (classic)</li>
-                        <li>Generate new token (classic)</li>
-                        <li>İzinler: <code>repo</code> (tüm kutucukları işaretle)</li>
-                        <li>Token'ı kopyala ve aşağıya yapıştır</li>
-                    </ol>
-                </div>
+    <!-- ❌ GitHub Token Modal KALDIRILDI - Artık Supabase kullanılıyor -->
 
-                <input type="password" 
-                       id="githubTokenInput" 
-                       placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-                       style="width: 100%; padding: 12px; border: 2px solid #667eea; border-radius: 8px; font-size: 14px; margin-bottom: 10px;">
-                
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn btn-cancel" onclick="closeTokenModal()" style="flex: 1;">
-                        İptal
-                    </button>
-                    <button class="btn btn-save" onclick="saveToken()" style="flex: 1;">
-                        💾 Token'ı Kaydet
-                    </button>
-                </div>
-            </div>
-        </div>
     </div>
-
     <script>
+        // Supabase client zaten head'de başlatıldı - CONFIG.SUPABASE_URL ve CONFIG.SUPABASE_ANON_KEY kullanılıyor
+        
         let foodDatabase = [];
         let tarifKartlari = [];
         let manuelEslestirmeler = {};
@@ -1235,44 +1233,9 @@
         let editingFood = null; // Düzenlenen yemek
         let displayedFoods = []; // Gösterilen yemeklerin listesi
 
-        // GitHub Config
-        const GITHUB_OWNER = 'mustafasacar35';
-        const GITHUB_REPO = 'lipodem-takip-paneli'; // ✅ Ana repo
-        const GITHUB_BRANCH = 'main';
-        const MANUEL_FILE_PATH = 'data/manuel_eslestirmeler.json';
-        const YASAK_FILE_PATH = 'data/eslesmeme_kurallari.json';
-        const FOOD_LIST_FILE_PATH = 'food_list.json'; // Yemek listesi dosyası
-
-        // Token'ı localStorage'dan al
-        function getGithubToken() {
-            return localStorage.getItem('github_token');
-        }
-
-        // Token'ı kaydet
-        function saveToken() {
-            const token = document.getElementById('githubTokenInput').value.trim();
-            if (!token) {
-                alert('Lütfen bir token girin!');
-                return;
-            }
-            localStorage.setItem('github_token', token);
-            closeTokenModal();
-            alert('✅ Token kaydedildi! Artık GitHub\'a kaydedebilirsiniz.');
-        }
-
-        // Token modal'ını aç
-        function openTokenModal() {
-            document.getElementById('tokenModal').classList.add('active');
-            const currentToken = getGithubToken();
-            if (currentToken) {
-                document.getElementById('githubTokenInput').value = currentToken;
-            }
-        }
-
-        // Token modal'ını kapat
-        function closeTokenModal() {
-            document.getElementById('tokenModal').classList.remove('active');
-        }
+        // ✅ TÜM VERİLER ARTIK SUPABASE'DE (GitHub/JSON kullanımı kaldırıldı)
+        
+        // ❌ closeTokenModal() fonksiyonu kaldırıldı - GitHub token modalı kaldırıldı
 
         // ✅ Bildirim göster
         function showNotification(message, type = 'success') {
@@ -1327,7 +1290,7 @@
         }
 
         // Tab değiştir
-        function switchTab(tab) {
+        async function switchTab(tab) {
             currentTab = tab;
             
             // Tab butonlarını güncelle
@@ -1343,17 +1306,61 @@
             if (tab === 'manuel') {
                 document.getElementById('tabManuel').classList.add('active');
                 document.getElementById('tabContentManuel').style.display = 'block';
+                
+                // Seçili yemeği göster
+                if (currentFood && currentFood.name) {
+                    const currentMatchDiv = document.getElementById('currentMatch');
+                    const currentMatchName = document.getElementById('currentMatchName');
+                    if (currentMatchDiv && currentMatchName) {
+                        currentMatchName.textContent = currentFood.name;
+                        currentMatchDiv.style.display = 'block';
+                    }
+                }
+                
+                // Tarif kartlarını göster
+                displayTarifKartlari();
             } else if (tab === 'yasak') {
                 document.getElementById('tabYasak').classList.add('active');
                 document.getElementById('tabContentYasak').style.display = 'block';
+                
+                // Seçili yemeği göster
+                if (currentFood && currentFood.name) {
+                    const currentYasakDiv = document.getElementById('currentYasak');
+                    const currentYasakName = document.getElementById('currentYasakName');
+                    if (currentYasakDiv && currentYasakName) {
+                        currentYasakName.textContent = currentFood.name;
+                        currentYasakDiv.style.display = 'block';
+                    }
+                }
+                
                 displayTarifKartlariYasak();
             } else if (tab === 'yemekEslestirme') {
                 document.getElementById('tabYemekEslestirme').classList.add('active');
                 document.getElementById('tabContentYemekEslestirme').style.display = 'block';
+                
+                // ✅ TAB 3: Supabase'den en güncel veriyi yükle
+                console.log('🔄 TAB 3 - Yemek DB eşleştirmeleri yeniden yükleniyor...');
+                await loadYemekVeritabaniEslestirme();
+                
+                // Seçili yemeği otomatik doldur
+                if (currentFood && currentFood.name) {
+                    document.getElementById('yemekEslestirmeArama').value = currentFood.name;
+                }
+                
                 renderYemekEslestirmeList();
             } else if (tab === 'yemekYasak') {
                 document.getElementById('tabYemekYasak').classList.add('active');
                 document.getElementById('tabContentYemekYasak').style.display = 'block';
+                
+                // ✅ TAB 4: Supabase'den en güncel veriyi yükle
+                console.log('🔄 TAB 4 - Yemek DB yasakları yeniden yükleniyor...');
+                await loadYemekVeritabaniYasaklar();
+                
+                // Seçili yemeği otomatik doldur
+                if (currentFood && currentFood.name) {
+                    document.getElementById('yemekYasakArama').value = currentFood.name;
+                }
+                
                 renderYemekYasakList();
             }
         }
@@ -1484,16 +1491,37 @@
             }
             
             // SONRA: Otomatik eşleştirme (AKILLI ALGORİTMA)
+            const debugYemek = yemekAdi.includes('Sebzeli Muffin') || yemekAdi.includes('Tatlı Patates');
+            if (debugYemek) {
+                console.log(`\n🔍 OTO EŞLEŞTİRME DEBUG: "${yemekAdi}"`);
+                console.log(`   - normalized: "${normalized}"`);
+                console.log(`   - yemekWords:`, normalized.split('_').filter(w => w.length > 0));
+            }
+            
             for (const tarif of tarifKartlari) {
-                const tarifName = tarif.name.replace(/\.(jpg|jpeg|png)$/i, '');
+                // tarif.name artık display name (örn: "Fırında Menemen")
+                // tarif.file dosya adı (örn: "firinda_menemen.jpg")
+                const tarifName = tarif.name || tarif.file?.replace(/\.(jpg|jpeg|png)$/i, '') || '';
+                if (!tarifName) continue; // Boş ise atla
+                
                 const tarifNormalized = normalizeText(tarifName);
                 const tarifWords = tarifNormalized.split('_').filter(w => w.length > 0);
                 
                 const yemekWords = normalized.split('_').filter(w => w.length > 0);
                 
+                // Debug için "sebzeli" veya "muffin" kelimelerini içeren tarifleri göster
+                if (debugYemek && (tarifNormalized.includes('sebzeli') || tarifNormalized.includes('muffin'))) {
+                    console.log(`   📋 Tarif: "${tarifName}"`);
+                    console.log(`      - tarifNormalized: "${tarifNormalized}"`);
+                    console.log(`      - tarifWords:`, tarifWords);
+                    console.log(`      - allYemekWordsInTarif:`, yemekWords.every(word => tarifWords.includes(word)));
+                    console.log(`      - allTarifWordsInYemek:`, tarifWords.every(word => yemekWords.includes(word)));
+                }
+                
                 // 1. TAM EŞLEŞME - En yüksek öncelik
                 if (tarifNormalized === normalized) {
                     otomatikMatches.push(tarif.name);
+                    if (debugYemek) console.log(`      ✅ TAM EŞLEŞME`);
                     continue;
                 }
                 
@@ -1587,7 +1615,13 @@
             if (!yasakListesi || yasakListesi.length === 0) return { blocked: false };
             
             // Her tarif kartını yasak listesiyle karşılaştır
-            for (const tarifAdi of tarifKartlari) {
+            for (const tarif of tarifKartlari) {
+                if (!tarif) continue; // undefined/null kontrolü
+                
+                // tarif string veya object olabilir
+                const tarifAdi = typeof tarif === 'string' ? tarif : (tarif.name || tarif.file || '');
+                if (!tarifAdi) continue;
+                
                 const tarifNormalized = normalizeText(tarifAdi.replace(/\.(jpg|jpeg|png)$/i, ''));
                 
                 for (const yasak of yasakListesi) {
@@ -1623,12 +1657,32 @@
                 .replace(/ç/g, 'c').replace(/Ç/g, 'C')
                 .trim();
             
+            console.log('🔍 getYasakKurallar çağrıldı:', {
+                orijinal: yemekAdi,
+                cleaned: cleanedYemekAdi,
+                normalized: normalized,
+                lowercaseSpaced: lowercaseSpaced,
+                mevcutKeys: Object.keys(eslesmemeKurallari)
+            });
+            
+            // 🐛 DEBUG: Tüm key'leri ve ilk birkaç değeri göster
+            console.log('🔍 eslesmemeKurallari içeriği:', eslesmemeKurallari);
+            console.log('🔑 Denenen key\'ler:', {
+                key1: yemekAdi,
+                key2: lowercaseSpaced,
+                key3: normalized,
+                key4: cleanedYemekAdi,
+                key5: normalizeText(yemekAdi)
+            });
+            
             // Farklı key'leri dene (JSON'daki key'ler boşluklu ve lowercase)
             let yasakData = eslesmemeKurallari[yemekAdi] ||           // Orijinal
                             eslesmemeKurallari[lowercaseSpaced] ||     // Boşluklu lowercase (JSON formatı!)
                             eslesmemeKurallari[normalized] ||          // Alt çizgili
                             eslesmemeKurallari[cleanedYemekAdi] ||     // Temizlenmiş
                             eslesmemeKurallari[normalizeText(yemekAdi)]; // Normalize orijinal
+            
+            console.log('🔍 İlk deneme sonucu:', yasakData ? '✅ Bulundu' : '❌ Bulunamadı');
             
             // Eğer bulunamazsa, tüm key'leri kontrol et (fuzzy match)
             if (!yasakData) {
@@ -1773,11 +1827,11 @@
             resultsDiv.innerHTML = html;
         }
 
-        // Yemekleri yükle
+        // Yemekleri yükle (🔥 DAL kullan - Supabase-first)
         async function loadFoodData() {
             try {
-                const response = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/food_list.json');
-                const data = await response.json();
+                console.log('📥 Yemek veritabanı yükleniyor (DAL)...');
+                const data = await window.DAL.getFoodList();
                 
                 foodDatabase = [];
                 if (data.categories && Array.isArray(data.categories)) {
@@ -1806,53 +1860,28 @@
         // Tarif kartlarını yükle
         async function loadTarifKartlari() {
             try {
-                // Yöntem 1: list.json dosyası (EN İYİ - rate limit yok, CORS yok)
-                let response = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/list.json');
+                console.log('📥 Tarif kartları yükleniyor (DAL)...');
                 
-                if (response.ok) {
-                    const data = await response.json();
+                // DAL kullanarak Supabase-first yükleme
+                const recipeCards = await window.DAL.getRecipeCards();
+                
+                // Array kontrolü ve format tespiti
+                if (Array.isArray(recipeCards) && recipeCards.length > 0) {
+                    // DAL.getRecipeCards() artık object array döndürüyor: {id, name, file, filename, ...}
+                    // name = display_name (örn: "Fırında Menemen")
+                    // file/filename = dosya adı (örn: "firinda_menemen.jpg")
+                    tarifKartlari = recipeCards.map(card => ({
+                        name: card.name || card.display_name,  // Display name (tarif adı)
+                        file: card.file || card.filename,       // Dosya adı
+                        type: 'file',
+                        download_url: card.download_url
+                    }));
                     
-                    // Array kontrolü ve format tespiti
-                    if (Array.isArray(data)) {
-                        tarifKartlari = data
-                            .map(item => {
-                                // String ise direkt kullan
-                                if (typeof item === 'string') return item;
-                                // Object ise name veya filename özelliğini al
-                                if (typeof item === 'object') return item.name || item.filename || item.file || null;
-                                return null;
-                            })
-                            .filter(name => name && typeof name === 'string' && name.match(/\.(jpg|jpeg|png)$/i))
-                            .map(name => ({
-                                name: name,
-                                type: 'file',
-                                download_url: `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/${name}`
-                            }));
-                        
-                        console.log('✅ Tarif kartları list.json ile yüklendi:', tarifKartlari.length, 'kart');
-                        return;
-                    }
+                    console.log('✅ Tarif kartları yüklendi (DAL):', tarifKartlari.length, 'kart');
+                    return;
                 }
                 
-                console.warn(`⚠️ list.json yüklenemedi (${response.status}), GitHub API deneniyor...`);
-                
-                // Yöntem 2: GitHub API (token gerekebilir)
-                response = await fetch('https://api.github.com/repos/mustafasacar35/lipodem-takip-paneli/contents/tarifler');
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    if (Array.isArray(data)) {
-                        tarifKartlari = data.filter(file => 
-                            file.type === 'file' && 
-                            (file.name.endsWith('.jpg') || file.name.endsWith('.jpeg') || file.name.endsWith('.png'))
-                        );
-                        console.log('✅ Tarif kartları GitHub API ile yüklendi:', tarifKartlari.length, 'kart');
-                        return;
-                    }
-                }
-                
-                throw new Error('Tüm yöntemler başarısız');
+                throw new Error('Recipe cards array bulunamadı');
                 
             } catch (error) {
                 console.error('❌ Tarif kartları yüklenemedi:', error.message);
@@ -1885,99 +1914,172 @@
             }
         }
 
-        // Manuel eşleştirmeleri yükle
+        // Manuel eşleştirmeleri yükle (SADECE SUPABASE)
         async function loadManuelEslestirmeler() {
             try {
-                // Cache bypass için timestamp ekle
-                const timestamp = new Date().getTime();
-                const manuelUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data/manuel_eslestirmeler.json?t=${timestamp}`;
-                console.log('📥 Manuel eşleştirmeler yükleniyor:', manuelUrl);
-                const response = await fetch(manuelUrl, {
-                    cache: 'no-store' // Cache'i tamamen devre dışı bırak
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    manuelEslestirmeler = data.eslestirmeler || data;
-                    console.log('✅ Manuel eşleştirmeler yüklendi:', Object.keys(manuelEslestirmeler).length, 'adet');
+                console.log('📥 Manuel eşleştirmeler Supabase\'den yükleniyor...');
+                
+                // DAL ile Supabase'den çek
+                if (!window.DAL) {
+                    throw new Error('DAL bulunamadı! Lütfen sayfayı yenileyin.');
                 }
-            } catch (error) {
-                console.warn('⚠️ Manuel eşleştirmeler yüklenemedi:', error);
-            }
-        }
-
-        // Yasak kurallarını yükle
-        async function loadEslesmemeKurallari() {
-            try {
-                // Cache bypass için timestamp ekle
-                const timestamp = new Date().getTime();
-                const yasakUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data/eslesmeme_kurallari.json?t=${timestamp}`;
-                console.log('📥 Yasak kurallar yükleniyor:', yasakUrl);
-                const response = await fetch(yasakUrl, {
-                    cache: 'no-store' // Cache'i tamamen devre dışı bırak
+                
+                const matchingsArray = await window.DAL.getFoodMatchings();
+                
+                console.log('📦 Supabase\'den gelen RAW veri (array):', matchingsArray);
+                console.log('� Toplam satır sayısı:', matchingsArray.length);
+                
+                // Her satırı detaylı göster
+                console.group('🔍 DETAYLI VERİ ANALİZİ');
+                matchingsArray.forEach((item, index) => {
+                    console.log(`\n${index + 1}. Satır:`);
+                    console.log('  - food_name:', item.food_name);
+                    console.log('  - matched_food:', item.matched_food);
+                    console.log('  - normalize(food_name):', normalizeText(item.food_name));
+                    console.log('  - created_at:', item.created_at);
                 });
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    // İç içe yapıyı kontrol et
-                    if (data.kurallar && data.kurallar.eslesmemeKurallari) {
-                        // Yeni format: kurallar.eslesmemeKurallari
-                        eslesmemeKurallari = data.kurallar.eslesmemeKurallari;
-                    } else if (data.kurallar) {
-                        // Eski format: kurallar
-                        eslesmemeKurallari = data.kurallar;
-                    } else if (data.eslesmemeKurallari) {
-                        // Direkt eslesmemeKurallari
-                        eslesmemeKurallari = data.eslesmemeKurallari;
-                    } else {
-                        // Direkt data
-                        eslesmemeKurallari = data;
+                console.groupEnd();
+                
+                // Özel kontrol: "Ketojenik Köfte" eşleştirmeleri
+                const ketojenikMatches = matchingsArray.filter(m => 
+                    m.food_name.toLowerCase().includes('ketojenik') || 
+                    m.food_name.toLowerCase().includes('köfte')
+                );
+                console.log('\n🍖 "Ketojenik Köfte" ile ilgili satırlar:', ketojenikMatches);
+                
+                // Array'i objeye çevir (eski format) - DUPLIKE ÖNLEME
+                manuelEslestirmeler = {};
+                matchingsArray.forEach(item => {
+                    // Key'i normalizeText ile oluştur (Türkçe karakterler düzeltilmiş)
+                    const key = normalizeText(item.food_name);
+                    if (!manuelEslestirmeler[key]) {
+                        manuelEslestirmeler[key] = {
+                            orijinalMetin: item.food_name,
+                            kartlar: [],
+                            eklemeTarihi: item.created_at
+                        };
                     }
                     
-                    console.log('✅ Yasak kurallar yüklendi:', Object.keys(eslesmemeKurallari).length, 'adet');
-                    console.log('📋 Yasak key\'leri:', Object.keys(eslesmemeKurallari));
+                    // 🔥 SADECE DOSYA ADI FORMATINI KABUL ET (.jpg dahil)
+                    // Eğer eski format gelirse (.jpg yoksa) normalize et
+                    let normalizedFile = item.matched_food;
+                    if (!item.matched_food.match(/\.(jpg|jpeg|png)$/i)) {
+                        // Eski format: "Keto kofte" → "keto_kofte.jpg"
+                        normalizedFile = item.matched_food.toLowerCase()
+                            .replace(/\s+/g, '_')
+                            .replace(/[^\w_]/g, '') + '.jpg';
+                        console.warn(`⚠️ Eski format tespit edildi ve normalize edildi: "${item.matched_food}" → "${normalizedFile}"`);
+                    }
                     
-                    // 🐛 DEBUG: İlk 3 kuralı detaylı göster
-                    Object.keys(eslesmemeKurallari).slice(0, 3).forEach(key => {
-                        console.log(`   → "${key}":`, eslesmemeKurallari[key]);
-                    });
+                    // Duplike kontrolü ile ekle
+                    if (!manuelEslestirmeler[key].kartlar.includes(normalizedFile)) {
+                        manuelEslestirmeler[key].kartlar.push(normalizedFile);
+                    } else {
+                        console.warn(`⚠️ Duplike atlandı: ${item.food_name} → ${normalizedFile}`);
+                    }
+                });
+                
+                console.log('\n✅ Manuel eşleştirmeler yüklendi:', Object.keys(manuelEslestirmeler).length, 'adet');
+                console.log('🔑 Manuel eşleştirme key\'leri:', Object.keys(manuelEslestirmeler));
+                
+                // "ketojenikkofte" key'inin içeriğini göster
+                if (manuelEslestirmeler['ketojenikkofte']) {
+                    console.log('\n🎯 "ketojenikkofte" key içeriği:');
+                    console.log('  - Orijinal metin:', manuelEslestirmeler['ketojenikkofte'].orijinalMetin);
+                    console.log('  - Kartlar:', manuelEslestirmeler['ketojenikkofte'].kartlar);
+                    console.log('  - Kart sayısı:', manuelEslestirmeler['ketojenikkofte'].kartlar.length);
+                } else {
+                    console.warn('⚠️ "ketojenikkofte" key\'i bulunamadı!');
                 }
+                
+                console.log('\n📋 Tüm manuel eşleştirme detayları:', manuelEslestirmeler);
             } catch (error) {
-                console.warn('⚠️ Yasak kurallar yüklenemedi:', error);
+                console.error('❌ Manuel eşleştirmeler yüklenemedi:', error);
+                alert('Manuel eşleştirmeler yüklenirken hata oluştu!');
             }
         }
 
-        // Yemek veritabanı eşleştirmelerini yükle
-        async function loadYemekVeritabaniEslestirme() {
+        // Yasak kurallarını yükle (SADECE SUPABASE)
+        async function loadEslesmemeKurallari() {
             try {
-                const timestamp = new Date().getTime();
-                const url = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data/yemek_veritabani_eslestirme.json?t=${timestamp}`;
-                console.log('📥 Yemek veritabanı eşleştirmeleri yükleniyor:', url);
-                const response = await fetch(url, { cache: 'no-store' });
-                if (response.ok) {
-                    const data = await response.json();
-                    yemekVeritabaniEslestirme = data.eslestirmeler || data;
-                    console.log('✅ Yemek veritabanı eşleştirmeleri yüklendi:', Object.keys(yemekVeritabaniEslestirme).length, 'adet');
+                console.log('📥 Yasak kurallar Supabase\'den yükleniyor...');
+                
+                // DAL ile Supabase'den çek
+                if (!window.DAL) {
+                    throw new Error('DAL bulunamadı! Lütfen sayfayı yenileyin.');
+                }
+                
+                // 🔥 patient_nutrition ile aynı yöntemi kullan
+                const yasakData = await window.DAL.getFoodBlacklist();
+                
+                if (yasakData && Object.keys(yasakData).length > 0) {
+                    eslesmemeKurallari = yasakData;
+                    
+                    // 🔥 ESKI FORMAT NORMALİZASYONU (dosya adı formatına çevir)
+                    Object.keys(eslesmemeKurallari).forEach(key => {
+                        const yasaklar = eslesmemeKurallari[key];
+                        if (yasaklar && yasaklar.yasakliKartlar) {
+                            eslesmemeKurallari[key].yasakliKartlar = yasaklar.yasakliKartlar.map(cardFile => {
+                                // Eğer .jpg yoksa ekle
+                                if (!cardFile.match(/\.(jpg|jpeg|png)$/i)) {
+                                    const normalized = cardFile.toLowerCase()
+                                        .replace(/\s+/g, '_')
+                                        .replace(/[^\w_]/g, '') + '.jpg';
+                                    console.warn(`⚠️ Yasak kart eski format normalize edildi: "${cardFile}" → "${normalized}"`);
+                                    return normalized;
+                                }
+                                return cardFile;
+                            });
+                        }
+                    });
+                    
+                    console.log('✅ Yasak kurallar yüklendi:', Object.keys(eslesmemeKurallari).length, 'adet');
+                } else {
+                    eslesmemeKurallari = {};
+                    console.log('⚠️ Yasak kurallar bulunamadı, boş başlatıldı');
                 }
             } catch (error) {
-                console.warn('⚠️ Yemek veritabanı eşleştirmeleri yüklenemedi:', error);
+                console.error('❌ Yasak kurallar yüklenemedi:', error);
+                eslesmemeKurallari = {};
+            }
+        }
+
+        // Yemek veritabanı eşleştirmelerini yükle (SADECE SUPABASE)
+        async function loadYemekVeritabaniEslestirme() {
+            try {
+                console.log('📥 Yemek veritabanı eşleştirmeleri Supabase\'den yükleniyor...');
+                
+                // DAL ile Supabase'den çek
+                if (!window.DAL) {
+                    throw new Error('DAL bulunamadı! Lütfen sayfayı yenileyin.');
+                }
+                
+                const mappingObj = await window.DAL.getFoodDatabaseMappings();
+                yemekVeritabaniEslestirme = mappingObj;
+                
+                console.log('✅ Yemek veritabanı eşleştirmeleri yüklendi:', Object.keys(yemekVeritabaniEslestirme).length, 'adet');
+            } catch (error) {
+                console.error('❌ Yemek veritabanı eşleştirmeleri yüklenemedi:', error);
                 yemekVeritabaniEslestirme = {};
             }
         }
 
-        // Yemek veritabanı yasaklarını yükle
+        // Yemek veritabanı yasakları yükle (SADECE SUPABASE)
         async function loadYemekVeritabaniYasaklar() {
             try {
-                const timestamp = new Date().getTime();
-                const url = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data/yemek_veritabani_yasaklar.json?t=${timestamp}`;
-                console.log('📥 Yemek veritabanı yasakları yükleniyor:', url);
-                const response = await fetch(url, { cache: 'no-store' });
-                if (response.ok) {
-                    const data = await response.json();
-                    yemekVeritabaniYasaklar = data.yasaklar || data;
-                    console.log('✅ Yemek veritabanı yasakları yüklendi:', Object.keys(yemekVeritabaniYasaklar).length, 'adet');
+                console.log('📥 Yemek veritabanı yasakları Supabase\'den yükleniyor...');
+                
+                // DAL ile Supabase'den çek
+                if (!window.DAL) {
+                    throw new Error('DAL bulunamadı! Lütfen sayfayı yenileyin.');
                 }
+                
+                const data = await window.DAL.getFoodDatabaseProhibitions();
+                yemekVeritabaniYasaklar = data.yasaklar || data;
+                
+                console.log('✅ Yemek veritabanı yasakları yüklendi:', Object.keys(yemekVeritabaniYasaklar).length, 'adet');
             } catch (error) {
-                console.warn('⚠️ Yemek veritabanı yasakları yüklenemedi:', error);
+                console.error('❌ Yemek veritabanı yasakları yüklenemedi:', error);
                 yemekVeritabaniYasaklar = {};
             }
         }
@@ -1995,97 +2097,13 @@
             document.getElementById('unmatchedCount').textContent = totalCount - matchedCount;
         }
 
-        // 🔧 GitHub API - Dosya Güncelleme Fonksiyonu
-        async function updateGithubFile(filePath, content, commitMessage) {
-            const token = getGithubToken();
-            if (!token) {
-                alert('❌ GitHub token gerekli! Lütfen önce token girin.');
-                openTokenModal();
-                throw new Error('GitHub token gerekli');
-            }
-
+        // 🔧 Food list'i Supabase'e kaydet (SADECE SUPABASE - GitHub kaldırıldı)
+        async function saveFoodListToSupabase(updatedDatabase, commitMessage) {
             try {
-                // 1. Dosyanın mevcut SHA'sını al (🔥 CACHE-BUSTING ile güncel versiyonu al)
-                const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}?ref=${GITHUB_BRANCH}&t=${Date.now()}`;
-                const getResponse = await fetch(getUrl, {
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    },
-                    cache: 'no-cache' // 🔥 Cache'i devre dışı bırak
-                });
-
-                let sha = null;
-                if (getResponse.ok) {
-                    const data = await getResponse.json();
-                    sha = data.sha;
-                    console.log(`🔍 Güncel SHA alındı: ${filePath} → ${sha.substring(0, 8)}...`);
-                } else if (getResponse.status === 401) {
-                    throw new Error('❌ GitHub Token Hatası! Token geçersiz veya yetkisiz.');
-                } else if (getResponse.status !== 404) {
-                    // 404 = dosya yok (yeni oluşturulacak), diğer hatalar sorun
-                    const error = await getResponse.json();
-                    console.warn('⚠️ SHA alma hatası:', error);
-                }
-
-                // 2. Dosyayı güncelle veya oluştur
-                const putUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`;
-                
-                // 🔥 BÜYÜK DOSYALAR İÇİN GÜVENLİ BASE64 ENCODING
-                // Stack overflow önlemek için: binary string'i chunk'larla oluştur, SONRA base64 encode et
-                const encoder = new TextEncoder();
-                const uint8Array = encoder.encode(content);
-                
-                // Binary string'i chunk'larla oluştur (stack overflow önleme)
-                let binaryString = '';
-                const chunkSize = 8192; // 8KB chunks (güvenli boyut)
-                
-                for (let i = 0; i < uint8Array.length; i += chunkSize) {
-                    const chunk = uint8Array.slice(i, i + chunkSize);
-                    const chunkArray = Array.from(chunk);
-                    binaryString += String.fromCharCode(...chunkArray);
+                if (!window.DAL) {
+                    throw new Error('DAL bulunamadı! Lütfen sayfayı yenileyin.');
                 }
                 
-                // Şimdi tüm binary string'i base64'e çevir
-                const base64Content = btoa(binaryString);
-                
-                console.log(`📦 Base64 encoding tamamlandı: ${(base64Content.length / 1024).toFixed(1)} KB`);
-                
-                const putResponse = await fetch(putUrl, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: commitMessage,
-                        content: base64Content,
-                        sha: sha, // null ise yeni dosya oluştur
-                        branch: GITHUB_BRANCH
-                    })
-                });
-
-                if (!putResponse.ok) {
-                    const error = await putResponse.json();
-                    if (putResponse.status === 401) {
-                        throw new Error('❌ GitHub Token Hatası! Token geçersiz veya yetkisiz.');
-                    }
-                    throw new Error(error.message || 'GitHub API hatası');
-                }
-
-                const result = await putResponse.json();
-                console.log(`✅ GitHub'a kaydedildi: ${filePath}`);
-                return result;
-            } catch (error) {
-                console.error('GitHub API Hatası:', error);
-                throw error;
-            }
-        }
-
-        // 🔧 food_list.json'u GitHub'a kaydet
-        async function saveFoodListToGithub(updatedDatabase, commitMessage) {
-            try {
                 // Kategorilere göre grupla (orijinal format)
                 const categories = {};
                 
@@ -2100,32 +2118,34 @@
                     categories[categoryName].items.push(food);
                 });
 
-                // 🔥 BÜYÜK JSON İÇİN GÜVENLİ STRINGİFY (Stack overflow önleme)
-                // Basit JSON.stringify kullan (indent: 2 boşluk)
                 const jsonData = {
                     version: "3.0",
                     lastUpdated: new Date().toISOString(),
                     categories: Object.values(categories)
                 };
                 
-                // Basit stringify (2 boşluk indent - güvenli)
-                const jsonContent = JSON.stringify(jsonData, null, 2);
+                console.log(`📊 Toplam kategori: ${jsonData.categories.length}, Toplam yemek: ${updatedDatabase.length}`);
+                console.log(`💾 Supabase'e kaydediliyor: ${commitMessage}`);
                 
-                console.log(`📊 JSON boyutu: ${(jsonContent.length / 1024).toFixed(1)} KB`);
-                console.log(`📂 Kayıt yeri: https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/blob/${GITHUB_BRANCH}/${FOOD_LIST_FILE_PATH}`);
-
-                // GitHub'a kaydet
-                await updateGithubFile(FOOD_LIST_FILE_PATH, jsonContent, commitMessage);
-                
-                console.log(`✅ GitHub'a başarıyla kaydedildi: ${FOOD_LIST_FILE_PATH}`);
-                console.log(`🔗 Doğrudan link: https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${FOOD_LIST_FILE_PATH}`);
+                await window.DAL.updateFoodList(jsonData);
+                console.log('✅ Food list Supabase\'e kaydedildi');
                 
                 return true;
             } catch (error) {
-                console.error('food_list.json kaydetme hatası:', error);
+                console.error('❌ Food list Supabase kayıt hatası:', error);
                 throw error;
             }
         }
+        
+        // ❌ ESKI FONKSİYON - Geriye dönük uyumluluk için bırakıldı
+        async function saveFoodListToGithub(updatedDatabase, commitMessage) {
+            return await saveFoodListToSupabase(updatedDatabase, commitMessage);
+        }
+
+        // ❌ ESKI FONKSİYONLAR - ARTIK KULLANILMIYOR (DAL kullanılıyor)
+        // saveManuelMatchingsToSupabase, saveFoodBlacklistToSupabase, 
+        // saveFoodDatabaseMappingsToSupabase, saveFoodDatabaseProhibitionsToSupabase
+        // Bu fonksiyonlar artık DAL.update* metodları ile değiştirildi
 
         // Yemekleri göster
         function displayFoods() {
@@ -2182,6 +2202,13 @@
                 const matchResult = findTarifKartlari(food.name);
                 const hasMatch = matchResult.matched.length > 0;
                 const matchClass = hasMatch ? 'matched' : '';
+                
+                // 🐛 DEBUG: Eşleştirme rozetlerini kontrol et
+                if (food.name.includes('Tatlı Patates') || food.name.includes('Yaban Mersinli')) {
+                    console.log(`🔍 ${food.name} → matchResult:`, matchResult);
+                    console.log(`   - sources:`, matchResult.sources);
+                    console.log(`   - matched:`, matchResult.matched);
+                }
                 
                 // 🐛 DEBUG: Her yemek için yasak kontrolü
                 const yasakTest = getYasakKurallar(food.name);
@@ -2295,10 +2322,21 @@
         }
 
         // Modal aç
-        function openMatchModal(food) {
+        async function openMatchModal(food) {
+            // ✅ İlk önce array'leri sıfırla - mevcut eşleşmeler sonradan eklenecek
+            selectedTarifler = [];
+            selectedYasaklar = [];
+            
             currentFood = food;
-            selectedTarifler = []; // Array'i sıfırla
-            selectedYasaklar = []; // Array'i sıfırla
+            
+            // 🔥 MODAL AÇILIRKEN EN GÜNCEL VERİYİ ÇEK (4 TAB için de)
+            console.log('🔄 Modal açılıyor, Supabase\'den güncel veriler çekiliyor (4 TAB)...');
+            await Promise.all([
+                loadManuelEslestirmeler(),       // TAB 1: Manuel Eşleştirme
+                loadEslesmemeKurallari(),         // TAB 2: Yasak Kuralları
+                loadYemekVeritabaniEslestirme(),  // TAB 3: Yemek DB Eşleştirme
+                loadYemekVeritabaniYasaklar()     // TAB 4: Yemek DB Yasakları
+            ]);
             
             document.getElementById('modalTitle').textContent = `Eşleştirme: ${food.name}`;
             document.getElementById('matchModal').classList.add('active');
@@ -2345,19 +2383,45 @@
                 matchInfoPanel.style.display = 'none';
             }
             
+            // 🔥 ÖNCELİKLE: Duplike önlemek için Set kullan
+            const uniqueSelected = new Map(); // file/name → tarif objesi
+            
             // Mevcut eşleştirmeleri (MANUEL veya OTOMATİK) selectedTarifler'e ekle
             if (matchResult.matched.length > 0) {
+                console.log('🎯 Eşleşmeler bulundu, selectedTarifler\'e ekleniyor:', matchResult.matched);
                 matchResult.matched.forEach(match => {
                     const name = match.name || match; // Geriye dönük uyumluluk
-                    const tarif = tarifKartlari.find(t => 
-                        normalizeText(t.name) === normalizeText(name) ||
-                        t.name === name ||
-                        t.name.replace(/\.(jpg|jpeg|png)$/i, '') === name.replace(/\.(jpg|jpeg|png)$/i, '')
-                    );
-                    if (tarif && !selectedTarifler.find(t => t.name === tarif.name)) {
-                        selectedTarifler.push(tarif);
+                    const tarif = tarifKartlari.find(t => {
+                        const tNameRaw = t.name || t.file || '';
+                        if (!tNameRaw || !name) return false;
+                        
+                        // Extension'ı kaldır ÖNCE
+                        const tName = tNameRaw.replace(/\.(jpg|jpeg|png)$/i, '');
+                        const searchName = name.replace(/\.(jpg|jpeg|png)$/i, '');
+                        
+                        // Normalize karşılaştırma (en güçlü eşleşme)
+                        if (normalizeText(tName) === normalizeText(searchName)) return true;
+                        
+                        // Direkt eşleşme
+                        if (tName === searchName) return true;
+                        if (tName.toLowerCase() === searchName.toLowerCase()) return true;
+                        
+                        return false;
+                    });
+                    if (tarif) {
+                        const key = tarif.name || tarif.file;
+                        if (!uniqueSelected.has(key)) {
+                            uniqueSelected.set(key, tarif);
+                            console.log('✅ Tarif bulundu ve eklendi:', key);
+                        } else {
+                            console.log('⚠️ Zaten ekli, atlanıyor:', key);
+                        }
+                    } else {
+                        console.log('❌ Tarif bulunamadı:', name);
                     }
                 });
+            } else {
+                console.log('⚠️ Hiç eşleşme bulunamadı');
             }
             
             // Manuel eşleştirme bilgisi göster
@@ -2365,6 +2429,14 @@
             let currentMatchData = manuelEslestirmeler[food.name] || 
                                    manuelEslestirmeler[normalized] ||
                                    manuelEslestirmeler[Object.keys(manuelEslestirmeler).find(key => normalizeText(key) === normalized)];
+            
+            console.log('🔍 Manuel eşleştirme araması:', {
+                foodName: food.name,
+                normalized: normalized,
+                foundKey: Object.keys(manuelEslestirmeler).find(key => normalizeText(key) === normalized),
+                currentMatchData: currentMatchData,
+                allKeys: Object.keys(manuelEslestirmeler)
+            });
             
             if (currentMatchData) {
                 let matchNames = [];
@@ -2374,11 +2446,62 @@
                     matchNames = [currentMatchData];
                 }
                 
+                console.log('📋 Bulunan eşleştirmeler:', matchNames);
+                
+                // Manuel eşleştirmeleri uniqueSelected Map'e ekle (duplike önlenir)
+                matchNames.forEach(name => {
+                    // Debug: "keto" veya "kofte" içeren tüm kartları göster
+                    if (name.toLowerCase().includes('keto') || name.toLowerCase().includes('kofte')) {
+                        const ketoCards = tarifKartlari.filter(t => {
+                            const tName = (t.name || t.file || '').toLowerCase();
+                            return tName.includes('keto') || tName.includes('kofte');
+                        });
+                        console.log('🔍 tarifKartlari içinde "keto/kofte" içeren kartlar:', ketoCards.map(t => ({
+                            name: t.name,
+                            file: t.file,
+                            normalized: normalizeText(t.name || t.file || '')
+                        })));
+                        console.log('🔍 Aranan normalized:', normalizeText(name));
+                    }
+                    
+                    const tarif = tarifKartlari.find(t => {
+                        const tNameRaw = t.name || t.file || '';
+                        if (!tNameRaw || !name) return false;
+                        
+                        // Extension'ı kaldır ÖNCE
+                        const tName = tNameRaw.replace(/\.(jpg|jpeg|png)$/i, '');
+                        const searchName = name.replace(/\.(jpg|jpeg|png)$/i, '');
+                        
+                        // Normalize karşılaştırma (en güçlü eşleşme)
+                        if (normalizeText(tName) === normalizeText(searchName)) return true;
+                        
+                        // Direkt eşleşme
+                        if (tName === searchName) return true;
+                        if (tName.toLowerCase() === searchName.toLowerCase()) return true;
+                        
+                        return false;
+                    });
+                    console.log('🔎 Kart aranıyor:', name, '→ Bulundu:', tarif ? (tarif.name || tarif.file) : 'BULUNAMADI');
+                    if (tarif) {
+                        const key = tarif.name || tarif.file;
+                        if (!uniqueSelected.has(key)) {
+                            uniqueSelected.set(key, tarif);
+                            console.log('➕ Manuel eşleştirme eklendi:', key);
+                        } else {
+                            console.log('⚠️ Manuel eşleştirme zaten mevcut, atlanıyor:', key);
+                        }
+                    }
+                });
+                
                 document.getElementById('currentMatch').style.display = 'block';
                 document.getElementById('currentMatchName').textContent = matchNames.map(n => n.replace(/\.(jpg|jpeg|png)$/i, '')).join(', ');
             } else {
                 document.getElementById('currentMatch').style.display = 'none';
             }
+            
+            // 🔥 Map'i Array'e çevir ve selectedTarifler'e ata
+            selectedTarifler = Array.from(uniqueSelected.values());
+            console.log('📦 Final selectedTarifler (duplikesiz):', selectedTarifler.map(t => t.name || t.file));
             
             displayTarifKartlari();
         }
@@ -2393,26 +2516,27 @@
                 return;
             }
 
-            // Filtreleme: Akıllı arama ile
-            let displayList = filteredList || tarifKartlari;
+            // ✨ 1. SEÇİLİ KARTLARI AYIR (her zaman gösterilecek)
+            const selectedCards = selectedTarifler.slice();
+            
+            // ✨ 2. SEÇİLİ OLMAYAN KARTLARI FİLTRELE
+            let unselectedCards = (filteredList || tarifKartlari).filter(tarif => 
+                !selectedTarifler.some(t => 
+                    (t.name || t.file) === (tarif.name || tarif.file)
+                )
+            );
+            
+            // ✨ 3. ARAMA FİLTRESİ (sadece seçili olmayanlar üzerinde)
             if (searchTerm) {
-                displayList = displayList.filter(tarif => {
-                    const tarifName = tarif.name.replace(/\.(jpg|jpeg|png)$/i, '');
+                unselectedCards = unselectedCards.filter(tarif => {
+                    const tarifNameRaw = tarif.name || tarif.file || '';
+                    const tarifName = tarifNameRaw.replace(/\.(jpg|jpeg|png)$/i, '');
                     return smartSearch(searchTerm, tarifName);
                 });
             }
-
-            // ✨ SEÇİLİ KARTLARI HER ZAMAN BAŞA EKLE (aramada yoksa bile!)
-            // 1. Seçili kartları al
-            const selectedCards = selectedTarifler.slice(); // Kopyasını al
             
-            // 2. Seçili olmayanları filtrele
-            const unselectedCards = displayList.filter(tarif => 
-                !selectedTarifler.some(t => t.name === tarif.name)
-            );
-            
-            // 3. Seçili kartlar + seçili olmayanlar
-            displayList = [...selectedCards, ...unselectedCards];
+            // ✨ 4. SEÇİLİ KARTLAR + FİLTRELENMİŞ KARTLAR
+            const displayList = [...selectedCards, ...unselectedCards];
 
             if (displayList.length === 0) {
                 grid.innerHTML = '<div class="loading">Arama sonucu bulunamadı</div>';
@@ -2420,9 +2544,10 @@
             }
 
             grid.innerHTML = displayList.map((tarif) => {
+                const tarifNameRaw = tarif.name || tarif.file || '';
                 const imageUrl = tarif.download_url || 
-                                `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/${tarif.name}`;
-                const tarifName = tarif.name.replace(/\.(jpg|jpeg|png)$/i, '');
+                                `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/${tarifNameRaw}`;
+                const tarifName = tarifNameRaw.replace(/\.(jpg|jpeg|png)$/i, '');
                 
                 // Yemek verisini bul (makrolar için) - daha esnek eşleştirme
                 const foodData = foodDatabase.find(food => {
@@ -2443,8 +2568,12 @@
                     return false;
                 });
                 
-                // Seçili mi kontrol et
-                const isSelected = selectedTarifler.some(t => t.name === tarif.name);
+                // Seçili mi kontrol et - SIKI KONTROL
+                const isSelected = selectedTarifler.some(t => {
+                    const tIdentifier = t.name || t.file || '';
+                    const tarifIdentifier = tarif.name || tarif.file || '';
+                    return tIdentifier === tarifIdentifier;
+                });
                 const selectedClass = isSelected ? 'selected' : '';
                 
                 // Makrolar her zaman göster - foodData yoksa da placeholder göster
@@ -2470,7 +2599,7 @@
                 }
                 
                 return `
-                    <div class="tarif-item ${selectedClass}" data-tarif-name="${tarif.name}" onclick="selectTarifByName('${tarif.name}')">
+                    <div class="tarif-item ${selectedClass}" data-tarif-name="${tarifNameRaw}" onclick="selectTarifByName('${tarifNameRaw}')">
                         <img src="${imageUrl}" alt="${tarifName}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23ddd%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22%3E📷%3C/text%3E%3C/svg%3E'">
                         <div class="tarif-name">${tarifName}</div>
                         ${macrosHTML}
@@ -2495,9 +2624,18 @@
 
         // Tarif seç (çoklu seçim) - İsme göre
         function selectTarifByName(tarifName) {
-            const tarif = tarifKartlari.find(t => t.name === tarifName);
+            // tarifName = dosya adı ile gelebilir (örn: "keto_kofte.jpg")
+            // tarifKartlari'da name veya file ile eşleşmeli
+            const tarif = tarifKartlari.find(t => 
+                (t.name === tarifName || t.file === tarifName) ||
+                (t.name && t.name.replace(/\.(jpg|jpeg|png)$/i, '') === tarifName) ||
+                (t.file && t.file.replace(/\.(jpg|jpeg|png)$/i, '') === tarifName)
+            );
+            
             if (!tarif) {
                 console.error('Tarif bulunamadı:', tarifName);
+                console.log('Aranan:', tarifName);
+                console.log('Mevcut kartlar:', tarifKartlari.map(t => ({ name: t.name, file: t.file })));
                 return;
             }
             
@@ -2507,17 +2645,28 @@
                 return;
             }
             
-            // Zaten seçili mi kontrol et
-            const existingIndex = selectedTarifler.findIndex(t => t.name === tarif.name);
+            // Zaten seçili mi kontrol et (name VEYA file ile karşılaştır)
+            const existingIndex = selectedTarifler.findIndex(t => 
+                (t.name || t.file) === (tarif.name || tarif.file)
+            );
+            
+            console.log('🔍 selectTarifByName çağrıldı:', {
+                tarifName: tarifName,
+                bulunanTarif: {name: tarif.name, file: tarif.file},
+                existingIndex: existingIndex,
+                currentSelected: selectedTarifler.map(t => t.name || t.file)
+            });
             
             if (existingIndex > -1) {
                 // Zaten seçili, kaldır
                 selectedTarifler.splice(existingIndex, 1);
                 tarifItem.classList.remove('selected');
+                console.log('➖ Seçim kaldırıldı');
             } else {
                 // Seçili değil, ekle
                 selectedTarifler.push(tarif);
                 tarifItem.classList.add('selected');
+                console.log('➕ Seçim eklendi');
             }
             
             // Seçim sayısını göster
@@ -2564,47 +2713,78 @@
 
             // Mevcut yasakları seçili olarak işaretle (sadece ilk açılışta)
             if (selectedYasaklar.length === 0 && existingYasaklar.length > 0) {
+                console.log('🔍 Yasak kartları eşleştiriliyor:', existingYasaklar);
+                
                 existingYasaklar.forEach(name => {
-                    const tarif = tarifKartlari.find(t => 
-                        normalizeText(t.name) === normalizeText(name) ||
-                        t.name === name ||
-                        t.name.replace(/\.(jpg|jpeg|png)$/i, '') === name.replace(/\.(jpg|jpeg|png)$/i, '')
-                    );
-                    if (tarif && !selectedYasaklar.find(t => t.name === tarif.name)) {
-                        selectedYasaklar.push(tarif);
-                        console.log('✅ Yasak seçildi:', tarif.name);
+                    if (!name) return; // Boş değerleri atla
+                    
+                    console.log(`🔎 "${name}" aranıyor...`);
+                    
+                    const tarif = tarifKartlari.find(t => {
+                        const tarifName = t.name || t.file || '';
+                        const tarifFile = t.file || '';
+                        
+                        const match = normalizeText(tarifName) === normalizeText(name) ||
+                               normalizeText(tarifFile) === normalizeText(name) ||
+                               tarifName === name ||
+                               tarifFile === name ||
+                               tarifName.replace(/\.(jpg|jpeg|png)$/i, '') === name.replace(/\.(jpg|jpeg|png)$/i, '') ||
+                               tarifFile.replace(/\.(jpg|jpeg|png)$/i, '') === name.replace(/\.(jpg|jpeg|png)$/i, '');
+                        
+                        if (match) {
+                            console.log(`  ✅ Eşleşti: ${tarifFile}`);
+                        }
+                        
+                        return match;
+                    });
+                    
+                    if (tarif) {
+                        if (!selectedYasaklar.find(t => (t.name || t.file) === (tarif.name || tarif.file))) {
+                            selectedYasaklar.push(tarif);
+                            console.log('✅ Yasak seçildi:', tarif.name || tarif.file);
+                        } else {
+                            console.log('⚠️ Zaten seçili:', tarif.name || tarif.file);
+                        }
+                    } else {
+                        console.warn(`❌ "${name}" tarifKartlari içinde bulunamadı!`);
                     }
                 });
+                
+                console.log('📦 selectedYasaklar:', selectedYasaklar);
             }
 
             // Mevcut yasak bilgisini göster
             if (existingYasaklar.length > 0) {
                 document.getElementById('currentYasak').style.display = 'block';
-                document.getElementById('currentYasakName').textContent = existingYasaklar.map(n => n.replace(/\.(jpg|jpeg|png)$/i, '')).join(', ');
+                document.getElementById('currentYasakName').textContent = existingYasaklar
+                    .filter(n => n) // Boş değerleri filtrele
+                    .map(n => n.replace(/\.(jpg|jpeg|png)$/i, '').replace(/_/g, ' '))
+                    .join(', ');
             } else {
                 document.getElementById('currentYasak').style.display = 'none';
             }
 
-            // Filtreleme: Akıllı arama ile
-            let displayList = tarifKartlari;
+            // ✨ 1. SEÇİLİ KARTLARI AYIR (her zaman gösterilecek)
+            const selectedYasakCards = selectedYasaklar.slice();
+            
+            // ✨ 2. SEÇİLİ OLMAYAN KARTLARI FİLTRELE
+            let unselectedYasakCards = tarifKartlari.filter(tarif => 
+                !selectedYasaklar.some(t => 
+                    (t.name || t.file) === (tarif.name || tarif.file)
+                )
+            );
+            
+            // ✨ 3. ARAMA FİLTRESİ (sadece seçili olmayanlar üzerinde)
             if (searchTerm) {
-                displayList = displayList.filter(tarif => {
-                    const tarifName = tarif.name.replace(/\.(jpg|jpeg|png)$/i, '');
+                unselectedYasakCards = unselectedYasakCards.filter(tarif => {
+                    const tarifNameRaw = tarif.name || tarif.file || '';
+                    const tarifName = tarifNameRaw.replace(/\.(jpg|jpeg|png)$/i, '');
                     return smartSearch(searchTerm, tarifName);
                 });
             }
-
-            // ✨ SEÇİLİ KARTLARI HER ZAMAN BAŞA EKLE (aramada yoksa bile!)
-            // 1. Seçili kartları al
-            const selectedYasakCards = selectedYasaklar.slice(); // Kopyasını al
             
-            // 2. Seçili olmayanları filtrele
-            const unselectedYasakCards = displayList.filter(tarif => 
-                !selectedYasaklar.some(t => t.name === tarif.name)
-            );
-            
-            // 3. Seçili kartlar + seçili olmayanlar
-            displayList = [...selectedYasakCards, ...unselectedYasakCards];
+            // ✨ 4. SEÇİLİ KARTLAR + FİLTRELENMİŞ KARTLAR
+            const displayList = [...selectedYasakCards, ...unselectedYasakCards];
 
             if (displayList.length === 0) {
                 grid.innerHTML = '<div class="loading">Arama sonucu bulunamadı</div>';
@@ -2612,9 +2792,10 @@
             }
 
             grid.innerHTML = displayList.map((tarif) => {
+                const tarifNameRaw = tarif.name || tarif.file || '';
                 const imageUrl = tarif.download_url || 
-                                `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/${tarif.name}`;
-                const tarifName = tarif.name.replace(/\.(jpg|jpeg|png)$/i, '');
+                                `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/${tarifNameRaw}`;
+                const tarifName = tarifNameRaw.replace(/\.(jpg|jpeg|png)$/i, '');
                 
                 // Yemek verisini bul (makrolar için) - daha esnek eşleştirme
                 const foodData = foodDatabase.find(food => {
@@ -2635,8 +2816,12 @@
                     return false;
                 });
                 
-                // Seçili mi kontrol et
-                const isSelected = selectedYasaklar.some(t => t.name === tarif.name);
+                // Seçili mi kontrol et - SIKI KONTROL
+                const isSelected = selectedYasaklar.some(t => {
+                    const tIdentifier = t.name || t.file || '';
+                    const tarifIdentifier = tarif.name || tarif.file || '';
+                    return tIdentifier === tarifIdentifier;
+                });
                 const selectedClass = isSelected ? 'selected' : '';
                 
                 // Makrolar her zaman göster
@@ -2661,7 +2846,7 @@
                 }
                 
                 return `
-                    <div class="tarif-item ${selectedClass}" data-tarif-name="${tarif.name}" onclick="selectYasakByName('${tarif.name}')" style="${isSelected ? 'border-color: #dc3545;' : ''}">
+                    <div class="tarif-item ${selectedClass}" data-tarif-name="${tarifNameRaw}" onclick="selectYasakByName('${tarifNameRaw}')" style="${isSelected ? 'border-color: #dc3545;' : ''}">
                         <img src="${imageUrl}" alt="${tarifName}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23ddd%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22%3E📷%3C/text%3E%3C/svg%3E'">
                         <div class="tarif-name">${tarifName}</div>
                         ${macrosHTML}
@@ -2685,20 +2870,31 @@
 
         // Yasak seç (çoklu seçim) - İsme göre
         function selectYasakByName(tarifName) {
-            const tarif = tarifKartlari.find(t => t.name === tarifName);
+            // tarifName = dosya adı ile gelebilir (örn: "keto_kofte.jpg")
+            const tarif = tarifKartlari.find(t => 
+                (t.name === tarifName || t.file === tarifName) ||
+                (t.name && t.name.replace(/\.(jpg|jpeg|png)$/i, '') === tarifName) ||
+                (t.file && t.file.replace(/\.(jpg|jpeg|png)$/i, '') === tarifName)
+            );
+            
             if (!tarif) {
-                console.error('Tarif bulunamadı:', tarifName);
+                console.error('Yasak için tarif bulunamadı:', tarifName);
+                console.log('Aranan:', tarifName);
+                console.log('Mevcut kartlar:', tarifKartlari.map(t => ({ name: t.name, file: t.file })));
                 return;
             }
             
             const tarifItem = document.querySelector(`#tarifGridYasak .tarif-item[data-tarif-name="${tarifName}"]`);
             if (!tarifItem) {
-                console.error('Tarif elementi bulunamadı:', tarifName);
+                console.error('Yasak için tarif elementi bulunamadı:', tarifName);
                 return;
             }
             
-            // Zaten seçili mi kontrol et
-            const existingIndex = selectedYasaklar.findIndex(t => t.name === tarif.name);
+            // Zaten seçili mi kontrol et (name VEYA file ile karşılaştır)
+            const existingIndex = selectedYasaklar.findIndex(t => 
+                t.name === tarif.name || t.file === tarif.file ||
+                t.name === tarifName || t.file === tarifName
+            );
             
             if (existingIndex > -1) {
                 // Zaten seçili, kaldır
@@ -2909,42 +3105,45 @@
             }
 
             try {
-                // Eşleştirmeyi sil
+                // ✅ SUPABASE'DEN SADECE BU YEMEĞİN EŞLEŞTİRMELERİNİ SİL
+                console.log('🗑️ Supabase\'den manuel eşleştirme siliniyor:', currentFood.name);
+                
+                // Supabase'den bu yemek için tüm eşleştirmeleri sil
+                const { error } = await window.DAL.supabaseClient
+                    .from('food_matchings')
+                    .delete()
+                    .eq('food_name', currentFood.name)
+                    .eq('type', 'manuel');
+                
+                if (error) throw error;
+                
+                // Local cache'den de sil
                 delete manuelEslestirmeler[actualKey];
-
-                // JSON'u oluştur
-                const jsonContent = JSON.stringify({
-                    version: "1.0",
-                    sonGuncelleme: new Date().toISOString(),
-                    eslestirmeler: manuelEslestirmeler
-                }, null, 2);
-
-                // GitHub'a kaydet
-                await updateGithubFile(
-                    MANUEL_FILE_PATH,
-                    jsonContent,
-                    `Manuel eşleştirme silindi: ${currentFood.name}`
-                );
-
-                console.log(`✅ Manuel eşleştirme silindi: "${currentFood.name}" → key: "${actualKey}"`);
+                
+                console.log(`✅ Manuel eşleştirme silindi: "${currentFood.name}"`);
                 
                 // ✅ Bildirim göster
                 showNotification(
                     `<strong>Manuel Eşleştirme Silindi!</strong><br>
-                    📁 Dosya: <code>manuel_eslestirmeler.json</code><br>
                     🗑️ Yemek: ${currentFood.name}`,
                     'info'
                 );
                 
                 if (btn) {
                     btn.textContent = '✅ Silindi!';
-                    setTimeout(() => {
+                    setTimeout(async () => {
                         btn.textContent = originalText;
                         btn.disabled = false;
+                        
+                        // Supabase'den güncel veriyi yükle
+                        await loadManuelEslestirmeler();
+                        
                         closeModal();
                         displayFoods();
                     }, 1500);
                 } else {
+                    // Supabase'den güncel veriyi yükle
+                    await loadManuelEslestirmeler();
                     closeModal();
                     displayFoods();
                 }
@@ -2974,6 +3173,12 @@
                 alert('Lütfen en az bir tarif kartı seçin!');
                 return;
             }
+            
+            console.log('💾 KAYIT BAŞLIYOR - selectedTarifler:', selectedTarifler.map(t => ({
+                name: t.name,
+                file: t.file,
+                identifier: t.name || t.file
+            })));
 
             const btn = evt?.target || document.getElementById('btnSaveManuel');
             const originalText = btn ? btn.textContent : '';
@@ -2985,37 +3190,50 @@
             try {
                 const normalizedKey = normalizeText(currentFood.name);
                 
+                // 🔥 SADECE DOSYA ADI (file) KAYDET - patient_nutrition ile aynı format
+                const kartDosyalari = selectedTarifler.map(t => {
+                    const fileName = t.file || t.name || '';
+                    // Eğer .jpg yoksa ekle (tutarlılık için)
+                    return fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png')
+                        ? fileName
+                        : fileName + '.jpg';
+                });
+                
+                console.log('🔍 KAYIT DETAYI:');
+                console.log('  - selectedTarifler:', selectedTarifler.map(t => t.name || t.file));
+                console.log('  - kartDosyalari (dosya adları):', kartDosyalari);
+                console.log('  - Unique kartDosyalari:', [...new Set(kartDosyalari)]);
+                
                 // Yeni eşleştirme objesi
                 const matchData = {
                     orijinalMetin: currentFood.name,
-                    kartlar: selectedTarifler.map(t => t.name),
+                    kartlar: kartDosyalari, // ✅ Dosya adları (.jpg dahil)
                     eklemeTarihi: new Date().toISOString()
                 };
 
                 // Mevcut verileri güncelle
                 manuelEslestirmeler[normalizedKey] = matchData;
-
-                // JSON'u oluştur
-                const jsonContent = JSON.stringify({
+                
+                const tarifNames = kartDosyalari.join(', ');
+                
+                // ✅ SADECE BU YEMEĞİN EŞLEŞTİRMESİNİ SUPABASE'E KAYDET
+                console.log('💾 Supabase\'e manuel eşleştirme kaydediliyor...');
+                
+                // Sadece bu yemek için eşleştirmeyi gönder
+                const singleFoodMatching = {
                     version: "1.0",
                     sonGuncelleme: new Date().toISOString(),
-                    eslestirmeler: manuelEslestirmeler
-                }, null, 2);
-
-                // GitHub'a kaydet
-                const tarifNames = selectedTarifler.map(t => t.name.replace(/\.(jpg|jpeg|png)$/i, '')).join(', ');
-                await updateGithubFile(
-                    MANUEL_FILE_PATH,
-                    jsonContent,
-                    `Manuel eşleştirme: ${currentFood.name} → ${tarifNames}`
-                );
-
-                console.log('✅ GitHub\'a kaydedildi:', currentFood.name, '→', tarifNames);
+                    eslestirmeler: {
+                        [normalizedKey]: matchData
+                    }
+                };
+                
+                await window.DAL.updateFoodMatchings(singleFoodMatching);
+                console.log('✅ Manuel eşleştirme kaydedildi:', currentFood.name, '→', tarifNames);
                 
                 // ✅ Bildirim göster
                 showNotification(
                     `<strong>Manuel Eşleştirme Kaydedildi!</strong><br>
-                    📁 Dosya: <code>manuel_eslestirmeler.json</code><br>
                     🍽️ Yemek: ${currentFood.name}<br>
                     📋 Tarifler: ${tarifNames}<br>
                     📊 Toplam: ${selectedTarifler.length} tarif`,
@@ -3028,7 +3246,7 @@
                         btn.textContent = originalText;
                         btn.disabled = false;
                         
-                        // Manuel eşleştirmeleri GitHub'dan yeniden yükle
+                        // Manuel eşleştirmeleri Supabase'den yeniden yükle
                         await loadManuelEslestirmeler();
                         
                         closeModal();
@@ -3131,8 +3349,8 @@
                 const updatedEslesmemeKurallari = { ...eslesmemeKurallari };
                 keysToRemove.forEach(key => delete updatedEslesmemeKurallari[key]);
 
-                // JSON'u oluştur - Doğru iç içe yapı ile (save ile aynı format)
-                const jsonContent = JSON.stringify({
+                // Supabase için blacklist data hazırla
+                const blacklistData = {
                     version: "1.0",
                     sonGuncelleme: new Date().toISOString(),
                     kurallar: {
@@ -3140,16 +3358,11 @@
                         sonGuncelleme: new Date().toISOString(),
                         eslesmemeKurallari: updatedEslesmemeKurallari
                     }
-                }, null, 2);
+                };
 
-                // GitHub'a kaydet
-                await updateGithubFile(
-                    YASAK_FILE_PATH,
-                    jsonContent,
-                    `Yasak kuralı silindi: ${currentFood.name}`
-                );
-                
-                console.log('✅ GitHub\'a kaydedildi, şimdi local objeden siliniyor');
+                // ✅ SADECE SUPABASE'E KAYDET (GitHub kaldırıldı)
+                console.log('💾 Supabase\'e yasak kuralı siliniyor...');
+                await window.DAL.updateFoodBlacklist(blacklistData);
                 
                 // ✅ SONRA: Başarılı olduysa local objeden de sil
                 keysToRemove.forEach(key => delete eslesmemeKurallari[key]);
@@ -3159,7 +3372,6 @@
                 // ✅ Bildirim göster
                 showNotification(
                     `<strong>Yasak Kuralı Silindi!</strong><br>
-                    📁 Dosya: <code>eslesmeme_kurallari.json</code><br>
                     🗑️ Yemek: ${currentFood.name}`,
                     'info'
                 );
@@ -3253,41 +3465,37 @@
                 
                 console.log(`💾 Kaydedilecek key: "${lowercaseSpaced}" (orijinal: "${currentFood.name}")`);
                 
+                // 🔥 SADECE DOSYA ADI (file) KAYDET - patient_nutrition ile aynı format
+                const yasakDosyalari = selectedYasaklar.map(t => {
+                    const fileName = t.file || t.name || '';
+                    // Eğer .jpg yoksa ekle (tutarlılık için)
+                    return fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png')
+                        ? fileName
+                        : fileName + '.jpg';
+                });
+                
                 // Yeni yasak kuralı objesi
                 const yasakData = {
                     orijinalMetin: currentFood.name,
-                    yasakliKartlar: selectedYasaklar.map(t => t.name),
+                    yasakliKartlar: yasakDosyalari, // ✅ Dosya adları (.jpg dahil)
                     eklemeTarihi: new Date().toISOString()
                 };
 
                 // Mevcut verileri güncelle
                 eslesmemeKurallari[lowercaseSpaced] = yasakData;
 
-                // JSON'u oluştur - Doğru iç içe yapı ile
-                const jsonContent = JSON.stringify({
-                    version: "1.0",
-                    sonGuncelleme: new Date().toISOString(),
-                    kurallar: {
-                        version: "1.0",
-                        sonGuncelleme: new Date().toISOString(),
-                        eslesmemeKurallari: eslesmemeKurallari
-                    }
-                }, null, 2);
+                // 🔥 SADECE TÜM KURALLARI GÖNDER (DAL içinde tek kayıt olarak saklanıyor)
+                const blacklistData = eslesmemeKurallari;
 
-                // GitHub'a kaydet
-                const yasakNames = selectedYasaklar.map(t => t.name.replace(/\.(jpg|jpeg|png)$/i, '')).join(', ');
-                await updateGithubFile(
-                    YASAK_FILE_PATH,
-                    jsonContent,
-                    `Eşleşme yasağı: ${currentFood.name} ⛔ ${yasakNames}`
-                );
-
-                console.log('✅ Yasak GitHub\'a kaydedildi:', currentFood.name, '⛔', yasakNames);
+                // ✅ SADECE SUPABASE'E KAYDET
+                const yasakNames = yasakDosyalari.join(', ');
+                console.log('💾 Supabase\'e yasak kuralı kaydediliyor...');
+                await window.DAL.updateFoodBlacklist(blacklistData);
+                console.log('✅ Yasak kaydedildi:', currentFood.name, '⛔', yasakNames);
                 
                 // ✅ Bildirim göster
                 showNotification(
                     `<strong>Eşleşme Yasağı Kaydedildi!</strong><br>
-                    📁 Dosya: <code>eslesmeme_kurallari.json</code><br>
                     🍽️ Yemek: ${currentFood.name}<br>
                     🚫 Yasaklanan: ${yasakNames}<br>
                     📊 Toplam: ${selectedYasaklar.length} kart`,
@@ -3358,7 +3566,7 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeModal();
-                closeTokenModal();
+                // closeTokenModal() kaldırıldı - GitHub modalı yok
             }
         });
 
@@ -3369,11 +3577,8 @@
             }
         });
 
-        document.getElementById('tokenModal').addEventListener('click', (e) => {
-            if (e.target.id === 'tokenModal') {
-                closeTokenModal();
-            }
-        });
+        // GitHub Token Modal kaldırıldı - Artık Supabase kullanılıyor
+
 
         // 🔄 SIRALAMA FONKSİYONLARI
         document.querySelectorAll('[data-sort]').forEach(btn => {
@@ -3634,18 +3839,43 @@
             document.getElementById('editModalTitle').textContent = '🍽️ Yemek Düzenle';
         }
 
+        // Helper: foodDatabase array'ini Supabase formatına çevir (categories yapısı)
+        function convertFoodDatabaseToSupabaseFormat() {
+            // foodDatabase flat array, category bilgisi her yemekte var
+            const categoryMap = {};
+            
+            foodDatabase.forEach(food => {
+                const categoryName = food.category || 'DİĞER';
+                if (!categoryMap[categoryName]) {
+                    categoryMap[categoryName] = [];
+                }
+                categoryMap[categoryName].push(food);
+            });
+            
+            // Kategori sırasına göre sırala
+            const categoryOrder = ['KAHVALTI', 'ÖĞLEN', 'AKŞAM', 'ATIŞT.', 'DİĞER'];
+            const categories = categoryOrder
+                .filter(name => categoryMap[name]) // Sadece var olan kategorileri al
+                .map(name => ({
+                    category: name,
+                    items: categoryMap[name]
+                }));
+            
+            // Tanımsız kategoriler varsa ekle
+            Object.keys(categoryMap).forEach(name => {
+                if (!categoryOrder.includes(name)) {
+                    categories.push({
+                        category: name,
+                        items: categoryMap[name]
+                    });
+                }
+            });
+            
+            return { categories };
+        }
+
         async function saveFoodEdit() {
             // editingFood null ise yeni ekleme modundayız
-
-            // Token kontrolü
-            const token = getGithubToken();
-            if (!token) {
-                if (!confirm('❌ GitHub token bulunamadı!\n\nDeğişiklikler sadece tarayıcıda kalacak (sayfa yenilenince kaybolacak).\n\nGitHub\'a kaydetmek için token girmek ister misiniz?')) {
-                    return;
-                }
-                openTokenModal();
-                return;
-            }
 
             // Form verilerini al
             const mealTypeArray = [];
@@ -3703,7 +3933,7 @@
             loadingDiv.innerHTML = `
                 <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); z-index: 10001; text-align: center;">
                     <div style="font-size: 48px; margin-bottom: 15px;">⏳</div>
-                    <div style="font-size: 18px; font-weight: 600; color: #667eea;">GitHub'a kaydediliyor...</div>
+                    <div style="font-size: 18px; font-weight: 600; color: #667eea;">Supabase'e kaydediliyor...</div>
                     <div style="font-size: 14px; color: #666; margin-top: 10px;">Lütfen bekleyin</div>
                 </div>
                 <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000;"></div>
@@ -3727,17 +3957,15 @@
                     // Yeni yemeği veritabanına ekle
                     foodDatabase.push(updatedFood);
                     
-                    // GitHub'a kaydet
-                    await saveFoodListToGithub(
-                        foodDatabase,
-                        `Yeni yemek eklendi: ${updatedFood.name}`
-                    );
+                    // Supabase'e kaydet (kategorilere göre grupla)
+                    const foodListData = convertFoodDatabaseToSupabaseFormat();
+                    await DAL.updateFoodList(foodListData);
                     
                     // Loading'i kaldır
                     document.body.removeChild(loadingDiv);
                     
-                    console.log('✅ Yeni yemek GitHub\'a eklendi:', updatedFood.name);
-                    alert(`✅ Başarılı!\n\n"${updatedFood.name}" yemeği GitHub'a eklendi.\n\nDeğişiklik food_list.json dosyasına yazıldı.`);
+                    console.log('✅ Yeni yemek Supabase\'e eklendi:', updatedFood.name);
+                    alert(`✅ Başarılı!\n\n"${updatedFood.name}" yemeği Supabase'e eklendi.`);
                 } else {
                     // ✏️ Mevcut yemek düzenleme
                     const index = foodDatabase.findIndex(f => f.name === originalFoodName);
@@ -3745,17 +3973,15 @@
                         foodDatabase[index] = updatedFood;
                     }
 
-                    // GitHub'a kaydet
-                    await saveFoodListToGithub(
-                        foodDatabase,
-                        `Yemek güncellendi: ${updatedFood.name}`
-                    );
+                    // Supabase'e kaydet (kategorilere göre grupla)
+                    const foodListData = convertFoodDatabaseToSupabaseFormat();
+                    await DAL.updateFoodList(foodListData);
 
                     // Loading'i kaldır
                     document.body.removeChild(loadingDiv);
                     
-                    console.log('✅ Yemek GitHub\'da güncellendi:', updatedFood.name);
-                    alert(`✅ Başarılı!\n\n"${updatedFood.name}" yemeği GitHub'da güncellendi.\n\nDeğişiklik food_list.json dosyasına yazıldı.`);
+                    console.log('✅ Yemek Supabase\'de güncellendi:', updatedFood.name);
+                    alert(`✅ Başarılı!\n\n"${updatedFood.name}" yemeği Supabase'de güncellendi.`);
                 }
 
                 // İstatistikleri ve ekranı yenile
@@ -3766,15 +3992,8 @@
                 // Loading'i kaldır
                 document.body.removeChild(loadingDiv);
 
-                console.error('GitHub kaydetme hatası:', error);
-                
-                // Token hatası mı kontrol et
-                if (error.message.includes('Token Hatası') || error.message.includes('401')) {
-                    alert(error.message);
-                    openTokenModal(); // Token modalını aç
-                } else {
-                    alert(`❌ GitHub'a kaydedilemedi!\n\nHata: ${error.message}\n\n💡 İpucu: Token'ınızın "repo" iznine sahip olduğundan emin olun.`);
-                }
+                console.error('Supabase kaydetme hatası:', error);
+                alert(`❌ Supabase'e kaydedilemedi!\n\nHata: ${error.message}`);
             }
         }
 
@@ -3795,29 +4014,12 @@
                 return;
             }
 
-            // Token kontrolü
-            const token = getGithubToken();
-            if (!token) {
-                if (!confirm('❌ GitHub token bulunamadı!\n\nDeğişiklik sadece tarayıcıda kalacak (sayfa yenilenince geri gelecek).\n\nGitHub\'dan kalıcı silmek için token girmek ister misiniz?')) {
-                    // Token istemiyorsa sadece tarayıcıda sil
-                    const index = foodDatabase.findIndex(f => f.name === food.name);
-                    if (index !== -1) {
-                        foodDatabase.splice(index, 1);
-                    }
-                    updateStats();
-                    displayFoods();
-                    return;
-                }
-                openTokenModal();
-                return;
-            }
-
             // Loading göster
             const loadingDiv = document.createElement('div');
             loadingDiv.innerHTML = `
                 <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); z-index: 10001; text-align: center;">
                     <div style="font-size: 48px; margin-bottom: 15px;">🗑️</div>
-                    <div style="font-size: 18px; font-weight: 600; color: #dc3545;">GitHub'dan siliniyor...</div>
+                    <div style="font-size: 18px; font-weight: 600; color: #dc3545;">Supabase'den siliniyor...</div>
                     <div style="font-size: 14px; color: #666; margin-top: 10px;">Lütfen bekleyin</div>
                 </div>
                 <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000;"></div>
@@ -3831,17 +4033,15 @@
                     foodDatabase.splice(index, 1);
                 }
 
-                // GitHub'a kaydet
-                await saveFoodListToGithub(
-                    foodDatabase,
-                    `Yemek silindi: ${food.name}`
-                );
+                // Supabase'e kaydet (kategorilere göre grupla)
+                const foodListData = convertFoodDatabaseToSupabaseFormat();
+                await DAL.updateFoodList(foodListData);
 
                 // Loading'i kaldır
                 document.body.removeChild(loadingDiv);
 
-                console.log('✅ Yemek GitHub\'dan silindi:', food.name);
-                alert(`✅ Başarılı!\n\n"${food.name}" yemeği GitHub'dan kalıcı olarak silindi.\n\nDeğişiklik food_list.json dosyasına yazıldı.`);
+                console.log('✅ Yemek Supabase\'den silindi:', food.name);
+                alert(`✅ Başarılı!\n\n"${food.name}" yemeği Supabase'den kalıcı olarak silindi.`);
 
                 // İstatistikleri ve ekranı yenile
                 updateStats();
@@ -3851,15 +4051,8 @@
                 // Loading'i kaldır
                 document.body.removeChild(loadingDiv);
 
-                console.error('GitHub silme hatası:', error);
-                
-                // Token hatası mı kontrol et
-                if (error.message.includes('Token Hatası') || error.message.includes('401')) {
-                    alert(error.message);
-                    openTokenModal(); // Token modalını aç
-                } else {
-                    alert(`❌ GitHub'dan silinemedi!\n\nHata: ${error.message}\n\n💡 İpucu: Token'ınızın "repo" iznine sahip olduğundan emin olun.`);
-                }
+                console.error('Supabase silme hatası:', error);
+                alert(`❌ Supabase'den silinemedi!\n\nHata: ${error.message}`);
             }
         }
 
@@ -3867,7 +4060,7 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeModal();
-                closeTokenModal();
+                // closeTokenModal() kaldırıldı - GitHub modalı yok
                 closeEditModal();
             }
         });
@@ -3881,17 +4074,44 @@
             const container = document.getElementById('yemekEslestirmeList');
             if (!container) return;
 
-            if (Object.keys(yemekVeritabaniEslestirme).length === 0) {
+            // ✅ META ALANLARI FİLTRELE (version, aciklama, sonGuncelleme, eslestirmeler)
+            const metaKeys = ['version', 'aciklama', 'sonGuncelleme', 'eslestirmeler'];
+            const validEntries = Object.entries(yemekVeritabaniEslestirme).filter(([key]) => !metaKeys.includes(key));
+
+            if (validEntries.length === 0) {
                 container.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">Henüz eşleştirme yok</div>';
                 return;
             }
 
             let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
             
-            Object.entries(yemekVeritabaniEslestirme).forEach(([key, value]) => {
+            validEntries.forEach(([key, value]) => {
+                // ✅ GÜVENLİK: value obje değilse atla
+                if (!value || typeof value !== 'object') {
+                    console.warn(`⚠️ Geçersiz eşleştirme formatı: ${key}`, value);
+                    return;
+                }
+                
                 const orijinal = value.orijinalMetin || key;
-                const hedef = value.hedefYemek || value;
+                
+                // 🔧 Hem eski format (hedefYemek string) hem yeni format (hedefYemekler array) destekle
+                let hedef = '';
+                if (value.hedefYemek && typeof value.hedefYemek === 'string') {
+                    // Eski format: tek yemek adı
+                    hedef = value.hedefYemek;
+                } else if (value.hedefYemekler && Array.isArray(value.hedefYemekler)) {
+                    // Yeni format: rotasyonlu yemekler
+                    hedef = value.hedefYemekler.join(' / ');
+                } else if (typeof value === 'string') {
+                    // Çok eski format: direkt string
+                    hedef = value;
+                } else {
+                    // Fallback: obje varsa JSON göster
+                    hedef = JSON.stringify(value);
+                }
+                
                 const notlar = value.notlar || '';
+                const rotasyon = value.rotasyonModu ? ` (🔄 ${value.rotasyonModu})` : '';
                 
                 html += `
                     <div style="background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
@@ -3899,7 +4119,7 @@
                             <div style="margin-bottom: 5px;">
                                 <strong style="color: #2196F3;">${orijinal}</strong>
                                 <span style="color: #999; margin: 0 8px;">→</span>
-                                <strong style="color: #28a745;">${hedef}</strong>
+                                <strong style="color: #28a745;">${hedef}</strong>${rotasyon}
                             </div>
                             ${notlar ? `<div style="font-size: 12px; color: #666;">📝 ${notlar}</div>` : ''}
                         </div>
@@ -3924,16 +4144,27 @@
             const container = document.getElementById('yemekYasakList');
             if (!container) return;
 
-            if (Object.keys(yemekVeritabaniYasaklar).length === 0) {
+            // ✅ META ALANLARI FİLTRELE (version, aciklama, sonGuncelleme, yasaklar)
+            const metaKeys = ['version', 'aciklama', 'sonGuncelleme', 'yasaklar'];
+            const validEntries = Object.entries(yemekVeritabaniYasaklar).filter(([key]) => !metaKeys.includes(key));
+
+            if (validEntries.length === 0) {
                 container.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">Henüz yasak yok</div>';
                 return;
             }
 
             let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
             
-            Object.entries(yemekVeritabaniYasaklar).forEach(([key, value]) => {
+            validEntries.forEach(([key, value]) => {
+                // ✅ GÜVENLİK: value obje değilse atla
+                if (!value || typeof value !== 'object') {
+                    console.warn(`⚠️ Geçersiz yasak formatı: ${key}`, value);
+                    return;
+                }
+                
                 const orijinal = value.orijinalMetin || key;
-                const yasaklar = value.yasakliYemekler || [];
+                // ✅ Her iki key'i de kontrol et (yasaklananYemekler veya yasakliYemekler)
+                const yasaklar = value.yasaklananYemekler || value.yasakliYemekler || [];
                 const neden = value.neden || '';
                 
                 html += `
@@ -3973,40 +4204,38 @@
                 return;
             }
 
-            // Normalize key
-            const key = normalizeText(aramaTxt);
-
-            // Yeni eşleştirme objesi
-            yemekVeritabaniEslestirme[key] = {
-                orijinalMetin: aramaTxt,
-                hedefYemek: hedefTxt,
-                eklemeTarihi: new Date().toISOString(),
-                notlar: `"${aramaTxt}" → "${hedefTxt}" eşleştirildi`
-            };
-
-            // 🔥 ÖNCE EKRANI GÜNCELLE (anlık görünüm)
-            clearYemekEslestirmeForm();
-            renderYemekEslestirmeList();
-
-            // GitHub'a kaydet
-            const jsonData = {
-                version: "1.0",
-                aciklama: "Şablonlardaki yemek adlarını food_list.json'daki yemeklerle manuel eşleştir",
-                sonGuncelleme: new Date().toISOString(),
-                eslestirmeler: yemekVeritabaniEslestirme
-            };
-
             try {
-                await updateGithubFile(
-                    'data/yemek_veritabani_eslestirme.json',
-                    JSON.stringify(jsonData, null, 2),
-                    `Yemek eşleştirme eklendi: ${aramaTxt} → ${hedefTxt}`
-                );
+                // Normalize key
+                const key = normalizeText(aramaTxt);
 
+                console.log('💾 Supabase\'e eşleştirme kaydediliyor...');
+                
+                // Mevcut eşleştirmeleri al
+                const currentMappings = await window.DAL.getFoodDatabaseMappings();
+                
+                // ✅ YENİ FORMAT: hedefYemekler (array) + rotasyonModu
+                currentMappings[key] = {
+                    orijinalMetin: aramaTxt,
+                    hedefYemekler: [hedefTxt], // ✅ ARRAY formatı (rotasyon için)
+                    rotasyonModu: 'sirayla',
+                    eklemeTarihi: new Date().toISOString(),
+                    notlar: `"${aramaTxt}" → "${hedefTxt}" eşleştirildi`
+                };
+                
+                // Supabase'e kaydet (DAL zaten wrapper ekleyecek)
+                await window.DAL.updateFoodDatabaseMappings(currentMappings);
+                
+                // Local state'i güncelle
+                yemekVeritabaniEslestirme = currentMappings;
+                
+                // 🔥 EKRANI GÜNCELLE
+                clearYemekEslestirmeForm();
+                renderYemekEslestirmeList();
+                
                 showNotification(`✅ Eşleştirme kaydedildi: ${aramaTxt} → ${hedefTxt}`, 'success');
             } catch (error) {
-                console.error('GitHub kayıt hatası:', error);
-                showNotification('⚠️ Ekranda görünüyor ama GitHub\'a kaydedilemedi!', 'warning');
+                console.error('❌ Eşleştirme kayıt hatası:', error);
+                showNotification('⚠️ Supabase kayıt hatası!', 'error');
             }
         }
 
@@ -4020,40 +4249,46 @@
                 return;
             }
 
-            // Normalize key
-            const key = normalizeText(aramaTxt);
-
-            // Yeni yasak objesi
-            yemekVeritabaniYasaklar[key] = {
-                orijinalMetin: aramaTxt,
-                yasakliYemekler: currentYemekYasakItems,
-                eklemeTarihi: new Date().toISOString(),
-                neden: nedenTxt || `"${aramaTxt}" bu yemeklerle eşleşmemeli`
-            };
-
-            // 🔥 ÖNCE EKRANI GÜNCELLE (anlık görünüm)
-            clearYemekYasakForm();
-            renderYemekYasakList();
-
-            // GitHub'a kaydet
-            const jsonData = {
-                version: "1.0",
-                aciklama: "Şablonlardaki yemeklerin food_list.json'da yanlış eşleşmesini önlemek için yasaklar",
-                sonGuncelleme: new Date().toISOString(),
-                yasaklar: yemekVeritabaniYasaklar
-            };
-
             try {
-                await updateGithubFile(
-                    'data/yemek_veritabani_yasaklar.json',
-                    JSON.stringify(jsonData, null, 2),
-                    `Yemek yasağı eklendi: ${aramaTxt} (${currentYemekYasakItems.length} yasak)`
-                );
+                // Normalize key
+                const key = normalizeText(aramaTxt);
 
+                console.log('💾 Supabase\'e yasak kaydediliyor...');
+                
+                // Mevcut yasakları al
+                const currentProhibitions = await window.DAL.getFoodDatabaseProhibitions();
+                const yasaklar = currentProhibitions.yasaklar || currentProhibitions;
+                
+                // Yeni yasak ekle
+                yasaklar[key] = {
+                    orijinalMetin: aramaTxt,
+                    yasakliYemekler: currentYemekYasakItems,
+                    eklemeTarihi: new Date().toISOString(),
+                    neden: nedenTxt || `"${aramaTxt}" bu yemeklerle eşleşmemeli`
+                };
+                
+                // Wrapper object ile kaydet
+                const prohibitionsData = {
+                    version: "1.0",
+                    aciklama: "Şablonlardaki yemeklerin food_list.json'da yanlış eşleşmesini önlemek için yasaklar",
+                    sonGuncelleme: new Date().toISOString(),
+                    yasaklar: yasaklar
+                };
+                
+                // Supabase'e kaydet
+                await window.DAL.updateFoodDatabaseProhibitions(prohibitionsData);
+                
+                // Local state'i güncelle
+                yemekVeritabaniYasaklar = yasaklar;
+                
+                // 🔥 EKRANI GÜNCELLE
+                clearYemekYasakForm();
+                renderYemekYasakList();
+                
                 showNotification(`🚫 Yasak kaydedildi: ${aramaTxt}`, 'success');
             } catch (error) {
-                console.error('GitHub kayıt hatası:', error);
-                showNotification('⚠️ Ekranda görünüyor ama GitHub\'a kaydedilemedi!', 'warning');
+                console.error('❌ Yasak kayıt hatası:', error);
+                showNotification('⚠️ Supabase kayıt hatası!', 'error');
             }
         }
 
@@ -4303,29 +4538,28 @@
                 return;
             }
 
-            delete yemekVeritabaniEslestirme[key];
-
-            // 🔥 ÖNCE EKRANI GÜNCELLE (anlık görünüm)
-            renderYemekEslestirmeList();
-
-            const jsonData = {
-                version: "1.0",
-                aciklama: "Şablonlardaki yemek adlarını food_list.json'daki yemeklerle manuel eşleştir",
-                sonGuncelleme: new Date().toISOString(),
-                eslestirmeler: yemekVeritabaniEslestirme
-            };
-
             try {
-                await updateGithubFile(
-                    'data/yemek_veritabani_eslestirme.json',
-                    JSON.stringify(jsonData, null, 2),
-                    `Yemek eşleştirme silindi: ${key}`
-                );
-
-                showNotification('✅ Eşleştirme silindi ve GitHub\'a kaydedildi', 'success');
+                console.log('💾 Supabase\'e eşleştirme silme kaydediliyor...');
+                
+                // Mevcut eşleştirmeleri al
+                const currentMappings = await window.DAL.getFoodDatabaseMappings();
+                
+                // Sil
+                delete currentMappings[key];
+                
+                // Supabase'e kaydet (DAL zaten wrapper ekleyecek)
+                await window.DAL.updateFoodDatabaseMappings(currentMappings);
+                
+                // Local state'i güncelle
+                yemekVeritabaniEslestirme = currentMappings;
+                
+                // 🔥 EKRANI GÜNCELLE
+                renderYemekEslestirmeList();
+                
+                showNotification('✅ Eşleştirme silindi', 'success');
             } catch (error) {
-                console.error('GitHub kayıt hatası:', error);
-                showNotification('⚠️ Ekrandan silindi ama GitHub\'a kaydedilemedi!', 'warning');
+                console.error('❌ Eşleştirme silme hatası:', error);
+                showNotification('⚠️ Supabase kayıt hatası!', 'error');
                 // Hata durumunda geri yükle
                 await loadYemekVeritabaniEslestirme();
                 renderYemekEslestirmeList();
@@ -4338,29 +4572,34 @@
                 return;
             }
 
-            delete yemekVeritabaniYasaklar[key];
-
-            // 🔥 ÖNCE EKRANI GÜNCELLE (anlık görünüm)
-            renderYemekYasakList();
-
-            const jsonData = {
-                version: "1.0",
-                aciklama: "Şablonlardaki yemeklerin food_list.json'da yanlış eşleşmesini önlemek için yasaklar",
-                sonGuncelleme: new Date().toISOString(),
-                yasaklar: yemekVeritabaniYasaklar
-            };
-
             try {
-                await updateGithubFile(
-                    'data/yemek_veritabani_yasaklar.json',
-                    JSON.stringify(jsonData, null, 2),
-                    `Yemek yasağı silindi: ${key}`
-                );
+                // ✅ 1. Supabase'den güncel veriyi oku
+                console.log('📥 Güncel yasaklar Supabase\'den okunuyor...');
+                const currentProhibitions = await window.DAL.getFoodDatabaseProhibitions();
+                const yasaklar = currentProhibitions.yasaklar || currentProhibitions;
 
-                showNotification('✅ Yasak silindi ve GitHub\'a kaydedildi', 'success');
+                // 2. Silme işlemini yap
+                delete yasaklar[key];
+
+                // 3. Wrapper ile kaydet
+                const prohibitionsData = {
+                    version: "1.0",
+                    aciklama: "Şablonlardaki yemeklerin food_list.json'da yanlış eşleşmesini önlemek için yasaklar",
+                    sonGuncelleme: new Date().toISOString(),
+                    yasaklar: yasaklar
+                };
+
+                console.log('📤 Supabase\'e yasak silme kaydediliyor...');
+                await window.DAL.updateFoodDatabaseProhibitions(prohibitionsData);
+
+                // 4. Yerel state'i güncelle ve ekranı yenile
+                yemekVeritabaniYasaklar = yasaklar;
+                renderYemekYasakList();
+
+                showNotification('✅ Yasak silindi', 'success');
             } catch (error) {
-                console.error('GitHub kayıt hatası:', error);
-                showNotification('⚠️ Ekrandan silindi ama GitHub\'a kaydedilemedi!', 'warning');
+                console.error('❌ Yasak silme hatası:', error);
+                showNotification('⚠️ Supabase kayıt hatası!', 'error');
                 // Hata durumunda geri yükle
                 await loadYemekVeritabaniYasaklar();
                 renderYemekYasakList();

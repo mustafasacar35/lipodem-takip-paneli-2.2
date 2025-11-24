@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Data Access Layer</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="data-access-layer.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Data Access Layer Test Sayfası</h1>
+    
+    <div class="test-section">
+        <h2>⚙️ Config Bilgisi</h2>
+        <div id="configInfo" style="background: #e3f2fd; padding: 15px; border-radius: 5px; margin: 10px 0;">
+            <strong>Environment:</strong> <span id="envInfo"></span><br>
+            <strong>Supabase URL:</strong> <span id="supabaseInfo"></span><br>
+            <strong>Storage Mode:</strong> <span id="storageInfo"></span>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>👥 Hasta İşlemleri</h2>
+        <button onclick="testGetAllPatients()">Tüm Hastaları Getir</button>
+        <button onclick="testGetPatient()">Tek Hasta Getir</button>
+        <button onclick="testSavePatient()">Hasta Kaydet</button>
+        <button onclick="testDeletePatient()">Hasta Sil</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>🍽️ Yemek İşlemleri</h2>
+        <button onclick="testGetFoodList()">Yemek Listesi Getir</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>📋 Şablon İşlemleri</h2>
+        <button onclick="testGetAllTemplates()">Tüm Şablonları Getir</button>
+        <button onclick="testGetTemplate()">Tek Şablon Getir</button>
+        <button onclick="testSaveTemplate()">Şablon Kaydet</button>
+        <button onclick="testDeleteTemplate()">Şablon Sil</button>
+    </div>
+    
+    <div id="result"></div>
+    
+    <script>
+        const resultDiv = document.getElementById('result');
+        
+        function showResult(data, isError = false) {
+            resultDiv.className = isError ? 'error' : 'success';
+            resultDiv.textContent = JSON.stringify(data, null, 2);
+        }
+        
+        // Config bilgisini göster
+        function showConfigInfo() {
+            const config = window.APP_CONFIG;
+            document.getElementById('envInfo').textContent = config.environment;
+            document.getElementById('supabaseInfo').textContent = config.supabase.url;
+            document.getElementById('storageInfo').textContent = 
+                `JSON: ${config.storage.useLocalJSON ? '✅' : '❌'} | ` +
+                `Supabase: ${config.storage.useSupabase ? '✅' : '❌'} | ` +
+                `Dual: ${config.storage.dualMode ? '✅' : '❌'}`;
+        }
+        
+        // PATIENT TESTS
+        async function testGetAllPatients() {
+            try {
+                const patients = await window.DAL.getPatientList();
+                showResult({
+                    message: 'Tüm hastalar getirildi',
+                    count: patients.length,
+                    data: patients
+                });
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+        
+        async function testGetPatient() {
+            try {
+                const patientId = prompt('Hasta ID girin:', 'patient_1762097712792');
+                if (!patientId) return;
+                
+                const patient = await window.DAL.getPatient(patientId);
+                showResult({
+                    message: 'Hasta getirildi',
+                    data: patient
+                });
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+        
+        async function testSavePatient() {
+            try {
+                const patientData = {
+                    id: 'patient_test_' + Date.now(),
+                    username: 'testuser',
+                    personalInfo: {
+                        name: 'Test',
+                        surname: 'Hasta',
+                        age: 30,
+                        gender: 'female',
+                        weight: 80,
+                        height: 170
+                    },
+                    status: 'active'
+                };
+                
+                const success = await window.DAL.savePatient(patientData);
+                showResult({
+                    message: success ? 'Hasta kaydedildi' : 'Kaydetme başarısız',
+                    patient_id: patientData.id,
+                    success: success
+                });
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+        
+        async function testDeletePatient() {
+            try {
+                const patientId = prompt('Silinecek hasta ID:', 'patient_test_');
+                if (!patientId) return;
+                
+                if (!confirm('Bu hastayı silmek istediğinizden emin misiniz?')) return;
+                
+                const success = await window.DAL.deletePatient(patientId);
+                showResult({
+                    message: success ? 'Hasta silindi' : 'Silme başarısız',
+                    patient_id: patientId,
+                    success: success
+                });
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+        
+        // FOOD TESTS
+        async function testGetFoodList() {
+            try {
+                const foodData = await window.DAL.getFoodList();
+                showResult({
+                    message: 'Yemek listesi getirildi',
+                    categoryCount: foodData.categories?.length || 0,
+                    categories: foodData.categories?.map(c => c.name) || []
+                });
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+        
+        // TEMPLATE TESTS
+        async function testGetAllTemplates() {
+            try {
+                const templates = await window.DAL.getTemplateList();
+                showResult({
+                    message: 'Tüm şablonlar getirildi',
+                    count: templates.length,
+                    first10: templates.slice(0, 10).map(t => ({
+                        id: t.template_id || t.id,
+                        name: t.name,
+                        type: t.type,
+                        calories: t.calories
+                    }))
+                });
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+        
+        async function testGetTemplate() {
+            try {
+                const templateId = prompt('Şablon ID girin:');
+                if (!templateId) return;
+                
+                const template = await window.DAL.getTemplate(templateId);
+                showResult({
+                    message: 'Şablon getirildi',
+                    data: template
+                });
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+        
+        async function testSaveTemplate() {
+            try {
+                const templateData = {
+                    id: 'template_test_' + Date.now(),
+                    name: 'Test Şablon',
+                    type: 'kahvaltı',
+                    calories: 350,
+                    protein: 20,
+                    carbs: 40,
+                    fat: 15,
+                    meals: {
+                        breakfast: [
+                            { name: 'Yumurta', amount: 2, unit: 'adet' },
+                            { name: 'Zeytin', amount: 10, unit: 'adet' }
+                        ]
+                    }
+                };
+                
+                const success = await window.DAL.saveTemplate(templateData);
+                showResult({
+                    message: success ? 'Şablon kaydedildi' : 'Kaydetme başarısız',
+                    template_id: templateData.id,
+                    success: success
+                });
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+        
+        async function testDeleteTemplate() {
+            try {
+                const templateId = prompt('Silinecek şablon ID:', 'template_test_');
+                if (!templateId) return;
+                
+                if (!confirm('Bu şablonu silmek istediğinizden emin misiniz?')) return;
+                
+                const success = await window.DAL.deleteTemplate(templateId);
+                showResult({
+                    message: success ? 'Şablon silindi' : 'Silme başarısız',
+                    template_id: templateId,
+                    success: success
+                });
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+        
+        // Sayfa yüklendiğinde
+        window.addEventListener('load', () => {
+            showConfigInfo();
+            showResult({ message: '✅ Data Access Layer hazır. Test butonlarına tıklayın.' });
+        });
+    </script>
+</body>
+</html>

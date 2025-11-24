@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Development Ortamı Kurulum Sihirbazı</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .step h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .input-group {
+            margin: 15px 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin: 10px 5px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .success {
+            background: #10b981;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .error {
+            background: #ef4444;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .status-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .status-icon.pending { background: #e0e0e0; color: #666; }
+        .status-icon.success { background: #10b981; color: white; }
+        .status-icon.error { background: #ef4444; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Development Ortamı Kurulum Sihirbazı</h1>
+        <p class="subtitle">Production sistemini bozmadan izole development ortamı oluştur</p>
+        
+        <!-- ADIM 1: GitHub Stratejisi -->
+        <div class="step">
+            <h3>📁 Adım 1: GitHub Stratejisi Seç</h3>
+            <div class="input-group">
+                <label>Nasıl çalışmak istersin?</label>
+                <select id="githubStrategy">
+                    <option value="branch">Farklı Branch (dev) - Önerilen ⭐</option>
+                    <option value="repo">Farklı Repository</option>
+                    <option value="local">Sadece Local (En Güvenli)</option>
+                </select>
+            </div>
+            <div id="branchInfo" style="margin-top: 10px;">
+                <div class="code-block">
+git checkout -b dev
+git push origin dev
+                </div>
+                <p style="margin-top: 10px; color: #666;">
+                    ✅ Bu branch'te çalış, production (main) etkilenmez
+                </p>
+            </div>
+        </div>
+        
+        <!-- ADIM 2: Supabase -->
+        <div class="step">
+            <h3>🗄️ Adım 2: Development Supabase Projesi</h3>
+            <div class="warning">
+                ⚠️ Production Supabase'i kullanma! Yeni bir development projesi oluştur.
+            </div>
+            
+            <div class="input-group">
+                <label>Supabase Project URL</label>
+                <input type="text" id="supabaseUrl" placeholder="https://xxxxx.supabase.co">
+            </div>
+            
+            <div class="input-group">
+                <label>Supabase Anon Key</label>
+                <input type="text" id="supabaseKey" placeholder="eyJhbGci...">
+            </div>
+            
+            <button onclick="testSupabase()">🧪 Bağlantıyı Test Et</button>
+            <button onclick="createSupabaseTables()">📋 Tabloları Oluştur</button>
+            
+            <div id="supabaseStatus"></div>
+        </div>
+        
+        <!-- ADIM 3: Config Oluştur -->
+        <div class="step">
+            <h3>⚙️ Adım 3: Config Dosyası Oluştur</h3>
+            
+            <div class="input-group">
+                <label>Çalışma Modu</label>
+                <select id="workMode">
+                    <option value="json">JSON Only (Başlangıç)</option>
+                    <option value="dual">Dual Mode (Geçiş)</option>
+                    <option value="supabase">Supabase Only (Final)</option>
+                </select>
+            </div>
+            
+            <button onclick="generateConfig()">🔧 Config Oluştur</button>
+            <button onclick="downloadConfig()">💾 config.js İndir</button>
+            
+            <div id="configPreview" style="margin-top: 20px;"></div>
+        </div>
+        
+        <!-- ADIM 4: Durum Kontrolü -->
+        <div class="step">
+            <h3>✅ Adım 4: Kurulum Kontrolü</h3>
+            <button onclick="checkSetup()">🔍 Kurulumu Kontrol Et</button>
+            
+            <div id="setupStatus" style="margin-top: 20px;"></div>
+        </div>
+        
+        <div class="success" id="successMessage">
+            🎉 Kurulum başarıyla tamamlandı! Artık development ortamında çalışabilirsin.
+        </div>
+        
+        <div class="error" id="errorMessage"></div>
+    </div>
+    
+    <script>
+        let generatedConfig = null;
+        
+        // GitHub stratejisi değiştiğinde bilgi göster
+        document.getElementById('githubStrategy').addEventListener('change', function() {
+            const info = document.getElementById('branchInfo');
+            const strategy = this.value;
+            
+            if (strategy === 'branch') {
+                info.innerHTML = `
+                    <div class="code-block">git checkout -b dev
+git push origin dev</div>
+                    <p style="margin-top: 10px; color: #666;">
+                        ✅ Bu branch'te çalış, production (main) etkilenmez
+                    </p>
+                `;
+            } else if (strategy === 'repo') {
+                info.innerHTML = `
+                    <div class="code-block">git remote add dev https://github.com/mustafasacar35/lipodem-takip-paneli-dev.git
+git push dev main</div>
+                    <p style="margin-top: 10px; color: #666;">
+                        ✅ Farklı repository'de çalış
+                    </p>
+                `;
+            } else {
+                info.innerHTML = `
+                    <p style="margin-top: 10px; color: #666;">
+                        ✅ Hiçbir push yapma, sadece local'de çalış (en güvenli)
+                    </p>
+                `;
+            }
+        });
+        
+        // Supabase bağlantı testi
+        async function testSupabase() {
+            const url = document.getElementById('supabaseUrl').value;
+            const key = document.getElementById('supabaseKey').value;
+            const status = document.getElementById('supabaseStatus');
+            
+            if (!url || !key) {
+                status.innerHTML = '<div class="error">❌ URL ve Key girilmeli!</div>';
+                return;
+            }
+            
+            status.innerHTML = '<p>🔄 Test ediliyor...</p>';
+            
+            try {
+                const { createClient } = supabase;
+                const client = createClient(url, key);
+                
+                // Basit bir sorgu yap
+                const { data, error } = await client.from('messages').select('count');
+                
+                if (error && error.code !== 'PGRST116') { // Table not found hatası OK
+                    throw error;
+                }
+                
+                status.innerHTML = '<div class="success">✅ Bağlantı başarılı!</div>';
+            } catch (error) {
+                status.innerHTML = `<div class="error">❌ Bağlantı hatası: ${error.message}</div>`;
+            }
+        }
+        
+        // Supabase tabloları oluştur
+        async function createSupabaseTables() {
+            const url = document.getElementById('supabaseUrl').value;
+            const status = document.getElementById('supabaseStatus');
+            
+            const sql = `
+-- Messages tablosu
+CREATE TABLE IF NOT EXISTS messages (
+    id BIGSERIAL PRIMARY KEY,
+    sender_id VARCHAR(100) NOT NULL,
+    receiver_id VARCHAR(100) NOT NULL,
+    sender_type VARCHAR(20) NOT NULL,
+    receiver_type VARCHAR(20) NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    is_read BOOLEAN DEFAULT FALSE,
+    sender_admin VARCHAR(100),
+    deleted_for_admin BOOLEAN DEFAULT FALSE,
+    deleted_for_patient BOOLEAN DEFAULT FALSE
+);
+
+-- Patients tablosu
+CREATE TABLE IF NOT EXISTS patients (
+    id BIGSERIAL PRIMARY KEY,
+    patient_id VARCHAR(50) UNIQUE NOT NULL,
+    name VARCHAR(200),
+    data JSONB,
+    last_seen TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- RLS
+ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE patients ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow all" ON messages FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all" ON patients FOR ALL USING (true) WITH CHECK (true);
+            `;
+            
+            status.innerHTML = `
+                <div class="warning">
+                    <strong>📋 SQL Kodu:</strong>
+                    <div class="code-block">${sql}</div>
+                    <p>👉 Bu kodu Supabase SQL Editor'de çalıştır:</p>
+                    <a href="${url.replace('https://', 'https://supabase.com/dashboard/project/')}/sql/new" target="_blank" style="color: #667eea;">
+                        Supabase SQL Editor'ı Aç →
+                    </a>
+                </div>
+            `;
+        }
+        
+        // Config oluştur
+        function generateConfig() {
+            const supabaseUrl = document.getElementById('supabaseUrl').value;
+            const supabaseKey = document.getElementById('supabaseKey').value;
+            const workMode = document.getElementById('workMode').value;
+            const githubStrategy = document.getElementById('githubStrategy').value;
+            
+            let useJSON = false;
+            let useSupabase = false;
+            let dualMode = false;
+            
+            if (workMode === 'json') {
+                useJSON = true;
+            } else if (workMode === 'supabase') {
+                useSupabase = true;
+            } else {
+                dualMode = true;
+                useJSON = true;
+                useSupabase = true;
+            }
+            
+            const repoName = githubStrategy === 'repo' ? 'lipodem-takip-paneli-dev' : 'lipodem-takip-paneli';
+            const branchName = githubStrategy === 'local' ? 'main' : 'dev';
+            
+            generatedConfig = `
+// 🔧 AUTO-GENERATED CONFIG - ${new Date().toISOString()}
+
+const ENV = {
+    isLocalhost: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1',
+    isGitHubPages: window.location.hostname.includes('github.io'),
+    isVercel: window.location.hostname.includes('vercel.app'),
+    isDevelopment: true
+};
+
+const SUPABASE_CONFIG = {
+    production: {
+        url: 'https://rorkccxpjndllxemsmlo.supabase.co',
+        anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    },
+    development: {
+        url: '${supabaseUrl}',
+        anonKey: '${supabaseKey}'
+    }
+};
+
+const GITHUB_CONFIG = {
+    production: {
+        owner: 'mustafasacar35',
+        repo: 'lipodem-takip-paneli',
+        branch: 'main',
+        token: ''
+    },
+    development: {
+        owner: 'mustafasacar35',
+        repo: '${repoName}',
+        branch: '${branchName}',
+        token: ''
+    }
+};
+
+const CONFIG = {
+    environment: ENV.isDevelopment ? 'development' : 'production',
+    supabase: ENV.isDevelopment ? SUPABASE_CONFIG.development : SUPABASE_CONFIG.production,
+    github: ENV.isDevelopment ? GITHUB_CONFIG.development : GITHUB_CONFIG.production,
+    storage: {
+        useJSON: ${useJSON},
+        useSupabase: ${useSupabase},
+        dualMode: ${dualMode}
+    },
+    debug: ENV.isDevelopment,
+    logLevel: ENV.isDevelopment ? 'verbose' : 'error'
+};
+
+window.APP_CONFIG = CONFIG;
+console.log('✅ Config loaded:', CONFIG.environment);
+            `;
+            
+            document.getElementById('configPreview').innerHTML = `
+                <div class="code-block">${generatedConfig.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+            `;
+        }
+        
+        // Config indir
+        function downloadConfig() {
+            if (!generatedConfig) {
+                alert('Önce config oluştur!');
+                return;
+            }
+            
+            const blob = new Blob([generatedConfig], { type: 'text/javascript' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'config.js';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert('✅ config.js indirildi! Workspace root klasörüne kopyala.');
+        }
+        
+        // Kurulum kontrolü
+        function checkSetup() {
+            const status = document.getElementById('setupStatus');
+            const checks = [];
+            
+            // Config kontrolü
+            const hasConfig = typeof window.APP_CONFIG !== 'undefined';
+            checks.push({
+                name: 'Config Yüklü',
+                status: hasConfig ? 'success' : 'error',
+                message: hasConfig ? 'config.js yüklü' : 'config.js bulunamadı'
+            });
+            
+            // Environment kontrolü
+            if (hasConfig) {
+                const isDev = window.APP_CONFIG.environment === 'development';
+                checks.push({
+                    name: 'Development Mode',
+                    status: isDev ? 'success' : 'error',
+                    message: isDev ? 'Development modunda' : 'Production modunda!'
+                });
+            }
+            
+            // Supabase kontrolü
+            const hasSupabase = typeof supabase !== 'undefined';
+            checks.push({
+                name: 'Supabase Library',
+                status: hasSupabase ? 'success' : 'error',
+                message: hasSupabase ? 'Supabase kütüphanesi yüklü' : 'Supabase yüklü değil'
+            });
+            
+            // DAL kontrolü
+            const hasDAL = typeof window.DAL !== 'undefined';
+            checks.push({
+                name: 'Data Access Layer',
+                status: hasDAL ? 'success' : 'error',
+                message: hasDAL ? 'DAL yüklü' : 'data-access-layer.js yüklü değil'
+            });
+            
+            // Render
+            let html = '';
+            checks.forEach(check => {
+                html += `
+                    <div class="status">
+                        <div class="status-icon ${check.status}">${check.status === 'success' ? '✓' : '✗'}</div>
+                        <div>
+                            <strong>${check.name}</strong><br>
+                            <small>${check.message}</small>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            status.innerHTML = html;
+            
+            // Başarı mesajı
+            const allSuccess = checks.every(c => c.status === 'success');
+            if (allSuccess) {
+                document.getElementById('successMessage').style.display = 'block';
+            }
+        }
+    </script>
+    
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</body>
+</html>

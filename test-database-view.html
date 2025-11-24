@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗄️ Veritabanı Görüntüleyici - Supabase</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        button.active {
+            background: #28a745;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-card h3 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+        .stat-card p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        .json-preview {
+            max-width: 300px;
+            max-height: 100px;
+            overflow: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            background: #f5f5f5;
+            padding: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .json-preview:hover {
+            background: #e9ecef;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: auto;
+            width: 100%;
+        }
+        .modal-content h2 {
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+        .modal-content pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .close-modal {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #999;
+        }
+        .close-modal:hover {
+            color: #333;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .last-updated {
+            color: #666;
+            font-size: 12px;
+            text-align: right;
+            margin-top: 10px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗄️ Veritabanı Görüntüleyici</h1>
+        <p class="subtitle">Supabase'deki verileri gerçek zamanlı görüntüleyin</p>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-card">
+                <h3 id="patientCount">-</h3>
+                <p>👥 Toplam Hasta</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="templateCount">-</h3>
+                <p>📋 Toplam Şablon</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="foodCount">-</h3>
+                <p>🍽️ Toplam Yemek</p>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button onclick="loadTable('patients')" id="btnPatients">👥 Hastalar</button>
+            <button onclick="loadTable('templates')" id="btnTemplates">📋 Şablonlar</button>
+            <button onclick="loadTable('foods')" id="btnFoods">🍽️ Yemekler</button>
+            <button onclick="refreshCurrent()">🔄 Yenile</button>
+            <button onclick="autoRefreshToggle()" id="btnAutoRefresh">⏱️ Otomatik Yenileme: Kapalı</button>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+            <div id="loading" class="loading">Bir tablo seçin...</div>
+            <div id="tableContent" style="display: none;"></div>
+        </div>
+
+        <div class="last-updated" id="lastUpdated"></div>
+    </div>
+
+    <!-- JSON Modal -->
+    <div class="modal" id="jsonModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2>📄 JSON Detay</h2>
+            <pre id="jsonDetail"></pre>
+        </div>
+    </div>
+
+    <script>
+        let supabase;
+        let currentTable = null;
+        let autoRefreshInterval = null;
+
+        // Supabase'i başlat
+        async function initSupabase() {
+            if (supabase) return supabase;
+            
+            const { createClient } = window.supabase;
+            
+            // Config yapısını kontrol et
+            const supabaseUrl = window.APP_CONFIG?.supabase?.url || window.CONFIG?.supabaseUrl;
+            const supabaseKey = window.APP_CONFIG?.supabase?.anonKey || window.CONFIG?.supabaseAnonKey;
+            
+            console.log('🔧 Supabase bağlantısı kuruluyor:', {
+                url: supabaseUrl,
+                hasKey: !!supabaseKey
+            });
+            
+            if (!supabaseUrl || !supabaseKey) {
+                console.error('❌ Supabase bilgileri eksik!');
+                return null;
+            }
+            
+            supabase = createClient(supabaseUrl, supabaseKey);
+            
+            return supabase;
+        }
+
+        // İstatistikleri yükle
+        async function loadStats() {
+            const client = await initSupabase();
+            
+            // Hasta sayısı
+            const { count: patientCount } = await client
+                .from('patients')
+                .select('*', { count: 'exact', head: true });
+            document.getElementById('patientCount').textContent = patientCount || 0;
+            
+            // Şablon sayısı
+            const { count: templateCount } = await client
+                .from('templates')
+                .select('*', { count: 'exact', head: true });
+            document.getElementById('templateCount').textContent = templateCount || 0;
+            
+            // Yemek sayısı
+            const { count: foodCount } = await client
+                .from('foods')
+                .select('*', { count: 'exact', head: true });
+            document.getElementById('foodCount').textContent = foodCount || 0;
+        }
+
+        // Tablo yükle
+        async function loadTable(tableName) {
+            currentTable = tableName;
+            
+            // Buton durumlarını güncelle
+            document.querySelectorAll('.controls button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`btn${capitalize(tableName)}`).classList.add('active');
+            
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('tableContent').style.display = 'none';
+            
+            const client = await initSupabase();
+            
+            let query = client.from(tableName).select('*');
+            
+            // Sıralama
+            if (tableName === 'patients') {
+                query = query.order('created_at', { ascending: false });
+            } else if (tableName === 'templates') {
+                query = query.order('created_at', { ascending: false });
+            } else if (tableName === 'foods') {
+                query = query.order('id', { ascending: true });
+            }
+            
+            const { data, error } = await query;
+            
+            if (error) {
+                document.getElementById('loading').innerHTML = `❌ Hata: ${error.message}`;
+                return;
+            }
+            
+            renderTable(tableName, data);
+            updateLastUpdated();
+        }
+
+        // Tabloyu render et
+        function renderTable(tableName, data) {
+            const container = document.getElementById('tableContent');
+            
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding:40px;">📭 Veri bulunamadı</p>';
+                container.style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+                return;
+            }
+            
+            let html = '<table>';
+            
+            // Header
+            if (tableName === 'patients') {
+                html += `
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ad</th>
+                            <th>Username</th>
+                            <th>Durum</th>
+                            <th>Oluşturulma</th>
+                            <th>Güncellenme</th>
+                            <th>Veri</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                
+                data.forEach(row => {
+                    const patientData = row.data || {};
+                    const status = patientData.status || 'unknown';
+                    html += `
+                        <tr>
+                            <td><code>${row.patient_id}</code></td>
+                            <td>${row.name || '-'}</td>
+                            <td>${patientData.username || '-'}</td>
+                            <td><span class="badge badge-success">${status}</span></td>
+                            <td>${formatDate(row.created_at)}</td>
+                            <td>${formatDate(row.updated_at)}</td>
+                            <td>
+                                <div class="json-preview" onclick='showJSON(${JSON.stringify(row.data).replace(/'/g, "\\'")})'>
+                                    {${Object.keys(patientData).length} alanlar...}
+                                </div>
+                            </td>
+                        </tr>`;
+                });
+            } else if (tableName === 'templates') {
+                html += `
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Şablon Adı</th>
+                            <th>Tip</th>
+                            <th>Kalori</th>
+                            <th>Protein</th>
+                            <th>Oluşturulma</th>
+                            <th>Veri</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                
+                data.forEach(row => {
+                    html += `
+                        <tr>
+                            <td><code>${row.template_id}</code></td>
+                            <td><strong>${row.name || '-'}</strong></td>
+                            <td><span class="badge badge-warning">${row.type || '-'}</span></td>
+                            <td>${row.calories || 0} kcal</td>
+                            <td>${row.protein || 0}g</td>
+                            <td>${formatDate(row.created_at)}</td>
+                            <td>
+                                <div class="json-preview" onclick='showJSON(${JSON.stringify(row.data).replace(/'/g, "\\'")})'>
+                                    {${Object.keys(row.data || {}).length} öğün...}
+                                </div>
+                            </td>
+                        </tr>`;
+                });
+            } else if (tableName === 'foods') {
+                html += `
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Yemek Adı</th>
+                            <th>Kategori</th>
+                            <th>Kalori</th>
+                            <th>Protein</th>
+                            <th>Karb</th>
+                            <th>Yağ</th>
+                            <th>Veri</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                
+                data.forEach(row => {
+                    const foodData = row.data || {};
+                    html += `
+                        <tr>
+                            <td>${row.id || '-'}</td>
+                            <td><strong>${row.name || '-'}</strong></td>
+                            <td><span class="badge badge-warning">${row.category || '-'}</span></td>
+                            <td>${row.calories || 0} kcal</td>
+                            <td>${row.protein || 0}g</td>
+                            <td>${row.carbs || 0}g</td>
+                            <td>${row.fat || 0}g</td>
+                            <td>
+                                <div class="json-preview" onclick='showJSON(${JSON.stringify(foodData).replace(/'/g, "\\'")})'>
+                                    {${Object.keys(foodData).length} alanlar...}
+                                </div>
+                            </td>
+                        </tr>`;
+                });
+            }
+            
+            html += '</tbody></table>';
+            
+            container.innerHTML = html;
+            container.style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // JSON'u modal'da göster
+        function showJSON(data) {
+            document.getElementById('jsonDetail').textContent = JSON.stringify(data, null, 2);
+            document.getElementById('jsonModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('jsonModal').classList.remove('active');
+        }
+
+        // Yardımcı fonksiyonlar
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleString('tr-TR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function updateLastUpdated() {
+            document.getElementById('lastUpdated').textContent = 
+                `Son güncelleme: ${new Date().toLocaleTimeString('tr-TR')}`;
+        }
+
+        function refreshCurrent() {
+            if (currentTable) {
+                loadTable(currentTable);
+            }
+        }
+
+        function autoRefreshToggle() {
+            const btn = document.getElementById('btnAutoRefresh');
+            
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                btn.textContent = '⏱️ Otomatik Yenileme: Kapalı';
+                btn.style.background = '#667eea';
+            } else {
+                autoRefreshInterval = setInterval(() => {
+                    if (currentTable) {
+                        loadTable(currentTable);
+                    }
+                    loadStats();
+                }, 5000); // 5 saniyede bir
+                btn.textContent = '⏱️ Otomatik Yenileme: Açık (5sn)';
+                btn.style.background = '#28a745';
+            }
+        }
+
+        // Modal dışına tıklayınca kapat
+        window.onclick = function(event) {
+            const modal = document.getElementById('jsonModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Sayfa yüklendiğinde
+        window.addEventListener('load', async () => {
+            await initSupabase();
+            loadStats();
+            
+            // İlk tabloyu otomatik yükle
+            loadTable('patients');
+        });
+    </script>
+</body>
+</html>

@@ -3,6 +3,9 @@
  * Browser Fingerprinting + UUID Device ID Generation
  */
 
+// 🔧 LOCAL DEVELOPMENT MODE (defined in auth.js)
+// const IS_LOCAL_DEV is already defined in auth.js
+
 const DeviceManager = {
     /**
      * Browser fingerprint oluştur (cihaz tanımlama)
@@ -160,36 +163,34 @@ const DeviceManager = {
      */
     async checkDeviceLimit(patientId, currentDeviceInfo) {
         try {
-            // ⚠️ CRITICAL: GitHub'dan güncel veriyi çek (reset sonrası localStorage eski olabilir)
+            // ✅ SUPABASE: DAL üzerinden güncel hasta verisini çek
             let patientDetails = null;
-            const detailsKey = `patientDetails_${patientId}`; // ✅ Scope başında tanımla
+            const detailsKey = `patientDetails_${patientId}`;
             
             try {
-                const response = await fetch(
-                    `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/hastalar/${patientId}.json`
-                );
+                console.log('� [DeviceManager] Supabase\'den hasta verisi çekiliyor:', patientId);
+                patientDetails = await window.DAL.getPatient(patientId);
                 
-                if (response.ok) {
-                    patientDetails = await response.json();
-                    console.log('✅ Hasta verileri GitHub\'dan yüklendi (fresh data)');
-                    
-                    // localStorage'ı güncelle
+                if (patientDetails) {
+                    console.log('✅ [DeviceManager] Hasta verileri Supabase\'den yüklendi');
                     localStorage.setItem(detailsKey, JSON.stringify(patientDetails));
+                } else {
+                    console.warn('⚠️ [DeviceManager] Hasta Supabase\'de bulunamadı');
                 }
-            } catch (githubError) {
-                console.warn('⚠️ GitHub\'dan veri çekilemedi, localStorage kullanılacak:', githubError);
+            } catch (supabaseError) {
+                console.warn('⚠️ [DeviceManager] Supabase hatası, localStorage kullanılacak:', supabaseError);
             }
             
-            // GitHub başarısız olduysa localStorage'dan oku
+            // Supabase başarısız olduysa localStorage'dan oku
             if (!patientDetails) {
                 const patientDetailsStr = localStorage.getItem(detailsKey);
                 
                 if (!patientDetailsStr) {
-                    console.error('❌ Hasta detayları bulunamadı (GitHub ve localStorage boş)');
+                    console.error('❌ Hasta detayları bulunamadı (Supabase ve localStorage boş)');
                     throw new Error('Hasta doğrulama başarısız - veri bulunamadı');
                 }
                 
-                console.warn('⚠️ localStorage\'dan yedek veri kullanılıyor');
+                console.warn('⚠️ [DeviceManager] localStorage\'dan yedek veri kullanılıyor');
                 patientDetails = JSON.parse(patientDetailsStr);
             }
             
@@ -404,10 +405,12 @@ const DeviceManager = {
      */
     async checkDeviceValidity(patientId, currentDeviceId) {
         try {
-            // GitHub'dan hasta JSON'ını çek
-            const response = await fetch(
-                `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/hastalar/${patientId}.json`
-            );
+            // 🔧 LOCAL DEV veya Production: Hasta JSON'ını çek
+            const url = IS_LOCAL_DEV 
+                ? `/hastalar/${patientId}.json?t=${Date.now()}`
+                : `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/hastalar/${patientId}.json`;
+            
+            const response = await fetch(url);
 
             if (!response.ok) {
                 console.warn('⚠️ Hasta JSON yüklenemedi, cihaz kontrolü yapılamadı');

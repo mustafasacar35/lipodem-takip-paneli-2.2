@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔗 Eşleştirme Migration</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { color: #667eea; margin-bottom: 20px; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-value { font-size: 32px; font-weight: bold; }
+        .stat-label { font-size: 14px; opacity: 0.9; margin-top: 5px; }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover { background: #5568d3; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .log {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+        .log-entry { padding: 5px 0; border-bottom: 1px solid #ddd; }
+        .log-entry.success { color: #28a745; }
+        .log-entry.error { color: #dc3545; }
+        .progress {
+            width: 100%;
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Eşleştirme Migration - JSON → Supabase</h1>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="totalMatchings">0</div>
+                <div class="stat-label">Manuel Eşleştirmeler</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="totalBlacklist">0</div>
+                <div class="stat-label">Yasaklı Eşleştirmeler</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="migratedCount">0</div>
+                <div class="stat-label">Migrate Edilen</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="failedCount">0</div>
+                <div class="stat-label">Başarısız</div>
+            </div>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+        </div>
+
+        <div>
+            <button onclick="loadData()">📄 Verileri Yükle</button>
+            <button onclick="migrateMatchings()" id="btnMatchings" disabled>🔗 Eşleştirmeleri Migrate Et</button>
+            <button onclick="migrateBlacklist()" id="btnBlacklist" disabled>🚫 Yasakları Migrate Et</button>
+            <button onclick="migrateAll()" id="btnAll" disabled>🚀 Hepsini Migrate Et</button>
+            <button onclick="clearTables()" style="background: #dc3545;">🗑️ Tabloları Temizle</button>
+        </div>
+
+        <div class="log" id="log"></div>
+    </div>
+
+    <script>
+        let supabaseClient;
+        let manuelData = null;
+        let yasakData = null;
+        let migratedCount = 0;
+        let failedCount = 0;
+
+        // Supabase'i başlat
+        async function initSupabase() {
+            if (supabaseClient) return supabaseClient;
+            
+            const { createClient } = window.supabase;
+            const supabaseUrl = window.APP_CONFIG?.supabase?.url;
+            const supabaseKey = window.APP_CONFIG?.supabase?.anonKey;
+            
+            if (!supabaseUrl || !supabaseKey) {
+                log('❌ Supabase bilgileri eksik!', 'error');
+                return null;
+            }
+            
+            supabaseClient = createClient(supabaseUrl, supabaseKey);
+            log('✅ Supabase bağlantısı kuruldu', 'success');
+            return supabaseClient;
+        }
+
+        // Log
+        function log(message, type = '') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString('tr-TR')}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        // Progress güncelle
+        function updateProgress(current, total) {
+            const percent = Math.round((current / total) * 100);
+            const bar = document.getElementById('progressBar');
+            bar.style.width = percent + '%';
+            bar.textContent = percent + '%';
+        }
+
+        // Verileri yükle
+        async function loadData() {
+            try {
+                log('📄 JSON dosyaları yükleniyor...');
+                
+                // Manuel eşleştirmeler
+                const manuelResponse = await fetch('data/manuel_eslestirmeler.json');
+                manuelData = await manuelResponse.json();
+                const manuelCount = Object.keys(manuelData.eslestirmeler || {}).length;
+                document.getElementById('totalMatchings').textContent = manuelCount;
+                log(`✅ ${manuelCount} manuel eşleştirme yüklendi`, 'success');
+                
+                // Yasaklı eşleştirmeler
+                const yasakResponse = await fetch('data/eslesmeme_kurallari.json');
+                yasakData = await yasakResponse.json();
+                const yasakCount = Object.keys(yasakData.kurallar?.eslesmemeKurallari || {}).length;
+                document.getElementById('totalBlacklist').textContent = yasakCount;
+                log(`✅ ${yasakCount} yasaklı eşleştirme yüklendi`, 'success');
+                
+                // Butonları aktifleştir
+                document.getElementById('btnMatchings').disabled = false;
+                document.getElementById('btnBlacklist').disabled = false;
+                document.getElementById('btnAll').disabled = false;
+                
+            } catch (error) {
+                log(`❌ Hata: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+
+        // Eşleştirmeleri migrate et
+        async function migrateMatchings() {
+            if (!manuelData) {
+                log('❌ Önce verileri yükle!', 'error');
+                return;
+            }
+
+            try {
+                document.getElementById('btnMatchings').disabled = true;
+                log('🔗 Eşleştirmeler migrate ediliyor...');
+                
+                const client = await initSupabase();
+                if (!client) return;
+
+                const eslestirmeler = manuelData.eslestirmeler || {};
+                const keys = Object.keys(eslestirmeler);
+                let current = 0;
+
+                for (const key of keys) {
+                    const item = eslestirmeler[key];
+                    
+                    // Her kartla eşleştirme oluştur
+                    if (item.kartlar && Array.isArray(item.kartlar)) {
+                        for (const kart of item.kartlar) {
+                            try {
+                                const { error } = await client
+                                    .from('food_matchings')
+                                    .insert({
+                                        food_name: item.orijinalMetin || key,
+                                        matched_food: kart,
+                                        type: 'manuel',
+                                        data: {
+                                            key: key,
+                                            orijinalMetin: item.orijinalMetin,
+                                            kartlar: item.kartlar,
+                                            eklemeTarihi: item.eklemeTarihi
+                                        }
+                                    });
+
+                                if (error) throw error;
+                                migratedCount++;
+                            } catch (error) {
+                                log(`❌ Hata (${key}): ${error.message}`, 'error');
+                                failedCount++;
+                            }
+                        }
+                    }
+
+                    current++;
+                    updateProgress(current, keys.length);
+                    document.getElementById('migratedCount').textContent = migratedCount;
+                    document.getElementById('failedCount').textContent = failedCount;
+                }
+
+                log(`✅ ${migratedCount} eşleştirme migrate edildi`, 'success');
+                
+            } catch (error) {
+                log(`❌ Hata: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+
+        // Yasakları migrate et
+        async function migrateBlacklist() {
+            if (!yasakData) {
+                log('❌ Önce verileri yükle!', 'error');
+                return;
+            }
+
+            try {
+                document.getElementById('btnBlacklist').disabled = true;
+                log('🚫 Yasaklar migrate ediliyor...');
+                
+                const client = await initSupabase();
+                if (!client) return;
+
+                const kurallar = yasakData.kurallar?.eslesmemeKurallari || {};
+                const keys = Object.keys(kurallar);
+                let current = 0;
+
+                for (const key of keys) {
+                    const item = kurallar[key];
+                    
+                    // Her yasaklı kartla kural oluştur
+                    if (item.yasakliKartlar && Array.isArray(item.yasakliKartlar)) {
+                        for (const kart of item.yasakliKartlar) {
+                            try {
+                                const { error } = await client
+                                    .from('food_blacklist')
+                                    .insert({
+                                        food_name: item.orijinalMetin || key,
+                                        blocked_food: kart,
+                                        reason: 'Manuel yasak',
+                                        type: 'manuel',
+                                        data: {
+                                            key: key,
+                                            orijinalMetin: item.orijinalMetin,
+                                            yasakliKartlar: item.yasakliKartlar,
+                                            eklemeTarihi: item.eklemeTarihi
+                                        }
+                                    });
+
+                                if (error) throw error;
+                                migratedCount++;
+                            } catch (error) {
+                                log(`❌ Hata (${key}): ${error.message}`, 'error');
+                                failedCount++;
+                            }
+                        }
+                    }
+
+                    current++;
+                    updateProgress(current, keys.length);
+                    document.getElementById('migratedCount').textContent = migratedCount;
+                    document.getElementById('failedCount').textContent = failedCount;
+                }
+
+                log(`✅ ${migratedCount} yasak migrate edildi`, 'success');
+                
+            } catch (error) {
+                log(`❌ Hata: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+
+        // Hepsini migrate et
+        async function migrateAll() {
+            migratedCount = 0;
+            failedCount = 0;
+            await migrateMatchings();
+            await migrateBlacklist();
+            log(`✅ TOPLAM: ${migratedCount} kayıt migrate edildi, ${failedCount} başarısız`, 'success');
+        }
+
+        // Tabloları temizle
+        async function clearTables() {
+            if (!confirm('⚠️ TÜM eşleştirme ve yasak verileri silinecek. Emin misiniz?')) return;
+
+            try {
+                const client = await initSupabase();
+                if (!client) return;
+
+                log('🗑️ Tablolar temizleniyor...');
+
+                await client.from('food_matchings').delete().neq('id', 0);
+                await client.from('food_blacklist').delete().neq('id', 0);
+
+                log('✅ Tablolar temizlendi', 'success');
+                
+                migratedCount = 0;
+                failedCount = 0;
+                document.getElementById('migratedCount').textContent = 0;
+                document.getElementById('failedCount').textContent = 0;
+                updateProgress(0, 100);
+
+            } catch (error) {
+                log(`❌ Hata: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+
+        // Sayfa yüklendiğinde
+        window.addEventListener('load', async () => {
+            await initSupabase();
+            log('🎯 Hazır! "Verileri Yükle" butonuna tıklayın.');
+        });
+    </script>
+</body>
+</html>

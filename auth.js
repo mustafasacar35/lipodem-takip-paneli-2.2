@@ -3,6 +3,9 @@
  * SHA-256 Hash + Session Yönetimi
  */
 
+// 🔧 LOCAL DEVELOPMENT MODE
+const IS_LOCAL_DEV = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
 const PatientAuth = {
     REPO_OWNER: 'mustafasacar35',
     REPO_NAME: 'lipodem-takip-paneli',
@@ -21,32 +24,37 @@ const PatientAuth = {
     },
     
     /**
-     * Hasta listesini GitHub'dan yükle
+     * ✅ SUPABASE: Hasta listesini DAL üzerinden yükle
      */
     async loadPatientIndex() {
         try {
-            const response = await fetch(`https://raw.githubusercontent.com/${this.REPO_OWNER}/${this.REPO_NAME}/main/${this.PATIENTS_INDEX_PATH}`);
-            if (!response.ok) {
-                console.warn('⚠️ Hasta listesi bulunamadı, boş liste oluşturuluyor');
-                return { version: 1, lastUpdated: new Date().toISOString(), patients: [] };
-            }
-            return await response.json();
+            console.log('🔄 [PatientAuth] Supabase\'den hasta listesi yükleniyor...');
+            const patients = await window.DAL.getPatientList();
+            return { 
+                version: 1, 
+                lastUpdated: new Date().toISOString(), 
+                patients: patients || [] 
+            };
         } catch (error) {
-            console.error('❌ Hasta listesi yüklenemedi:', error);
+            console.error('❌ [PatientAuth] Supabase hasta listesi hatası:', error);
             return { version: 1, lastUpdated: new Date().toISOString(), patients: [] };
         }
     },
     
     /**
-     * Hasta detaylarını GitHub'dan yükle
+     * ✅ SUPABASE: Hasta detaylarını DAL üzerinden yükle
      */
     async loadPatientDetails(patientId) {
         try {
-            const response = await fetch(`https://raw.githubusercontent.com/${this.REPO_OWNER}/${this.REPO_NAME}/main/hastalar/${patientId}.json`);
-            if (!response.ok) throw new Error('Hasta dosyası bulunamadı');
-            return await response.json();
+            console.log('🔄 [PatientAuth] Supabase\'den hasta detayı yükleniyor:', patientId);
+            const patient = await window.DAL.getPatient(patientId);
+            if (!patient) {
+                console.warn('⚠️ [PatientAuth] Hasta bulunamadı:', patientId);
+                return null;
+            }
+            return patient;
         } catch (error) {
-            console.error('❌ Hasta detayları yüklenemedi:', error);
+            console.error('❌ [PatientAuth] Supabase hasta detay hatası:', error);
             return null;
         }
     },
@@ -56,31 +64,26 @@ const PatientAuth = {
      */
     async login(username, password, rememberMe = false) {
         try {
+            console.log('🔐 [PatientAuth] Login attempt:', username);
+            
             // Hasta listesini yükle
             const index = await this.loadPatientIndex();
             
-            // Kullanıcıyı bul (önce index.json, sonra local override'larda ara)
-            let patient = index.patients.find(p => p.username === username.toLowerCase());
-            let patientDetailsLocal = null;
+            // Kullanıcıyı bul - Supabase'den username ile
+            let patient = index.patients.find(p => p.username && p.username.toLowerCase() === username.toLowerCase());
+            
             if (!patient) {
-                // Eğer index'te yoksa, her hasta için localStorage'daki patientDetails_{id} içinde username override var mı kontrol et
-                for (const p of index.patients) {
-                    try {
-                        const local = localStorage.getItem(`patientDetails_${p.id}`);
-                        if (local) {
-                            const d = JSON.parse(local);
-                            if (d.username && d.username.toLowerCase() === username.toLowerCase()) {
-                                patient = p;
-                                patientDetailsLocal = d;
-                                break;
-                            }
-                        }
-                    } catch (e) { /* ignore parse errors */ }
-                }
-            }
-
-            if (!patient) {
+                console.warn('⚠️ [PatientAuth] Kullanıcı bulunamadı:', username);
                 return { success: false, error: 'Kullanıcı adı veya şifre hatalı' };
+            }
+            
+            console.log('✅ [PatientAuth] Kullanıcı bulundu:', patient.username);
+            
+            // Hasta ID'sini normalize et (Supabase'den patient_id olarak gelir)
+            const patientId = patient.patient_id || patient.id;
+            if (!patientId) {
+                console.error('❌ [PatientAuth] Hasta ID bulunamadı!');
+                return { success: false, error: 'Hasta bilgisi hatalı' };
             }
 
             // Arşivlenmiş hasta kontrolü
@@ -88,37 +91,26 @@ const PatientAuth = {
                 return { success: false, error: 'Bu hesap arşivlenmiştir. Lütfen yöneticinizle iletişime geçin.' };
             }
 
-            // Şifre kontrolü - önce hastalar/patient_XXX.json'dan güncel hash'i al
+            // 🔐 ŞİFRE KONTROLÜ - Supabase modunda password_hash direkt patient objesinde
             const passwordHash = await this.hashPassword(password);
+            console.log('🔐 [PatientAuth] Şifre kontrolü yapılıyor...');
+            console.log('   Girilen şifre hash:', passwordHash);
+            console.log('   Beklenen hash:', patient.password_hash);
             
-            // GitHub'daki hasta dosyasından güncel hash'i çek
-            let githubHash = null;
-            try {
-                const cleanId = patient.id.replace(/^patient_/i, '');
-                const patientFileName = `hastalar/patient_${cleanId}.json`;
-                const response = await fetch(`${patientFileName}?t=${new Date().getTime()}`);
-                if (response.ok) {
-                    const patientData = await response.json();
-                    githubHash = patientData.passwordHash;
-                }
-            } catch (e) {
-                console.warn('GitHub hasta dosyası okunamadı, index.json kullanılacak');
+            // Şifre hash'ini patient objesinden al (Supabase'den geldi)
+            const storedHash = patient.password_hash || patient.passwordHash || null;
+            
+            if (!storedHash) {
+                console.error('❌ [PatientAuth] Hasta kaydında password_hash bulunamadı!');
+                return { success: false, error: 'Şifre bilgisi bulunamadı. Lütfen yöneticinizle iletişime geçin.' };
             }
-            
-            // Sırayla kontrol et: GitHub hash, index.json hash, localStorage hash
-            const remoteHash = githubHash || patient.passwordHash || null;
-            let localHash = null;
-            try {
-                const localDetailsStr = localStorage.getItem(`patientDetails_${patient.id}`);
-                if (localDetailsStr) {
-                    const loc = JSON.parse(localDetailsStr);
-                    localHash = loc.passwordHashLocal || null;
-                }
-            } catch (e) { /* ignore */ }
 
-            if (passwordHash !== remoteHash && passwordHash !== localHash) {
+            if (passwordHash !== storedHash) {
+                console.warn('⚠️ [PatientAuth] Şifre eşleşmedi');
                 return { success: false, error: 'Kullanıcı adı veya şifre hatalı' };
             }
+            
+            console.log('✅ [PatientAuth] Şifre doğru!');
 
             // 🖥️ CİHAZ KONTROLÜ - Şifre doğru ama cihaz limiti var mı?
             let deviceCheckResult = null;
@@ -137,17 +129,17 @@ const PatientAuth = {
                     }
 
                     // Hasta detaylarını yükle (cihaz limiti için gerekli)
-                    const patientDetails = await this.loadPatientDetails(patient.id);
+                    const patientDetails = await this.loadPatientDetails(patientId);
                     if (patientDetails) {
                         // localStorage'a kaydet (cihaz kontrolü için gerekli)
-                        const detailsKey = `patientDetails_${patient.id}`;
+                        const detailsKey = `patientDetails_${patientId}`;
                         if (!localStorage.getItem(detailsKey)) {
                             localStorage.setItem(detailsKey, JSON.stringify(patientDetails));
                         }
                     }
 
                     // Cihaz limiti kontrolü
-                    deviceCheckResult = await window.DeviceManager.checkDeviceLimit(patient.id, currentDeviceInfo);
+                    deviceCheckResult = await window.DeviceManager.checkDeviceLimit(patientId, currentDeviceInfo);
 
                     if (!deviceCheckResult.allowed) {
                         // ❌ CİHAZ LİMİTİ AŞILDI - GİRİŞ ENGELLENDİ
@@ -155,13 +147,13 @@ const PatientAuth = {
 
                         // IP logu kaydet (status: blocked)
                         if (window.IPLogger && ipInfo) {
-                            await window.IPLogger.logLogin(patient.id, currentDeviceInfo.deviceId, ipInfo, 'blocked');
+                            await window.IPLogger.logLogin(patientId, currentDeviceInfo.deviceId, ipInfo, 'blocked');
                         }
 
                         // Admin'e bildirim gönder
                         if (window.AdminNotifier) {
                             await window.AdminNotifier.sendDeviceLimitAlert({
-                                patientId: patient.id,
+                                patientId: patientId,
                                 username: username,
                                 deviceId: currentDeviceInfo.deviceId,
                                 deviceInfo: `${currentDeviceInfo.deviceName} / ${currentDeviceInfo.browser}`,
@@ -180,7 +172,7 @@ const PatientAuth = {
 
                     // ✅ Cihaz limiti uygun, yeni cihazsa kaydet
                     if (deviceCheckResult.isNewDevice) {
-                        await window.DeviceManager.registerDevice(patient.id, currentDeviceInfo, ipInfo);
+                        await window.DeviceManager.registerDevice(patientId, currentDeviceInfo, ipInfo);
                         console.log(`✅ Yeni cihaz kaydedildi: ${currentDeviceInfo.deviceName}`);
                     }
                 }
@@ -206,14 +198,13 @@ const PatientAuth = {
             }
             
             // Session oluştur
-            // Oturum bilgilerini oluştururken local override'lı alanları tercih et
             const sessionData = {
-                patientId: patient.id,
-                username: (patientDetailsLocal && patientDetailsLocal.username) ? patientDetailsLocal.username : patient.username,
-                name: (patientDetailsLocal && patientDetailsLocal.name) ? patientDetailsLocal.name : patient.name,
-                surname: (patientDetailsLocal && patientDetailsLocal.surname) ? patientDetailsLocal.surname : patient.surname,
+                patientId: patientId,
+                username: patient.username,
+                name: patient.name || 'İsimsiz',
+                surname: patient.surname || '',
                 loginTime: new Date().toISOString(),
-                expiresAt: this.calculateExpiry(patient.sessionDays),
+                expiresAt: this.calculateExpiry(patient.session_days || patient.sessionDays || 7),
                 rememberMe: rememberMe,
                 isAdmin: isAdminUser  // ✅ Admin yetkisi eklendi
             };

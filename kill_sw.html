@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kill Service Workers</title>
+</head>
+<body>
+    <h1>Service Worker Killer</h1>
+    <div id="log"></div>
+    <script>
+        const log = document.getElementById('log');
+        function print(msg) {
+            log.innerHTML += msg + '<br>';
+        }
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                if (registrations.length === 0) {
+                    print('No Service Workers found.');
+                }
+                for(let registration of registrations) {
+                    print('Unregistering Service Worker: ' + registration.scope);
+                    registration.unregister().then(function(boolean) {
+                        print(boolean ? 'Success' : 'Failed');
+                    });
+                }
+            });
+            
+            caches.keys().then(function(names) {
+                for (let name of names) {
+                    print('Deleting Cache: ' + name);
+                    caches.delete(name);
+                }
+            });
+        } else {
+            print('Service Workers not supported.');
+        }
+    </script>
+</body>
+</html>

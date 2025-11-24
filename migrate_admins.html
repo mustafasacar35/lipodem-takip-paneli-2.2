@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Migration</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .log { background: #f0f0f0; padding: 10px; border: 1px solid #ccc; height: 400px; overflow-y: scroll; font-family: monospace; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Admin Migration Tool</h1>
+    <button id="startBtn">Start Migration</button>
+    <div id="log" class="log"></div>
+
+    <!-- Config & Shim -->
+    <script src="config.local.js"></script>
+    <script>
+    (function() {
+        'use strict';
+        class SupabaseClient {
+            constructor(supabaseUrl, supabaseKey) {
+                this.supabaseUrl = supabaseUrl.replace(/\/$/, '');
+                this.supabaseKey = supabaseKey;
+                this.headers = {
+                    'apikey': supabaseKey,
+                    'Authorization': `Bearer ${supabaseKey}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=representation'
+                };
+            }
+            from(table) { return new SupabaseQueryBuilder(this, table); }
+        }
+        class SupabaseQueryBuilder {
+            constructor(client, table) {
+                this.client = client;
+                this.table = table;
+                this.filters = [];
+                this.selectedColumns = '*';
+            }
+            select(columns = '*') { this.selectedColumns = columns; return this; }
+            eq(column, value) { this.filters.push(`${column}=eq.${value}`); return this; }
+            async _execute(method = 'GET', body = null) {
+                try {
+                    let url = `${this.client.supabaseUrl}/rest/v1/${this.table}`;
+                    const params = new URLSearchParams();
+                    params.append('select', this.selectedColumns);
+                    if (this.filters.length > 0) {
+                        this.filters.forEach(filter => {
+                            const [column, value] = filter.split('=');
+                            params.append(column, value);
+                        });
+                    }
+                    url += '?' + params.toString();
+                    const options = { method: method, headers: this.client.headers };
+                    if (body && (method === 'POST' || method === 'PATCH')) {
+                        options.body = JSON.stringify(body);
+                    }
+                    const response = await fetch(url, options);
+                    const data = await response.json();
+                    if (!response.ok) return { data: null, error: data };
+                    return { data: data, error: null };
+                } catch (error) {
+                    return { data: null, error: error };
+                }
+            }
+            async insert(data) { return await this._execute('POST', data); }
+            async upsert(data, options = {}) {
+                const headers = { ...this.client.headers };
+                if (options.onConflict) headers['Prefer'] = `resolution=merge-duplicates`;
+                const url = `${this.client.supabaseUrl}/rest/v1/${this.table}`;
+                const params = new URLSearchParams({ select: this.selectedColumns });
+                if (options.onConflict) params.append('on_conflict', options.onConflict);
+                try {
+                    const response = await fetch(url + '?' + params.toString(), {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify(data)
+                    });
+                    const responseData = await response.json();
+                    if (!response.ok) return { data: null, error: responseData };
+                    return { data: responseData, error: null };
+                } catch (error) {
+                    return { data: null, error: error };
+                }
+            }
+        }
+        window.supabase = {
+            createClient: function(url, key) {
+                return new SupabaseClient(url, key);
+            }
+        };
+    })();
+    </script>
+    
+    <!-- Admins Data -->
+    <script src="settings/admins.js"></script>
+
+    <script>
+        const logDiv = document.getElementById('log');
+        function log(msg, type = 'info') {
+            const div = document.createElement('div');
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            if (type === 'error') div.className = 'error';
+            if (type === 'success') div.className = 'success';
+            logDiv.appendChild(div);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        document.getElementById('startBtn').addEventListener('click', async () => {
+            log('Starting migration...');
+            
+            // Init Supabase
+            const client = window.supabase.createClient(CONFIG.supabase.url, CONFIG.supabase.anonKey);
+            
+            if (!window.GH_ADMINS || !window.GH_ADMINS.admins) {
+                log('❌ No admins found in window.GH_ADMINS', 'error');
+                return;
+            }
+
+            const admins = window.GH_ADMINS.admins;
+            log(`Found ${admins.length} admins to migrate.`);
+
+            for (const admin of admins) {
+                log(`Migrating admin: ${admin.username}...`);
+                
+                const { data, error } = await client.from('admins').upsert({
+                    username: admin.username,
+                    password_hash: admin.passwordHash,
+                    roles: admin.roles,
+                    is_active: true,
+                    created_by: 'migration_script'
+                }, { onConflict: 'username' });
+
+                if (error) {
+                    log(`❌ Failed to migrate ${admin.username}: ${JSON.stringify(error)}`, 'error');
+                } else {
+                    log(`✅ Successfully migrated ${admin.username}`, 'success');
+                }
+            }
+            
+            // Migrate Patient Admins
+            if (window.GH_ADMINS.patientAdmins) {
+                log(`Found ${window.GH_ADMINS.patientAdmins.length} patient admins.`);
+                for (const patientUsername of window.GH_ADMINS.patientAdmins) {
+                    log(`Migrating patient admin: ${patientUsername}...`);
+                    const { data, error } = await client.from('patient_admins').upsert({
+                        patient_username: patientUsername,
+                        assigned_admin_username: 'admin' // Default assignment
+                    }, { onConflict: 'patient_username' });
+                    
+                    if (error) {
+                        log(`❌ Failed to migrate patient admin ${patientUsername}: ${JSON.stringify(error)}`, 'error');
+                    } else {
+                        log(`✅ Successfully migrated patient admin ${patientUsername}`, 'success');
+                    }
+                }
+            }
+
+            log('Migration complete!');
+        });
+    </script>
+</body>
+</html>

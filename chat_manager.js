@@ -2,10 +2,8 @@
 // CHAT MANAGER - SUPABASE MESAJLAŞMA
 // ====================================
 
-// SUPABASE BAĞLANTISI
-// ⚠️ ÖNEMLİ: Supabase projenizi oluşturduktan sonra bu bilgileri güncelleyin!
-const SUPABASE_URL = 'https://rorkccxpjndllxemsmlo.supabase.co'; // Buraya kendi URL'nizi yazın
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvcmtjY3hwam5kbGx4ZW1zbWxvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNTQxNTIsImV4cCI6MjA3NzkzMDE1Mn0.dVuUrVvBigxo2rMpUQcHKoemD7ovqejupi2OkkrxE7c'; // Buraya kendi ANON KEY'inizi yazın
+// ✅ SUPABASE CLIENT - Global window.supabase kullanılıyor (config.js'den)
+// Artık burada tekrar oluşturmaya gerek yok, patient_nutrition.html'de zaten oluşturuldu
 
 let supabaseClient = null;
 let currentPatientId = null;
@@ -13,18 +11,27 @@ let messagesSubscription = null;
 
 // Supabase başlatma
 function initializeChat() {
-    // Supabase client oluştur
-    if (typeof supabase === 'undefined') {
-        console.error('Supabase kütüphanesi yüklenmedi!');
+    console.log('🚀 initializeChat() başlatıldı...');
+    
+    // Global Supabase client'ı kullan
+    if (!window.supabase) {
+        console.error('❌ Supabase client bulunamadı! window.supabase tanımlı değil.');
         return;
     }
     
-    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    supabaseClient = window.supabase; // Global client'ı kullan
+    console.log('✅ Chat Supabase client alındı (window.supabase)');
     
     // Mevcut hasta ID'sini al (birden fazla kaynaktan)
+    console.log('📌 Hasta ID kaynakları kontrol ediliyor...');
+    console.log('   sessionStorage.currentPatientId:', sessionStorage.getItem('currentPatientId'));
+    console.log('   localStorage.currentPatientId:', localStorage.getItem('currentPatientId'));
+    
     currentPatientId = sessionStorage.getItem('currentPatientId') || 
                        localStorage.getItem('currentPatientId') ||
                        getPatientIdFromAuth();
+    
+    console.log('🆔 Belirlenen currentPatientId:', currentPatientId);
     
     if (!currentPatientId) {
         console.error('❌ Hasta ID bulunamadı! Chat devre dışı.');
@@ -40,6 +47,7 @@ function initializeChat() {
     const chatWidget = document.getElementById('chatWidget');
     if (chatWidget) {
         chatWidget.style.display = 'block';
+        console.log('✅ Chat widget görünür yapıldı');
     }
     
     console.log('✅ Chat başlatıldı. Hasta ID:', currentPatientId);
@@ -50,9 +58,11 @@ function initializeChat() {
     });
     
     // Mesajları yükle
+    console.log('📥 loadMessages() çağrılıyor...');
     loadMessages();
     
     // Realtime dinlemeyi başlat
+    console.log('🔴 subscribeToMessages() çağrılıyor...');
     subscribeToMessages();
     
     // Okunmamış mesaj sayısını güncelle
@@ -60,10 +70,14 @@ function initializeChat() {
     
     // Online status heartbeat başlat (her 30 saniyede bir)
     startHeartbeat();
+    
+    console.log('✅ initializeChat() tamamlandı!');
 }
 
 // Auth sisteminden hasta ID al
 function getPatientIdFromAuth() {
+    console.log('🔍 Auth sisteminden hasta ID aranıyor...');
+    
     // 1. Auth.js session kontrolü - DOĞRU KEY İSİMLERİ
     try {
         // Auth.js'in kullandığı key isimleri dene
@@ -71,34 +85,53 @@ function getPatientIdFromAuth() {
         
         for (let key of sessionKeys) {
             const sessionData = localStorage.getItem(key);
+            console.log(`   Kontrol ediliyor: ${key} =`, sessionData ? 'VAR' : 'YOK');
+            
             if (sessionData) {
-                const session = JSON.parse(sessionData);
-                if (session && session.patientId) {
-                    console.log(`✅ Auth sisteminden hasta ID alındı (${key}):`, session.patientId);
-                    return session.patientId;
+                try {
+                    const session = JSON.parse(sessionData);
+                    console.log(`   ${key} parse edildi:`, session);
+                    
+                    if (session && session.patientId) {
+                        console.log(`✅ Auth sisteminden hasta ID alındı (${key}):`, session.patientId);
+                        return session.patientId;
+                    }
+                } catch (parseError) {
+                    console.warn(`   ${key} JSON parse hatası:`, parseError);
                 }
             }
         }
     } catch (e) {
-        console.warn('Auth session okunamadı:', e);
+        console.error('❌ Auth session okunamadı:', e);
     }
     
     // 2. Global getCurrentUser fonksiyonu
     if (typeof getCurrentUser === 'function') {
-        const user = getCurrentUser();
-        if (user && user.patientId) {
-            return user.patientId;
+        console.log('   getCurrentUser() fonksiyonu deneniyor...');
+        try {
+            const user = getCurrentUser();
+            console.log('   getCurrentUser() sonucu:', user);
+            if (user && user.patientId) {
+                console.log('✅ getCurrentUser() üzerinden hasta ID alındı:', user.patientId);
+                return user.patientId;
+            }
+        } catch (err) {
+            console.warn('   getCurrentUser() hatası:', err);
         }
+    } else {
+        console.log('   getCurrentUser() fonksiyonu YOK');
     }
     
     // 3. URL parametresinden al (test için)
     const urlParams = new URLSearchParams(window.location.search);
     const patientIdFromUrl = urlParams.get('patientId');
     if (patientIdFromUrl) {
-        console.log('URL parametresinden hasta ID alındı:', patientIdFromUrl);
+        console.log('✅ URL parametresinden hasta ID alındı:', patientIdFromUrl);
         return patientIdFromUrl;
     }
     
+    console.error('❌ Hiçbir kaynaktan hasta ID alınamadı!');
+    console.log('📋 localStorage dump:', Object.keys(localStorage));
     return null;
 }
 
@@ -310,7 +343,7 @@ async function sendMessage() {
     }
 }
 
-// Realtime dinleme başlat
+// Realtime dinleme başlat - HEM GÖNDERİLEN HEM ALINAN MESAJLAR İÇİN
 function subscribeToMessages() {
     if (!supabaseClient || !currentPatientId) return;
     
@@ -319,40 +352,69 @@ function subscribeToMessages() {
         messagesSubscription.unsubscribe();
     }
     
-    // Yeni mesajları dinle
+    console.log('🔔 Realtime subscription başlatılıyor. Patient ID:', currentPatientId);
+    
+    // Yeni mesajları dinle - SENDER veya RECEIVER bu hasta ise göster
     messagesSubscription = supabaseClient
-        .channel('messages-channel')
+        .channel('patient-messages-channel')
         .on(
             'postgres_changes',
             {
                 event: 'INSERT',
                 schema: 'public',
-                table: 'messages',
-                filter: `receiver_id=eq.${currentPatientId}`
+                table: 'messages'
             },
             (payload) => {
-                console.log('Yeni mesaj geldi:', payload);
+                console.log('📨 Realtime event aldı:', payload.new);
+                
+                // Bu mesaj bu hastayla ilgili mi?
+                const isForThisPatient = 
+                    payload.new.sender_id === currentPatientId || 
+                    payload.new.receiver_id === currentPatientId;
+                
+                if (!isForThisPatient) {
+                    console.log('⏭️ Bu mesaj başka hasta için, atlanıyor.');
+                    return;
+                }
+                
+                console.log('✅ Mesaj bu hasta için, ekrana ekleniyor...');
                 
                 // Mesajı ekrana ekle
                 const messageElement = createMessageElement(payload.new);
                 document.getElementById('chatMessages').appendChild(messageElement);
                 scrollToBottom();
                 
-                // Okunmamış sayıyı güncelle
-                updateUnreadCount();
-                
-                // Bildirim göster (chat kapalıysa)
-                const chatBox = document.getElementById('chatBox');
-                if (!chatBox.classList.contains('open')) {
-                    // Admin mesajı için başlık
-                    const notificationTitle = payload.new.sender_type === 'admin' 
-                        ? '💬 Yönetici Mesajı' 
-                        : 'Yeni mesaj';
-                    showNotification(notificationTitle, payload.new.message);
+                // Eğer gelen mesaj adminse:
+                if (payload.new.sender_type === 'admin' && payload.new.sender_id !== currentPatientId) {
+                    // 🔔 BİLDİRİM SESİ ÇALDIR
+                    playNotificationSound();
+                    
+                    // Okunmamış sayıyı güncelle
+                    updateUnreadCount();
+                    
+                    // Bildirim göster (chat kapalıysa)
+                    const chatBox = document.getElementById('chatBox');
+                    if (!chatBox.classList.contains('open')) {
+                        showNotification('💬 Yönetici Mesajı', payload.new.message);
+                        
+                        // Chat widget'ı zıplat (dikkat çekmek için)
+                        const chatWidget = document.getElementById('chatWidget');
+                        if (chatWidget) {
+                            chatWidget.classList.add('bounce');
+                            setTimeout(() => chatWidget.classList.remove('bounce'), 1000);
+                        }
+                    }
                 }
             }
         )
-        .subscribe();
+        .subscribe((status) => {
+            console.log('🔔 Subscription durumu:', status);
+            if (status === 'SUBSCRIBED') {
+                console.log('✅ Realtime dinleme aktif!');
+            } else if (status === 'CHANNEL_ERROR') {
+                console.error('❌ Realtime bağlantı hatası!');
+            }
+        });
 }
 
 // Okunmamış mesaj sayısını güncelle
@@ -433,6 +495,7 @@ function showError(message) {
 // 🔊 Bildirim sesi çal (Web Audio API ile)
 function playNotificationSound() {
     try {
+        // AudioContext oluştur (sadece user interaction sonrası çalışır)
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
@@ -440,14 +503,33 @@ function playNotificationSound() {
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
         
+        // Notification sesi: 2 bip
         oscillator.frequency.value = 800; // 800Hz
         oscillator.type = 'sine';
         
         gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
         
         oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.3);
+        oscillator.stop(audioContext.currentTime + 0.15);
+        
+        // İkinci bip (0.2 saniye sonra)
+        const oscillator2 = audioContext.createOscillator();
+        const gainNode2 = audioContext.createGain();
+        
+        oscillator2.connect(gainNode2);
+        gainNode2.connect(audioContext.destination);
+        
+        oscillator2.frequency.value = 1000; // 1000Hz (daha yüksek)
+        oscillator2.type = 'sine';
+        
+        gainNode2.gain.setValueAtTime(0.3, audioContext.currentTime + 0.2);
+        gainNode2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.35);
+        
+        oscillator2.start(audioContext.currentTime + 0.2);
+        oscillator2.stop(audioContext.currentTime + 0.35);
+        
+        console.log('🔔 Bildirim sesi çalındı!');
     } catch (error) {
         console.error('🔇 Bildirim sesi çalınamadı:', error);
     }
@@ -605,6 +687,10 @@ async function sendNotificationToAdmin(patientId, message) {
 // HASTA TARAFINDA ONESIGNAL (BİLDİRİM ALMAK İÇİN)
 // ====================================
 async function initializePatientOneSignal() {
+    if (window.OneSignalDisabledForDomain) {
+        console.warn('⚠️ OneSignal bu domainde devre dışı bırakıldığı için hasta bildirim süreci atlandı.');
+        return;
+    }
     try {
         // OneSignal SDK'nın yüklenmesini bekle
         let attempts = 0;

@@ -24,6 +24,24 @@
     <!-- / PWA ve Mobil Uygulama Meta Etiketleri -->
 
     <title>🍽️ Yemek Alternatif Bulucu</title>
+    
+    <!-- Global App Config -->
+    <script src="config.js"></script>
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.48.0/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
+    
+    <!-- Initialize Supabase Client -->
+    <script>
+        // Supabase client'ı başlat (DAL'dan önce olmalı)
+        if (typeof supabase !== 'undefined' && CONFIG?.SUPABASE_URL && CONFIG?.SUPABASE_ANON_KEY) {
+            window.supabase = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+            console.log('✅ Supabase client başlatıldı (mobil_versiyon_v1.html)');
+        } else {
+            console.warn('⚠️ Supabase başlatılamadı - CONFIG veya SDK yok');
+        }
+    </script>
+    
     <style>
         * {
             margin: 0;
@@ -1188,6 +1206,9 @@
         @media (prefers-color-scheme: dark) {
         }
     </style>
+    
+    <!-- DAL (Supabase zaten head'de başlatıldı) -->
+    <script src="data-access-layer.js"></script>
 </head>
 <body>
     <div class="container">
@@ -1698,15 +1719,9 @@
                 <button onclick="closeTemplateFoodEditModal()" style="background: #6c757d; color: white; border: none; padding: 12px 24px; font-size: 15px; cursor: pointer; border-radius: 6px; font-weight: 600;">
                     ❌ İptal
                 </button>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666; cursor: pointer;">
-                        <input type="checkbox" id="saveFoodToDatabase" style="width: 16px; height: 16px;">
-                        <span>💾 food_list.json'a da kaydet</span>
-                    </label>
-                    <button onclick="saveEditedTemplateFood()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; border: none; padding: 12px 24px; font-size: 15px; cursor: pointer; border-radius: 6px; font-weight: 600;">
-                        ✅ Kaydet
-                    </button>
-                </div>
+                <button onclick="saveEditedTemplateFood()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; border: none; padding: 12px 24px; font-size: 15px; cursor: pointer; border-radius: 6px; font-weight: 600;">
+                    ✅ Supabase'e Kaydet
+                </button>
             </div>
         </div>
     </div>
@@ -1718,7 +1733,7 @@
         var foodDatabase = [];
         
         // ==================== YASAK LİSTESİ GLOBAL DEĞİŞKENLERİ ====================
-        var alternativeBlacklist = []; // GitHub'dan yüklenecek yasak listesi
+        var alternativeBlacklist = []; // Supabase'den yüklenecek yasak listesi
         var blacklistVersion = '1.0';
         var selectedFoodsForBan = []; // Toplu yasaklama için seçili yemekler
         
@@ -1781,24 +1796,32 @@
                 
                 let patientData;
                 
-                // ÖNCELİK 1: GitHub'dan çek (HER ZAMAN ÖNCE GITHUB!)
-                const timestamp = new Date().getTime();
-                const response = await fetch(`https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/hastalar/${fileName}?t=${timestamp}`);
+                // ÖNCELİK 1: Supabase/DAL üzerinden çek
+                if (window.DAL) {
+                    try {
+                        patientData = await window.DAL.getPatient(cleanId);
+                        if (patientData) {
+                            // data alanındaki JSON'u ana objeye taşı
+                            if (patientData.data && typeof patientData.data === 'object') {
+                                patientData = { ...patientData.data, id: patientData.id };
+                            }
+                            localStorage.setItem(cachedDataKey, JSON.stringify(patientData));
+                            console.log('✅ Hasta verisi DAL/Supabase\'den yüklendi:', patientData);
+                        }
+                    } catch (dalError) {
+                        console.warn('⚠️ DAL hatası, localStorage deneniyor:', dalError);
+                    }
+                }
                 
-                if (response.ok) {
-                    // GitHub'dan başarıyla yüklendi
-                    patientData = await response.json();
-                    localStorage.setItem(cachedDataKey, JSON.stringify(patientData));
-                    console.log('✅ Hasta verisi GitHub\'dan yüklendi:', patientData);
-                } else {
-                    // ÖNCELİK 2: GitHub'a erişilemiyorsa localStorage'dan yükle
+                // ÖNCELİK 2: DAL başarısızsa localStorage'dan yükle
+                if (!patientData) {
                     const cachedData = localStorage.getItem(cachedDataKey);
                     if (cachedData) {
                         patientData = JSON.parse(cachedData);
-                        console.log('⚠️ GitHub erişilemiyor, localStorage kullanıldı:', patientData);
+                        console.log('⚠️ DAL erişilemiyor, localStorage kullanıldı:', patientData);
                     } else {
-                        console.error('❌ Dosya bulunamadı:', fileName);
-                        throw new Error(`Hasta dosyası bulunamadı: ${fileName}`);
+                        console.error('❌ Hasta verisi bulunamadı:', cleanId);
+                        throw new Error(`Hasta verisi bulunamadı: ${cleanId}`);
                     }
                 }
                 
@@ -2564,9 +2587,11 @@
             async function loadFoodData() {
                 try {
                     document.getElementById('resultsList').innerHTML = '<div class="loading">Yemek veritabanı yükleniyor...</div>';
-                    const response = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/food_list.json');
-                    const data = await response.json();
+                    
+                    // DAL/Supabase'den yemek listesini al
+                    const data = await window.DAL.getFoodList();
                     foodDatabase = [];
+                    
                     if (data.categories && Array.isArray(data.categories)) {
                         data.categories.forEach(category => {
                             if (category.items && Array.isArray(category.items)) {
@@ -2590,65 +2615,56 @@
                             }
                         });
                     }
-                console.log('✅ Yemek veritabanı yüklendi:', foodDatabase.length);
-                await loadTarifKartlari();
-                await loadManuelEslestirmeler();
-                document.getElementById('resultsList').innerHTML = '<div class="no-results">👆 Yukarıdan yemek arayın</div>';
-            } catch (error) {
-                console.error('❌ Veritabanı hatası:', error);
-                document.getElementById('resultsList').innerHTML = '<div class="no-results">❌ Veritabanı yüklenemedi</div>';
-            }
-        }            async function loadManuelEslestirmeler() {
+                    console.log('✅ Yemek veritabanı yüklendi:', foodDatabase.length);
+                    await loadTarifKartlari();
+                    await loadManuelEslestirmeler();
+                    document.getElementById('resultsList').innerHTML = '<div class="no-results">👆 Yukarıdan yemek arayın</div>';
+                } catch (error) {
+                    console.error('❌ Veritabanı hatası:', error);
+                    document.getElementById('resultsList').innerHTML = '<div class="no-results">❌ Veritabanı yüklenemedi</div>';
+                }
+            }            async function loadManuelEslestirmeler() {
                 try {
-                    const manuelResp = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/data/manuel_eslestirmeler.json');
-                    if (manuelResp.ok) {
-                        const manuelData = await manuelResp.json();
-                        manuelEslestirmeler = manuelData.eslestirmeler || manuelData;
-                        console.log('✅ Manuel eşleştirmeler yüklendi:', Object.keys(manuelEslestirmeler).length);
+                    // DAL/Supabase üzerinden yükle
+                    // Manuel eşleştirmeleri yükle
+                    const matchings = await window.DAL.getFoodMatchings();
+                    if (matchings && matchings.length > 0) {
+                        // Array'i object formatına çevir (legacy kod uyumluluğu için)
+                        manuelEslestirmeler = {};
+                        matchings.forEach(m => {
+                            if (m.food_name && m.matched_food) {
+                                // Eğer food_name için zaten bir array varsa ona ekle, yoksa yeni array oluştur
+                                if (!manuelEslestirmeler[m.food_name]) {
+                                    manuelEslestirmeler[m.food_name] = [];
+                                }
+                                if (!manuelEslestirmeler[m.food_name].includes(m.matched_food)) {
+                                    manuelEslestirmeler[m.food_name].push(m.matched_food);
+                                }
+                            }
+                        });
+                        console.log('✅ Manuel eşleştirmeler yüklendi (DAL):', Object.keys(manuelEslestirmeler).length);
                     }
                     
-                    // 🆕 Yemek veritabanı eşleştirmelerini yükle
-                    const dbEslestirmeResp = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/data/yemek_veritabani_eslestirme.json');
-                    if (dbEslestirmeResp.ok) {
-                        const dbData = await dbEslestirmeResp.json();
-                        yemekVeritabaniEslestirme = dbData.eslestirmeler || dbData;
-                        console.log('✅ Yemek veritabanı eşleştirmeleri yüklendi:', Object.keys(yemekVeritabaniEslestirme).length);
-                    }
+                    // Yemek veritabanı eşleştirmelerini de DAL'dan al (aynı tablo)
+                    yemekVeritabaniEslestirme = { ...manuelEslestirmeler };
+                    console.log('✅ Yemek veritabanı eşleştirmeleri hazır (DAL):', Object.keys(yemekVeritabaniEslestirme).length);
                     
-                    const yasakResp = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/data/eslesmeme_kurallari.json');
-                    if (yasakResp.ok) {
-                        const yasakData = await yasakResp.json();
-                        console.log('🔍 Yasak data yapısı:', yasakData);
-                        
-                        // JSON yapısına göre doğru path'i bul
-                        if (yasakData.kurallar && yasakData.kurallar.eslesmemeKurallari) {
-                            // İç içe yapı: { kurallar: { eslesmemeKurallari: {...} } }
-                            eslesmemeKurallari = yasakData.kurallar.eslesmemeKurallari;
-                            
-                            // Dış seviyedeki ekstra kuralları da ekle
-                            Object.keys(yasakData.kurallar).forEach(key => {
-                                if (key !== 'version' && key !== 'sonGuncelleme' && key !== 'eslesmemeKurallari' && typeof yasakData.kurallar[key] === 'object') {
-                                    eslesmemeKurallari[key] = yasakData.kurallar[key];
+                    // Yasak kurallarını yükle
+                    const blacklist = await window.DAL.getFoodBlacklist();
+                    if (blacklist && blacklist.length > 0) {
+                        // Array'i object formatına çevir
+                        eslesmemeKurallari = {};
+                        blacklist.forEach(b => {
+                            if (b.food_name && b.blocked_food) {
+                                if (!eslesmemeKurallari[b.food_name]) {
+                                    eslesmemeKurallari[b.food_name] = [];
                                 }
-                            });
-                        } else if (yasakData.eslesmemeKurallari) {
-                            eslesmemeKurallari = yasakData.eslesmemeKurallari;
-                        } else if (yasakData.kurallar) {
-                            eslesmemeKurallari = yasakData.kurallar;
-                        } else if (Array.isArray(yasakData)) {
-                            // Array ise object'e çevir
-                            eslesmemeKurallari = {};
-                            yasakData.forEach(kural => {
-                                if (kural.yemek && kural.yasaklar) {
-                                    eslesmemeKurallari[kural.yemek] = kural.yasaklar;
+                                if (!eslesmemeKurallari[b.food_name].includes(b.blocked_food)) {
+                                    eslesmemeKurallari[b.food_name].push(b.blocked_food);
                                 }
-                            });
-                        } else {
-                            eslesmemeKurallari = yasakData;
-                        }
-                        
-                        console.log('✅ Eşleşme yasakları yüklendi:', Object.keys(eslesmemeKurallari).length, 'yemek');
-                        console.log('📋 Yasak listesi:', Object.keys(eslesmemeKurallari));
+                            }
+                        });
+                        console.log('✅ Eşleşme yasakları yüklendi (DAL):', Object.keys(eslesmemeKurallari).length, 'yemek');
                     }
                 } catch (error) {
                     console.error('❌ Manuel data yükleme hatası:', error);
@@ -2657,26 +2673,22 @@
             
             async function loadTarifKartlari() {
                 try {
-                    let response = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/list.json');
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (Array.isArray(data)) {
-                            tarifKartlari = data.map(item => (typeof item === 'string' ? item : item.name || item.filename || item.file || null)).filter(name => name && name.match(/\.(jpg|jpeg|png)$/i)).map(name => ({ name: name, type: 'file', download_url: `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/${name}` }));
-                            console.log('✅ Tarif kartları list.json ile yüklendi:', tarifKartlari.length);
-                            return;
-                        }
+                    // DAL/Supabase'den tarif kartlarını al
+                    const cards = await window.DAL.getRecipeCards();
+                    if (cards && Array.isArray(cards) && cards.length > 0) {
+                        tarifKartlari = cards.map(card => ({
+                            name: card.filename || card.name,
+                            type: 'file',
+                            download_url: `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/${card.filename || card.name}`
+                        }));
+                        console.log('✅ Tarif kartları yüklendi (DAL):', tarifKartlari.length);
+                    } else {
+                        console.warn('⚠️ Tarif kartları boş geldi');
+                        tarifKartlari = [];
                     }
-                    throw new Error('list.json yüklenemedi');
                 } catch (error) {
-                    console.error('❌ Tarif kartları yüklenemedi, fallback deneniyor:', error.message);
-                    await loadManuelEslestirmeler();
-                    const uniqueTarifler = new Set();
-                    Object.values(manuelEslestirmeler).forEach(eslestirme => {
-                        const kartlar = (typeof eslestirme === 'object' && eslestirme.kartlar) ? eslestirme.kartlar : (typeof eslestirme === 'string' ? [eslestirme] : []);
-                        kartlar.forEach(kart => uniqueTarifler.add(kart));
-                    });
-                    tarifKartlari = [...uniqueTarifler].map(name => ({ name: name, type: 'file', download_url: `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/${name}` }));
-                    console.log('✅ Fallback tarif kartları yüklendi:', tarifKartlari.length);
+                    console.error('❌ Tarif kartları yüklenemedi:', error);
+                    tarifKartlari = [];
                 }
             }
 
@@ -2966,42 +2978,60 @@
             async function loadBlacklist() {
                 try {
                     console.log('🚫 Yasak listesi yükleniyor...');
-                    const timestamp = new Date().getTime();
-                    const blacklistUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/data/alternative_blacklist.json?t=${timestamp}`;
                     
-                    const response = await fetch(blacklistUrl);
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        alternativeBlacklist = data.blacklist || [];
-                        blacklistVersion = data.version || '1.0';
+                    // DAL/Supabase üzerinden yükle
+                    const blacklistData = await window.DAL.getAlternativeBlacklist();
+                    if (blacklistData && blacklistData.length > 0) {
+                        // Supabase'den gelen array formatını group'layarak kullan
+                        const grouped = {};
+                        blacklistData.forEach(item => {
+                            const mainFood = item.original_food || item.orijinalYemek;
+                            const bannedAlt = item.blocked_alternative || item.yasakliAlternatif;
+                            
+                            if (!grouped[mainFood]) {
+                                grouped[mainFood] = {
+                                    mainFood: mainFood,
+                                    bannedAlternatives: [],
+                                    id: item.id || Date.now().toString(),
+                                    addedBy: item.added_by || 'admin',
+                                    addedDate: item.created_at || new Date().toISOString(),
+                                    bidirectional: false // Will be determined by checking reverse entries
+                                };
+                            }
+                            grouped[mainFood].bannedAlternatives.push(bannedAlt);
+                        });
+                        
+                        // Bidirectional kontrolü: reverse entry var mı diye bak
+                        Object.values(grouped).forEach(group => {
+                            group.bannedAlternatives.forEach(bannedAlt => {
+                                // Bu yasaklanan yemek için reverse entry var mı?
+                                const hasReverse = blacklistData.some(item => 
+                                    (item.original_food === bannedAlt || item.orijinalYemek === bannedAlt) &&
+                                    (item.blocked_alternative === group.mainFood || item.yasakliAlternatif === group.mainFood)
+                                );
+                                if (hasReverse) {
+                                    group.bidirectional = true;
+                                }
+                            });
+                        });
+                        
+                        alternativeBlacklist = Object.values(grouped);
+                        blacklistVersion = '2.0-supabase';
                         
                         // localStorage'a da kaydet (offline için)
-                        localStorage.setItem('alternative_blacklist_cache', JSON.stringify(data));
+                        localStorage.setItem('alternative_blacklist_cache', JSON.stringify({
+                            blacklist: alternativeBlacklist,
+                            version: blacklistVersion
+                        }));
                         
-                        console.log(`✅ Yasak listesi yüklendi (${alternativeBlacklist.length} kural, v${blacklistVersion})`);
-                    } else {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
-                } catch (error) {
-                    console.warn('⚠️ Yasak listesi GitHub\'dan yüklenemedi, cache kullanılıyor:', error.message);
-                    
-                    // Fallback: localStorage'dan yükle
-                    const cached = localStorage.getItem('alternative_blacklist_cache');
-                    if (cached) {
-                        try {
-                            const data = JSON.parse(cached);
-                            alternativeBlacklist = data.blacklist || [];
-                            blacklistVersion = data.version || '1.0';
-                            console.log(`📦 Yasak listesi cache'den yüklendi (${alternativeBlacklist.length} kural)`);
-                        } catch (e) {
-                            console.error('❌ Cache parse hatası:', e);
-                            alternativeBlacklist = [];
-                        }
+                        console.log(`✅ Yasak listesi yüklendi (DAL) (${alternativeBlacklist.length} kural, v${blacklistVersion})`);
                     } else {
                         console.log('ℹ️ Henüz yasak listesi yok, boş başlatıldı');
                         alternativeBlacklist = [];
                     }
+                } catch (error) {
+                    console.error('❌ Yasak listesi yüklenemedi:', error);
+                    alternativeBlacklist = [];
                 }
             }
 
@@ -3014,6 +3044,26 @@
             window.openBlacklistModal = function() {
                 document.getElementById('blacklistModal').style.display = 'block';
                 document.body.classList.add('modal-open');
+                
+                // URL'den yemek adını al ve hedef yemek alanına doldur
+                const urlParams = new URLSearchParams(window.location.search);
+                const foodName = urlParams.get('food');
+                if (foodName) {
+                    const decodedFoodName = decodeURIComponent(foodName);
+                    const mainFoodInput = document.getElementById('blacklistMainFood');
+                    if (mainFoodInput) {
+                        mainFoodInput.value = decodedFoodName;
+                        // Seçili olarak işaretle
+                        selectedMainFoodForBan = decodedFoodName;
+                        const selectedDiv = document.getElementById('selectedMainFood');
+                        if (selectedDiv) {
+                            selectedDiv.querySelector('span').textContent = decodedFoodName;
+                            selectedDiv.style.display = 'block';
+                        }
+                        console.log('✅ Hedef yemek otomatik dolduruldu:', decodedFoodName);
+                    }
+                }
+                
                 refreshBlacklistDisplay();
                 setupBlacklistSearch();
             };
@@ -3218,63 +3268,44 @@
                     const session = JSON.parse(localStorage.getItem('patient_session') || '{}');
                     const username = session.username || 'admin';
                     
-                    // Mevcut blacklist'i kopyala
-                    const updatedBlacklist = [...alternativeBlacklist];
+                    console.log('💾 Supabase\'e yasak ekleniyor...');
                     
-                    // Ana yemek için yasak ekle/güncelle
-                    let mainEntry = updatedBlacklist.find(item => item.mainFood === selectedMainFoodForBan);
-                    if (mainEntry) {
-                        // Var olan entry'yi güncelle - yeni yasakları ekle (tekrar olmaması için Set kullan)
-                        const combined = new Set([...mainEntry.bannedAlternatives, ...selectedAlternativesForBan]);
-                        mainEntry.bannedAlternatives = Array.from(combined);
-                        mainEntry.lastUpdated = new Date().toISOString();
-                        mainEntry.lastUpdatedBy = username;
-                    } else {
-                        // Yeni entry oluştur
-                        updatedBlacklist.push({
-                            id: `bl_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                            mainFood: selectedMainFoodForBan,
-                            bannedAlternatives: [...selectedAlternativesForBan],
-                            addedBy: username,
-                            addedDate: new Date().toISOString().split('T')[0],
-                            lastUpdated: new Date().toISOString()
+                    // Supabase'e kayıt için rows oluştur
+                    const rowsToInsert = [];
+                    
+                    // Ana yemek için yasakları ekle
+                    selectedAlternativesForBan.forEach(altFood => {
+                        rowsToInsert.push({
+                            original_food: selectedMainFoodForBan,
+                            blocked_alternative: altFood,
+                            reason: `Added by ${username} on ${new Date().toISOString().split('T')[0]}`,
+                            created_at: new Date().toISOString()
                         });
-                    }
+                    });
                     
-                    // Çift yönlü ise
+                    // Çift yönlü ise ters yönde de ekle
                     if (isBidirectional) {
                         selectedAlternativesForBan.forEach(altFood => {
-                            let altEntry = updatedBlacklist.find(item => item.mainFood === altFood);
-                            if (altEntry) {
-                                const combined = new Set([...altEntry.bannedAlternatives, selectedMainFoodForBan]);
-                                altEntry.bannedAlternatives = Array.from(combined);
-                                altEntry.lastUpdated = new Date().toISOString();
-                                altEntry.lastUpdatedBy = username;
-                            } else {
-                                updatedBlacklist.push({
-                                    id: `bl_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                                    mainFood: altFood,
-                                    bannedAlternatives: [selectedMainFoodForBan],
-                                    addedBy: username,
-                                    addedDate: new Date().toISOString().split('T')[0],
-                                    lastUpdated: new Date().toISOString(),
-                                    bidirectional: true
-                                });
-                            }
+                            rowsToInsert.push({
+                                original_food: altFood,
+                                blocked_alternative: selectedMainFoodForBan,
+                                reason: `Added by ${username} on ${new Date().toISOString().split('T')[0]} (bidirectional)`,
+                                created_at: new Date().toISOString()
+                            });
                         });
                     }
                     
-                    // GitHub'a kaydet
-                    const blacklistData = {
-                        version: blacklistVersion,
-                        lastUpdated: new Date().toISOString(),
-                        blacklist: updatedBlacklist
-                    };
+                    // Supabase'e insert et (bidirectional kolonu olmadan)
+                    const { error } = await window.DAL.supabaseClient
+                        .from('alternative_blacklist')
+                        .insert(rowsToInsert);
                     
-                    await saveBlacklistToGitHub(blacklistData);
+                    if (error) throw error;
                     
-                    // Global değişkeni güncelle
-                    alternativeBlacklist = updatedBlacklist;
+                    console.log('✅ Supabase\'e kaydedildi:', rowsToInsert.length, 'row');
+                    
+                    // Blacklist'i yeniden yükle
+                    await loadBlacklist();
                     
                     alert(`✅ Yasak listesi güncellendi!\n\n${selectedMainFoodForBan} için ${selectedAlternativesForBan.length} alternatif yasaklandı.${isBidirectional ? '\n(Çift yönlü)' : ''}`);
                     
@@ -3356,7 +3387,9 @@
                     );
                 }
                 
-                countEl.textContent = filtered.length;
+                // Toplam yasak kuralı sayısını hesapla (tüm banned alternatives toplamı)
+                const totalBans = filtered.reduce((sum, item) => sum + (item.bannedAlternatives?.length || 0), 0);
+                countEl.textContent = totalBans;
                 
                 if (filtered.length === 0) {
                     container.innerHTML = '<div style="text-align: center; padding: 40px; color: #999;">Henüz yasak kuralı yok</div>';
@@ -3368,23 +3401,23 @@
                         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
                             <div style="flex: 1;">
                                 <div style="font-weight: 700; font-size: 15px; color: #333; margin-bottom: 4px;">
-                                    📋 ${item.mainFood}
+                                    📋 ${item.mainFood || 'Bilinmeyen Yemek'}
                                 </div>
                                 <div style="font-size: 12px; color: #6c757d;">
                                     Ekleyen: ${item.addedBy || 'admin'} • ${item.addedDate || 'Tarih yok'}
                                     ${item.bidirectional ? ' • <span style="color: #0066cc;">🔄 Çift Yönlü</span>' : ''}
                                 </div>
                             </div>
-                            <button onclick="deleteBlacklistEntry('${item.mainFood.replace(/'/g, "\\'")}', '${item.id}')" 
+                            <button onclick="deleteBlacklistEntry('${(item.mainFood || '').replace(/'/g, "\\'")}', '${item.id}')" 
                                     style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">
                                 🗑️ Sil
                             </button>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
-                            ${item.bannedAlternatives.map(alt => `
+                            ${(item.bannedAlternatives || []).map(alt => `
                                 <span style="background: white; border: 2px solid #ff6b6b; color: #ff6b6b; padding: 4px 10px; border-radius: 12px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px;">
-                                    🚫 ${alt}
-                                    <button onclick="removeSingleBan('${item.mainFood.replace(/'/g, "\\'")}', '${alt.replace(/'/g, "\\'")}', '${item.id}')" 
+                                    🚫 ${alt || 'Bilinmeyen'}
+                                    <button onclick="removeSingleBan('${(item.mainFood || '').replace(/'/g, "\\'")}', '${(alt || '').replace(/'/g, "\\'")}', '${item.id}')" 
                                             style="background: rgba(255,107,107,0.2); border: none; color: #ff6b6b; border-radius: 50%; width: 16px; height: 16px; cursor: pointer; font-size: 11px; padding: 0;">✖</button>
                                 </span>
                             `).join('')}
@@ -3400,22 +3433,30 @@
                 }
                 
                 try {
-                    const entry = alternativeBlacklist.find(item => item.mainFood === mainFood);
-                    if (!entry) return;
+                    console.log('🗑️ Supabase\'den yasak siliniyor:', mainFood, '-', bannedFood);
                     
-                    entry.bannedAlternatives = entry.bannedAlternatives.filter(f => f !== bannedFood);
+                    // Ana yasağı sil
+                    const { error: error1 } = await window.DAL.supabaseClient
+                        .from('alternative_blacklist')
+                        .delete()
+                        .eq('original_food', mainFood)
+                        .eq('blocked_alternative', bannedFood);
                     
-                    // Eğer boş kaldıysa entry'yi sil
-                    if (entry.bannedAlternatives.length === 0) {
-                        alternativeBlacklist = alternativeBlacklist.filter(item => item.mainFood !== mainFood);
-                    }
+                    if (error1) throw error1;
                     
-                    await saveBlacklistToGitHub({
-                        version: blacklistVersion,
-                        lastUpdated: new Date().toISOString(),
-                        blacklist: alternativeBlacklist
-                    });
+                    // Reverse yasağı da kontrol et ve varsa sil (bidirectional için)
+                    const { error: error2 } = await window.DAL.supabaseClient
+                        .from('alternative_blacklist')
+                        .delete()
+                        .eq('original_food', bannedFood)
+                        .eq('blocked_alternative', mainFood);
                     
+                    // error2'yi ignore et (reverse olmayabilir)
+                    
+                    console.log('✅ Supabase\'den silindi (bidirectional dahil)');
+                    
+                    // Blacklist'i yeniden yükle
+                    await loadBlacklist();
                     refreshBlacklistDisplay();
                     
                     // Eğer halihazırda alternatif gösteriliyorsa yenile
@@ -3440,14 +3481,30 @@
                 }
                 
                 try {
-                    alternativeBlacklist = alternativeBlacklist.filter(item => item.mainFood !== mainFood);
+                    console.log('🗑️ Supabase\'den tüm yasaklar siliniyor:', mainFood);
                     
-                    await saveBlacklistToGitHub({
-                        version: blacklistVersion,
-                        lastUpdated: new Date().toISOString(),
-                        blacklist: alternativeBlacklist
-                    });
+                    // Ana kayıtları sil (original_food'a göre)
+                    const { error: error1 } = await window.DAL.supabaseClient
+                        .from('alternative_blacklist')
+                        .delete()
+                        .eq('original_food', mainFood);
                     
+                    if (error1) throw error1;
+                    
+                    // Reverse kayıtları da sil (bidirectional için - blocked_alternative'e göre)
+                    const { error: error2 } = await window.DAL.supabaseClient
+                        .from('alternative_blacklist')
+                        .delete()
+                        .eq('blocked_alternative', mainFood);
+                    
+                    // error2'yi ignore et
+                    
+                    console.log('✅ Tüm yasaklar silindi (bidirectional dahil)');
+                    
+                    console.log('✅ Supabase\'den silindi');
+                    
+                    // Blacklist'i yeniden yükle
+                    await loadBlacklist();
                     refreshBlacklistDisplay();
                     
                     // Eğer halihazırda alternatif gösteriliyorsa yenile
@@ -4865,9 +4922,6 @@
             // Notlar
             document.getElementById('editFoodNotes').value = food.notes || '';
             
-            // food_list.json kaydetme checkbox'ı varsayılan kapalı
-            document.getElementById('saveFoodToDatabase').checked = false;
-            
             // Modalı göster
             document.getElementById('templateFoodEditModal').style.display = 'block';
         };
@@ -4997,13 +5051,6 @@
          * Düzenlenen yemeği kaydet (sadece food_list.json'a)
          */
         window.saveEditedTemplateFood = async function() {
-            const saveToDB = document.getElementById('saveFoodToDatabase').checked;
-            
-            if (!saveToDB) {
-                alert('ℹ️ food_list.json\'a kaydetmek için checkbox\'ı işaretleyin.');
-                return;
-            }
-            
             const newFoodName = document.getElementById('editFoodName').value.trim();
             const newCalories = parseFloat(document.getElementById('editFoodCalories').value) || 0;
             const newProtein = parseFloat(document.getElementById('editFoodProtein').value) || 0;
@@ -5038,7 +5085,6 @@
             
             const newSeasonMin = document.getElementById('editFoodSeasonMin').value.trim();
             const newSeasonMax = document.getElementById('editFoodSeasonMax').value.trim();
-            const newSeasonRange = (newSeasonMin && newSeasonMax) ? JSON.stringify([parseInt(newSeasonMin), parseInt(newSeasonMax)]) : '';
             
             const newKeto = document.getElementById('editFoodKeto').checked;
             const newLowCarb = document.getElementById('editFoodLowCarb').checked;
@@ -5052,13 +5098,6 @@
             const newIncompat = document.getElementById('editFoodIncompat').value.split(',').map(t => t.trim()).filter(t => t);
             
             const newNotes = document.getElementById('editFoodNotes').value.trim();
-            
-            // Token kontrolü - artık opsiyonel (Vercel API varsa gerekmez)
-            // const token = localStorage.getItem('github_token');
-            // if (!token) {
-            //     alert('❌ GitHub token bulunamadı!\n\nDeğişiklikler kaybolacak.\n\nAdmin Settings sayfasından GitHub token girin.');
-            //     return;
-            // }
             
             // Güncellenmiş yemek objesi
             const updatedFood = {
@@ -5096,7 +5135,7 @@
             const loadingDiv = document.createElement('div');
             loadingDiv.innerHTML = `
                 <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 10001; text-align: center;">
-                    <div style="font-size: 18px; font-weight: 600; color: #28a745;">GitHub'a kaydediliyor...</div>
+                    <div style="font-size: 18px; font-weight: 600; color: #28a745;">Supabase'e kaydediliyor...</div>
                     <div style="font-size: 14px; color: #666; margin-top: 10px;">Lütfen bekleyin</div>
                 </div>
                 <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000;"></div>
@@ -5116,14 +5155,30 @@
                     foodDatabase.push(updatedFood);
                 }
 
-                // GitHub'a kaydet - saveFoodListToGithub fonksiyonunu çağır
-                await saveFoodListToGithub(foodDatabase, `Yemek güncellendi: ${newFoodName}`);
+                // Supabase'e kaydet - DAL.updateFoodList() kullan
+                const foodListData = {
+                    categories: []
+                };
+                
+                // foodDatabase'i categories formatına çevir
+                const categoryMap = {};
+                foodDatabase.forEach(food => {
+                    const cat = food.category || 'Diğer';
+                    if (!categoryMap[cat]) {
+                        categoryMap[cat] = { category: cat, items: [] };
+                    }
+                    categoryMap[cat].items.push(food);
+                });
+                
+                foodListData.categories = Object.values(categoryMap);
+                
+                await window.DAL.updateFoodList(foodListData);
 
                 // Loading'i kaldır
                 document.body.removeChild(loadingDiv);
                 
-                console.log('✅ Yemek GitHub\'a kaydedildi:', newFoodName);
-                alert(`✅ Başarılı!\n\n"${newFoodName}" yemeği GitHub'a kaydedildi.\n\nDeğişiklik food_list.json dosyasına yazıldı.`);
+                console.log('✅ Yemek Supabase\'e kaydedildi:', newFoodName);
+                alert(`✅ Başarılı!\n\n"${newFoodName}" yemeği Supabase'e kaydedildi.`);
                 
                 closeTemplateFoodEditModal();
                 
@@ -5136,8 +5191,8 @@
                     document.body.removeChild(loadingDiv);
                 }
 
-                console.error('GitHub kaydetme hatası:', error);
-                alert(`❌ GitHub'a kaydedilemedi!\n\nHata: ${error.message}`);
+                console.error('Supabase kaydetme hatası:', error);
+                alert(`❌ Supabase'e kaydedilemedi!\n\nHata: ${error.message}`);
             }
         };
         

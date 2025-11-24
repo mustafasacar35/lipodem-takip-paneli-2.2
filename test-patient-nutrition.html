@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Patient Nutrition Test - DAL Integration</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="data-access-layer.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-section h2 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .result {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            border-left-color: #28a745;
+            background: #d4edda;
+            color: #155724;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .info {
+            border-left-color: #17a2b8;
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .config-info {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .config-info h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .config-info code {
+            background: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Patient Nutrition Test - DAL Integration</h1>
+        <p class="subtitle">Patient nutrition panel veri yükleme/kaydetme testleri (Supabase + DAL)</p>
+
+        <!-- Config Info -->
+        <div class="config-info">
+            <h3>⚙️ Mevcut Konfigürasyon</h3>
+            <div id="configInfo">Yükleniyor...</div>
+        </div>
+
+        <!-- Test 1: Load Patient Data -->
+        <div class="test-section">
+            <h2>📥 Test 1: Hasta Verisi Yükleme (loadPatientData)</h2>
+            <div class="input-group">
+                <label>Hasta ID (ör: patient_1761489943986):</label>
+                <input type="text" id="loadPatientId" value="patient_1761489943986" placeholder="patient_XXXXXXXXX">
+                <button onclick="testLoadPatientData()">🔍 Hasta Verisi Yükle</button>
+            </div>
+            <div id="loadResult" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Test 2: Save Patient Data -->
+        <div class="test-section">
+            <h2>💾 Test 2: Hasta Verisi Kaydetme (savePatientData)</h2>
+            <div class="input-group">
+                <label>Hasta ID (ör: patient_1761489943986):</label>
+                <input type="text" id="savePatientId" value="patient_1761489943986" placeholder="patient_XXXXXXXXX">
+            </div>
+            <button onclick="testSavePatientData()">💾 Test Verisi Kaydet</button>
+            <button onclick="testUpdateWeeks()">📅 Hafta Verisi Güncelle</button>
+            <div id="saveResult" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Test 3: Full Workflow -->
+        <div class="test-section">
+            <h2>🔄 Test 3: Tam İş Akışı (Load → Modify → Save)</h2>
+            <div class="input-group">
+                <label>Hasta ID (ör: patient_1761489943986):</label>
+                <input type="text" id="workflowPatientId" value="patient_1761489943986" placeholder="patient_XXXXXXXXX">
+            </div>
+            <button onclick="testFullWorkflow()">🚀 Tam İş Akışı Test Et</button>
+            <div id="workflowResult" class="result" style="display:none;"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Config bilgilerini göster
+        window.addEventListener('load', () => {
+            const configHtml = `
+                <strong>Supabase URL:</strong> <code>${window.CONFIG.supabaseUrl}</code><br>
+                <strong>useSupabase:</strong> <code>${window.CONFIG.useSupabase}</code><br>
+                <strong>useLocalJSON:</strong> <code>${window.CONFIG.useLocalJSON}</code><br>
+                <strong>useGitHub:</strong> <code>${window.CONFIG.useGitHub}</code><br>
+                <strong>dualMode:</strong> <code>${window.CONFIG.dualMode}</code>
+            `;
+            document.getElementById('configInfo').innerHTML = configHtml;
+        });
+
+        // Test 1: Load Patient Data
+        async function testLoadPatientData() {
+            const resultDiv = document.getElementById('loadResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '⏳ Hasta verisi yükleniyor...';
+
+            try {
+                const patientId = document.getElementById('loadPatientId').value.trim();
+                
+                if (!patientId) {
+                    throw new Error('Lütfen hasta ID girin');
+                }
+
+                console.log('🔍 Hasta verisi yükleniyor:', patientId);
+                const fetchedData = await window.DAL.getPatient(patientId);
+
+                if (!fetchedData) {
+                    throw new Error('Hasta bulunamadı');
+                }
+
+                // data field kontrolü
+                const patientData = fetchedData.data || fetchedData;
+
+                // Ad ve soyad - eski ve yeni format desteği
+                const firstName = patientData.firstName || 
+                                patientData.personalInfo?.name || 
+                                patientData.username || 'N/A';
+                const lastName = patientData.lastName || 
+                               patientData.personalInfo?.surname || '';
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✅ Hasta verisi başarıyla yüklendi!
+
+📋 Hasta Bilgileri:
+ID: ${patientData.id || patientId}
+Ad: ${firstName}
+Soyad: ${lastName}
+Username: ${patientData.username || 'N/A'}
+Hedef Kalori: ${patientData.targetCalories || 'N/A'}
+Hafta Sayısı: ${patientData.weeks?.length || 0}
+Güncelleme: ${patientData.updatedAt || 'N/A'}
+
+📊 Veri Yapısı:
+${JSON.stringify(patientData, null, 2).substring(0, 500)}...`;
+
+            } catch (error) {
+                console.error('❌ Hata:', error);
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Hata: ${error.message}\n\n${error.stack}`;
+            }
+        }
+
+        // Test 2: Save Patient Data
+        async function testSavePatientData() {
+            const resultDiv = document.getElementById('saveResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '⏳ Test verisi kaydediliyor...';
+
+            try {
+                const patientId = document.getElementById('savePatientId').value.trim();
+                
+                if (!patientId) {
+                    throw new Error('Lütfen hasta ID girin');
+                }
+
+                // Önce mevcut veriyi yükle
+                const existingData = await window.DAL.getPatient(patientId);
+                const patientData = existingData?.data || existingData || {};
+
+                // Test verisi ekle
+                const testData = {
+                    ...patientData,
+                    id: patientId,
+                    testField: 'DAL_TEST_' + Date.now(),
+                    testTimestamp: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+
+                console.log('💾 Test verisi kaydediliyor:', testData);
+                const saved = await window.DAL.savePatient(testData);
+
+                if (saved) {
+                    // Kaydı doğrula
+                    const verification = await window.DAL.getPatient(patientId);
+                    const verData = verification?.data || verification;
+
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Test verisi başarıyla kaydedildi!
+
+💾 Kaydedilen Test Alanları:
+testField: ${verData.testField}
+testTimestamp: ${verData.testTimestamp}
+updatedAt: ${verData.updatedAt}
+
+✓ Veri Supabase'e yazıldı ve geri okundu!`;
+                } else {
+                    throw new Error('Kaydetme işlemi false döndü');
+                }
+
+            } catch (error) {
+                console.error('❌ Hata:', error);
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Hata: ${error.message}\n\n${error.stack}`;
+            }
+        }
+
+        // Test 2b: Update Weeks
+        async function testUpdateWeeks() {
+            const resultDiv = document.getElementById('saveResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '⏳ Hafta verisi güncelleniyor...';
+
+            try {
+                const patientId = document.getElementById('savePatientId').value.trim();
+                
+                if (!patientId) {
+                    throw new Error('Lütfen hasta ID girin');
+                }
+
+                // Önce mevcut veriyi yükle
+                const existingData = await window.DAL.getPatient(patientId);
+                const patientData = existingData?.data || existingData || {};
+
+                // Weeks array kontrolü
+                if (!patientData.weeks) {
+                    patientData.weeks = [];
+                }
+
+                // Test week ekle
+                const testWeek = {
+                    weekNumber: patientData.weeks.length + 1,
+                    startDate: new Date().toISOString().split('T')[0],
+                    days: [
+                        { dayNumber: 1, meals: [], totalCalories: 0 },
+                        { dayNumber: 2, meals: [], totalCalories: 0 }
+                    ],
+                    testUpdate: Date.now()
+                };
+
+                patientData.weeks.push(testWeek);
+                patientData.updatedAt = new Date().toISOString();
+
+                console.log('📅 Hafta verisi kaydediliyor:', patientData);
+                const saved = await window.DAL.savePatient(patientData);
+
+                if (saved) {
+                    // Kaydı doğrula
+                    const verification = await window.DAL.getPatient(patientId);
+                    const verData = verification?.data || verification;
+
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Hafta verisi başarıyla güncellendi!
+
+📅 Toplam Hafta Sayısı: ${verData.weeks?.length || 0}
+Son Hafta: Hafta ${testWeek.weekNumber}
+Gün Sayısı: ${testWeek.days.length}
+Güncelleme: ${verData.updatedAt}
+
+✓ Weeks array Supabase'e yazıldı!`;
+                } else {
+                    throw new Error('Kaydetme işlemi false döndü');
+                }
+
+            } catch (error) {
+                console.error('❌ Hata:', error);
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Hata: ${error.message}\n\n${error.stack}`;
+            }
+        }
+
+        // Test 3: Full Workflow
+        async function testFullWorkflow() {
+            const resultDiv = document.getElementById('workflowResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '⏳ Tam iş akışı test ediliyor...';
+
+            const logs = [];
+
+            try {
+                const patientId = document.getElementById('workflowPatientId').value.trim();
+                
+                if (!patientId) {
+                    throw new Error('Lütfen hasta ID girin');
+                }
+
+                // Adım 1: Load
+                logs.push('📥 ADIM 1: Hasta verisi yükleniyor...');
+                const initialData = await window.DAL.getPatient(patientId);
+                const patientData = initialData?.data || initialData || {};
+                
+                // Ad ve soyad - eski ve yeni format desteği
+                const firstName = patientData.firstName || 
+                                patientData.personalInfo?.name || 
+                                patientData.username || '';
+                const lastName = patientData.lastName || 
+                               patientData.personalInfo?.surname || '';
+                
+                logs.push(`✓ Yüklendi: ${firstName} ${lastName}`);
+                logs.push(`✓ Mevcut hafta sayısı: ${patientData.weeks?.length || 0}`);
+
+                // Adım 2: Modify
+                logs.push('\n🔧 ADIM 2: Veri modifikasyonu...');
+                const workflowTestData = {
+                    ...patientData,
+                    id: patientId,
+                    workflowTest: 'FULL_WORKFLOW_' + Date.now(),
+                    workflowTimestamp: new Date().toISOString()
+                };
+
+                // Weeks varsa son haftaya test günü ekle
+                if (workflowTestData.weeks && workflowTestData.weeks.length > 0) {
+                    const lastWeek = workflowTestData.weeks[workflowTestData.weeks.length - 1];
+                    if (!lastWeek.days) lastWeek.days = [];
+                    lastWeek.days.push({
+                        dayNumber: lastWeek.days.length + 1,
+                        meals: [{ name: 'Test Yemek', calories: 500 }],
+                        totalCalories: 500,
+                        workflowTest: true
+                    });
+                    logs.push(`✓ Son haftaya test günü eklendi (Gün ${lastWeek.days.length})`);
+                }
+
+                workflowTestData.updatedAt = new Date().toISOString();
+
+                // Adım 3: Save
+                logs.push('\n💾 ADIM 3: Değişiklikler kaydediliyor...');
+                const saved = await window.DAL.savePatient(workflowTestData);
+                
+                if (!saved) {
+                    throw new Error('Kaydetme işlemi false döndü');
+                }
+                logs.push('✓ Supabase\'e kaydedildi');
+
+                // Adım 4: Verify
+                logs.push('\n🔍 ADIM 4: Değişiklikler doğrulanıyor...');
+                const verification = await window.DAL.getPatient(patientId);
+                const verData = verification?.data || verification;
+
+                if (verData.workflowTest === workflowTestData.workflowTest) {
+                    logs.push('✓ workflowTest alanı doğrulandı');
+                } else {
+                    throw new Error('workflowTest alanı eşleşmiyor!');
+                }
+
+                if (verData.workflowTimestamp === workflowTestData.workflowTimestamp) {
+                    logs.push('✓ workflowTimestamp alanı doğrulandı');
+                } else {
+                    throw new Error('workflowTimestamp alanı eşleşmiyor!');
+                }
+
+                logs.push('\n✅ TAM İŞ AKIŞI BAŞARILI!');
+                logs.push('\n📊 Sonuç Özeti:');
+                
+                // Ad ve soyad - eski ve yeni format desteği
+                const verFirstName = verData.firstName || 
+                                   verData.personalInfo?.name || 
+                                   verData.username || '';
+                const verLastName = verData.lastName || 
+                                  verData.personalInfo?.surname || '';
+                
+                logs.push(`Hasta: ${verFirstName} ${verLastName}`);
+                logs.push(`Hafta Sayısı: ${verData.weeks?.length || 0}`);
+                logs.push(`Son Güncelleme: ${verData.updatedAt}`);
+                logs.push(`Test Alanları: ${verData.workflowTest}`);
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = logs.join('\n');
+
+            } catch (error) {
+                console.error('❌ Hata:', error);
+                logs.push(`\n❌ HATA: ${error.message}`);
+                resultDiv.className = 'result error';
+                resultDiv.textContent = logs.join('\n') + `\n\n${error.stack}`;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔄 Hasta Migration Testi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 { color: #667eea; margin: 0 0 10px 0; }
+        h2 { color: #333; margin: 20px 0 10px 0; border-bottom: 2px solid #667eea; padding-bottom: 5px; }
+        button {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #5568d3; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .success { color: #10b981; font-weight: bold; }
+        .error { color: #ef4444; font-weight: bold; }
+        .info { color: #3b82f6; }
+        pre {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            max-height: 400px;
+        }
+        .log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .step {
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #e0e0e0;
+            background: #f8f9fa;
+        }
+        .step.active { border-color: #667eea; background: #e8eaff; }
+        .step.done { border-color: #10b981; background: #d1fae5; }
+        .step.error { border-color: #ef4444; background: #fee2e2; }
+        select {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            margin: 10px 5px;
+            min-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>🔄 ADIM 1: Hasta Verisi Migration Testi</h1>
+        <p>Local JSON'dan Supabase'e hasta verisi aktarımı</p>
+        
+        <hr style="margin: 20px 0;">
+        
+        <h2>1️⃣ Hasta Seç</h2>
+        <select id="patientSelect">
+            <option value="">-- Hasta Seç --</option>
+        </select>
+        <button onclick="loadPatientList()">📋 Hasta Listesini Yükle</button>
+        <button onclick="migrateAllPatients()" style="background: #10b981;">🚀 Tüm Hastaları Migrate Et</button>
+        
+        <div id="patientInfo"></div>
+        <div id="bulkProgress" style="margin-top: 20px;"></div>
+        
+        <hr style="margin: 20px 0;">
+        
+        <h2>2️⃣ Migration Adımları</h2>
+        <div id="steps">
+            <div class="step" id="step1">📄 Local JSON'dan hasta verisi oku</div>
+            <div class="step" id="step2">🔍 Veri yapısını kontrol et</div>
+            <div class="step" id="step3">💾 Supabase'e kaydet (patients tablosu)</div>
+            <div class="step" id="step4">✅ Doğrulama yap</div>
+        </div>
+        
+        <button onclick="migratePatient()" id="migrateBtn" disabled>🚀 Migration Başlat</button>
+        <button onclick="verifyMigration()" id="verifyBtn" disabled>🔍 Doğrulama Yap</button>
+        
+        <hr style="margin: 20px 0;">
+        
+        <h2>3️⃣ Log</h2>
+        <div class="log" id="log"></div>
+        
+        <hr style="margin: 20px 0;">
+        
+        <h2>4️⃣ Veri Önizleme</h2>
+        <div id="preview"></div>
+    </div>
+
+    <!-- Config & Dependencies -->
+    <script src="./config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        let currentPatient = null;
+        let supabaseClient = null;
+        
+        // Log fonksiyonu
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6';
+            logDiv.innerHTML += `<div style="color: ${color}">[${time}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        // Step güncelle
+        function updateStep(stepId, status) {
+            const step = document.getElementById(stepId);
+            step.className = 'step ' + status;
+        }
+        
+        // Supabase client oluştur
+        window.addEventListener('DOMContentLoaded', () => {
+            log('🏠 Sayfa yüklendi');
+            
+            if (typeof supabase === 'undefined') {
+                log('❌ Supabase kütüphanesi yüklenemedi!', 'error');
+                return;
+            }
+            
+            if (typeof window.APP_CONFIG === 'undefined') {
+                log('❌ Config yüklenemedi!', 'error');
+                return;
+            }
+            
+            const config = window.APP_CONFIG.supabase;
+            supabaseClient = supabase.createClient(config.url, config.anonKey);
+            log('✅ Supabase client oluşturuldu', 'success');
+            log(`🗄️ Database: ${config.url}`);
+        });
+        
+        // Hasta listesini yükle
+        async function loadPatientList() {
+            try {
+                log('📋 Hasta listesi yükleniyor...');
+                
+                // hastalar/ klasöründeki JSON dosyalarını direkt listele
+                const patients = [
+                    'patient_001',
+                    'patient_1761123223097',
+                    'patient_1761135747439',
+                    'patient_1761489943986',
+                    'patient_1761679326659',
+                    'patient_1762097712792',
+                    'patient_1762151674616',
+                    'patient_1762176120684',
+                    'patient_1762176209447',
+                    'patient_1762763081510'
+                ];
+                
+                log(`✅ ${patients.length} hasta bulundu`, 'success');
+                
+                const select = document.getElementById('patientSelect');
+                select.innerHTML = '<option value="">-- Hasta Seç --</option>';
+                
+                // Her hasta için bilgi yükle
+                for (const patientId of patients) {
+                    const option = document.createElement('option');
+                    option.value = patientId;
+                    option.textContent = patientId;
+                    select.appendChild(option);
+                }
+                
+                log('✅ Liste hazır, hasta seçebilirsin', 'success');
+                
+                select.addEventListener('change', async function() {
+                    if (this.value) {
+                        await loadPatientData(this.value);
+                    }
+                });
+                
+            } catch (error) {
+                log(`❌ Hata: ${error.message}`, 'error');
+            }
+        }
+        
+        // Hasta verisini yükle
+        async function loadPatientData(patientId) {
+            try {
+                log(`📄 ${patientId} verisi yükleniyor...`);
+                
+                const response = await fetch(`./hastalar/${patientId}.json`);
+                currentPatient = await response.json();
+                
+                log(`✅ Hasta verisi yüklendi`, 'success');
+                
+                // Önizleme
+                const info = document.getElementById('patientInfo');
+                info.innerHTML = `
+                    <div style="background: #e8eaff; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                        <h3>📊 Hasta Bilgileri</h3>
+                        <p><strong>ID:</strong> ${currentPatient.id}</p>
+                        <p><strong>Ad Soyad:</strong> ${currentPatient.personalInfo?.name} ${currentPatient.personalInfo?.surname}</p>
+                        <p><strong>Kullanıcı Adı:</strong> ${currentPatient.username}</p>
+                        <p><strong>Hafta Sayısı:</strong> ${currentPatient.weeks?.length || 0}</p>
+                        <p><strong>Veri Boyutu:</strong> ${(JSON.stringify(currentPatient).length / 1024).toFixed(2)} KB</p>
+                    </div>
+                `;
+                
+                // Preview
+                const preview = document.getElementById('preview');
+                preview.innerHTML = `<pre>${JSON.stringify(currentPatient, null, 2).substring(0, 2000)}...</pre>`;
+                
+                document.getElementById('migrateBtn').disabled = false;
+                
+            } catch (error) {
+                log(`❌ Hata: ${error.message}`, 'error');
+            }
+        }
+        
+        // Migration başlat
+        async function migratePatient() {
+            if (!currentPatient) {
+                log('❌ Önce bir hasta seç!', 'error');
+                return;
+            }
+            
+            try {
+                document.getElementById('migrateBtn').disabled = true;
+                
+                // STEP 1: Veri okundu (zaten var)
+                updateStep('step1', 'done');
+                log('✅ Step 1: Veri okundu', 'success');
+                
+                // STEP 2: Veri kontrolü
+                updateStep('step2', 'active');
+                log('🔍 Step 2: Veri yapısı kontrol ediliyor...');
+                
+                const patientData = {
+                    patient_id: currentPatient.id,
+                    username: currentPatient.username || currentPatient.id,
+                    password_hash: currentPatient.passwordHash || 'temp_hash',
+                    name: currentPatient.personalInfo?.name || null,
+                    surname: currentPatient.personalInfo?.surname || null,
+                    age: currentPatient.personalInfo?.age || null,
+                    gender: currentPatient.personalInfo?.gender || null,
+                    weight: currentPatient.personalInfo?.weight || null,
+                    height: currentPatient.personalInfo?.height || null,
+                    bmi: currentPatient.personalInfo?.bmi || null,
+                    session_days: currentPatient.sessionDays || 7,
+                    status: currentPatient.status || 'active',
+                    max_devices: 3,
+                    notes: currentPatient.notes || null,
+                    data: currentPatient, // Tüm JSON'u JSONB kolonuna kaydet
+                    last_seen: new Date().toISOString(),
+                    created_at: currentPatient.createdAt || new Date().toISOString(),
+                    updated_at: currentPatient.updatedAt || new Date().toISOString()
+                };
+                
+                log(`✅ Veri hazırlandı: ${Object.keys(patientData).length} alan`, 'success');
+                updateStep('step2', 'done');
+                
+                // STEP 3: Supabase'e kaydet
+                updateStep('step3', 'active');
+                log('💾 Step 3: Supabase\'e kaydediliyor...');
+                
+                // Önce var mı kontrol et
+                const { data: existing } = await supabaseClient
+                    .from('patients')
+                    .select('id')
+                    .eq('patient_id', currentPatient.id)
+                    .single();
+                
+                let result;
+                if (existing) {
+                    log(`⚠️ Hasta zaten var, güncelleniyor...`);
+                    result = await supabaseClient
+                        .from('patients')
+                        .update(patientData)
+                        .eq('patient_id', currentPatient.id)
+                        .select();
+                } else {
+                    log(`➕ Yeni hasta ekleniyor...`);
+                    result = await supabaseClient
+                        .from('patients')
+                        .insert([patientData])
+                        .select();
+                }
+                
+                if (result.error) {
+                    throw result.error;
+                }
+                
+                log(`✅ Supabase'e kaydedildi! ID: ${result.data[0].id}`, 'success');
+                updateStep('step3', 'done');
+                
+                // STEP 4: Doğrulama
+                updateStep('step4', 'active');
+                document.getElementById('verifyBtn').disabled = false;
+                
+                log('🎉 Migration tamamlandı!', 'success');
+                log('👉 Şimdi "Doğrulama Yap" butonuna tıkla');
+                
+            } catch (error) {
+                log(`❌ Migration hatası: ${error.message}`, 'error');
+                console.error(error);
+                updateStep('step3', 'error');
+            }
+        }
+        
+        // Doğrulama
+        async function verifyMigration() {
+            try {
+                log('🔍 Doğrulama başlatılıyor...');
+                
+                const { data, error } = await supabaseClient
+                    .from('patients')
+                    .select('*')
+                    .eq('patient_id', currentPatient.id)
+                    .single();
+                
+                if (error) throw error;
+                
+                log(`✅ Supabase'den okundu!`, 'success');
+                log(`📊 Kayıt ID: ${data.id}`);
+                log(`👤 Ad: ${data.name} ${data.surname}`);
+                log(`📧 Username: ${data.username}`);
+                log(`📅 Oluşturulma: ${data.created_at}`);
+                log(`📦 JSONB Data boyutu: ${JSON.stringify(data.data).length} karakter`);
+                
+                // Karşılaştırma
+                const originalSize = JSON.stringify(currentPatient).length;
+                const savedSize = JSON.stringify(data.data).length;
+                
+                if (originalSize === savedSize) {
+                    log(`✅ VERİ BÜTÜNLÜĞÜ: Tam eşleşme! (${originalSize} karakter)`, 'success');
+                } else {
+                    log(`⚠️ VERİ BÜTÜNLÜĞÜ: Boyut farkı var (Orijinal: ${originalSize}, Kaydedilen: ${savedSize})`);
+                }
+                
+                updateStep('step4', 'done');
+                
+                // Preview güncelle
+                const preview = document.getElementById('preview');
+                preview.innerHTML = `
+                    <h3>🔄 Karşılaştırma</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <h4>📄 Orijinal (Local JSON)</h4>
+                            <pre>${JSON.stringify(currentPatient, null, 2).substring(0, 1000)}...</pre>
+                        </div>
+                        <div>
+                            <h4>💾 Kaydedilen (Supabase)</h4>
+                            <pre>${JSON.stringify(data.data, null, 2).substring(0, 1000)}...</pre>
+                        </div>
+                    </div>
+                `;
+                
+                log('🎉 DOĞRULAMA BAŞARILI!', 'success');
+                
+            } catch (error) {
+                log(`❌ Doğrulama hatası: ${error.message}`, 'error');
+                updateStep('step4', 'error');
+            }
+        }
+
+        // 🚀 TÜM HASTALARI MİGRATE ET
+        async function migrateAllPatients() {
+            const bulkProgress = document.getElementById('bulkProgress');
+            bulkProgress.innerHTML = '<h3>🚀 Toplu Migration Başlıyor...</h3>';
+            
+            // Hasta listesini al
+            const patientIds = [
+                'patient_001',
+                'patient_1761123223097',
+                'patient_1761135747439',
+                'patient_1761489943986',
+                'patient_1761679326659',
+                'patient_1762097712792', // Zaten migrate edildi
+                'patient_1762151674616',
+                'patient_1762176120684',
+                'patient_1762176209447',
+                'patient_1762763081510'
+            ];
+            
+            let successCount = 0;
+            let errorCount = 0;
+            const errors = [];
+            
+            bulkProgress.innerHTML += `<p>Toplam ${patientIds.length} hasta bulundu</p>`;
+            bulkProgress.innerHTML += `<div class="log" id="bulkLog"></div>`;
+            
+            const bulkLog = document.getElementById('bulkLog');
+            
+            for (let i = 0; i < patientIds.length; i++) {
+                const patientId = patientIds[i];
+                bulkLog.innerHTML += `<div>[${i+1}/${patientIds.length}] ${patientId} işleniyor...</div>`;
+                
+                try {
+                    // Hasta verisini yükle
+                    const response = await fetch(`hastalar/${patientId}.json`);
+                    if (!response.ok) {
+                        throw new Error('Dosya bulunamadı');
+                    }
+                    
+                    const patientData = await response.json();
+                    
+                    // Supabase'de var mı kontrol et
+                    const { data: existing } = await supabaseClient
+                        .from('patients')
+                        .select('patient_id')
+                        .eq('patient_id', patientId)
+                        .single();
+                    
+                    if (existing) {
+                        bulkLog.innerHTML += `<div style="color: orange;">⚠️ ${patientId} zaten var, atlanıyor...</div>`;
+                        continue;
+                    }
+                    
+                    // Supabase'e kaydet
+                    const { data, error } = await supabaseClient
+                        .from('patients')
+                        .insert({
+                            patient_id: patientId,
+                            name: patientData.name || 'İsimsiz',
+                            email: patientData.email || '',
+                            phone: patientData.phone || '',
+                            start_date: patientData.startDate || new Date().toISOString().split('T')[0],
+                            target_weight: patientData.targetWeight || 0,
+                            current_weight: patientData.currentWeight || 0,
+                            height: patientData.height || 0,
+                            age: patientData.age || 0,
+                            gender: patientData.gender || 'female',
+                            diet_type: patientData.dietType || 'ketojenik',
+                            activity_level: patientData.activityLevel || 'sedentary',
+                            medical_conditions: patientData.medicalConditions || [],
+                            allergies: patientData.allergies || [],
+                            preferences: patientData.preferences || {},
+                            restrictions: patientData.restrictions || [],
+                            goals: patientData.goals || [],
+                            notes: patientData.notes || '',
+                            data: patientData
+                        })
+                        .select();
+                    
+                    if (error) throw error;
+                    
+                    successCount++;
+                    bulkLog.innerHTML += `<div style="color: green;">✅ ${patientId} başarıyla kaydedildi (${data[0]?.patient_id})</div>`;
+                    
+                } catch (error) {
+                    errorCount++;
+                    errors.push({ patientId, error: error.message });
+                    bulkLog.innerHTML += `<div style="color: red;">❌ ${patientId} hata: ${error.message}</div>`;
+                }
+                
+                // Kısa bekleme
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            // Sonuç özeti
+            bulkLog.innerHTML += `<hr>`;
+            bulkLog.innerHTML += `<div style="font-weight: bold; color: green;">✅ Başarılı: ${successCount}</div>`;
+            bulkLog.innerHTML += `<div style="font-weight: bold; color: red;">❌ Hatalı: ${errorCount}</div>`;
+            
+            if (errors.length > 0) {
+                bulkLog.innerHTML += `<h4>Hatalar:</h4>`;
+                errors.forEach(e => {
+                    bulkLog.innerHTML += `<div>- ${e.patientId}: ${e.error}</div>`;
+                });
+            }
+            
+            // Final doğrulama
+            const { count } = await supabaseClient
+                .from('patients')
+                .select('*', { count: 'exact', head: true });
+            
+            bulkLog.innerHTML += `<hr>`;
+            bulkLog.innerHTML += `<div style="font-size: 18px; font-weight: bold; color: blue;">📊 Toplam ${count} hasta Supabase'de</div>`;
+        }
+    </script>
+</body>
+</html>

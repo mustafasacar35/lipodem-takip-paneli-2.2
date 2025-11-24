@@ -2,11 +2,7 @@
 // ADMIN CHAT MANAGER
 // ====================================
 
-// SUPABASE BAĞLANTISI
-// ⚠️ ÖNEMLİ: chat_manager.js ile aynı bilgileri kullanın!
-const SUPABASE_URL = 'https://rorkccxpjndllxemsmlo.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvcmtjY3hwam5kbGx4ZW1zbWxvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNTQxNTIsImV4cCI6MjA3NzkzMDE1Mn0.dVuUrVvBigxo2rMpUQcHKoemD7ovqejupi2OkkrxE7c';
-
+// Supabase bağlantısı config.js'den gelecek
 let supabaseClient = null;
 let selectedPatientId = null;
 let messagesSubscription = null;
@@ -60,14 +56,19 @@ function updateHeaderWithUsername() {
 
 // Supabase başlat
 async function initializeAdminChat() {
-    console.log('🚀🚀🚀 INIT ADMIN CHAT - VERSION 2.0 🚀🚀🚀');
+    console.log('🚀🚀🚀 INIT ADMIN CHAT - VERSION 2.0 (FULL SUPABASE) 🚀🚀🚀');
     
     // Admin kontrolü - admin_auth.js halledecek
     const isAuthenticated = await checkAdminAuth();
     if (!isAuthenticated) {
         console.log('⚠️ Session bulunamadı, admin_auth.js login overlay gösterecek');
-        // admin_auth.js auto-guard devreye girecek, burada beklemeye gerek yok
-        // Sayfayı durdurmuyoruz, sadece chat fonksiyonlarını başlatmıyoruz
+        return;
+    }
+    
+    // Supabase client'ı config.js'den al
+    if (typeof window.CONFIG === 'undefined' || !window.CONFIG.SUPABASE_URL) {
+        console.error('❌ CONFIG.js yüklenmedi veya Supabase bilgileri eksik!');
+        alert('Yapılandırma hatası! config.js kontrol edin.');
         return;
     }
     
@@ -76,7 +77,13 @@ async function initializeAdminChat() {
         return;
     }
     
-    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Supabase client oluştur
+    supabaseClient = supabase.createClient(
+        window.CONFIG.SUPABASE_URL, 
+        window.CONFIG.SUPABASE_ANON_KEY
+    );
+    
+    console.log('✅ Supabase client oluşturuldu:', window.CONFIG.SUPABASE_URL);
     
     // ✅ Hastaları yükle (AWAIT ile bekle - hasta isimleri yüklensin)
     console.log('📋 Hastalar yükleniyor...');
@@ -357,8 +364,8 @@ function playNotificationSound() {
 // Hastaları yükle
 async function loadPatients() {
     try {
-        // 1. Önce tüm hastaları yükle (hastalar/index.json'dan)
-        await loadAllPatientsFromIndex();
+        // 1. Önce tüm hastaları Supabase'den yükle
+        await loadAllPatientsFromSupabase();
         
         // 2. Sonra mesaj bilgilerini ekle
         await updatePatientsWithMessages();
@@ -377,81 +384,49 @@ async function loadPatients() {
     }
 }
 
-// Tüm hastaları index.json'dan yükle (GitHub API kaldırıldı - rate limit sorunu)
-async function loadAllPatientsFromIndex() {
+// Tüm hastaları Supabase'den yükle (JSON bağımlılığı kaldırıldı)
+async function loadAllPatientsFromSupabase() {
     try {
-        // 1️⃣ index.json'dan hastaları yükle (CACHE BYPASS)
-        const response = await fetch('./hastalar/index.json?t=' + Date.now(), {
-            cache: 'no-store'
-        });
-        
-        if (!response.ok) {
-            throw new Error('index.json yüklenemedi');
+        if (!supabaseClient) {
+            console.error('❌ Supabase client yok!');
+            return;
         }
         
-        const data = await response.json();
-        const indexPatients = data.patients || [];
+        // 1️⃣ Supabase'den tüm hastaları yükle (name + surname birleştir)
+        const { data: patients, error } = await supabaseClient
+            .from('patients')
+            .select('id, patient_id, name, surname, username, phone, email')
+            .order('name', { ascending: true });
         
-        console.log(`📋 index.json'da ${indexPatients.length} hasta bulundu`);
-        
-        // 2️⃣ Supabase'den mesajı olan hastaları da ekle
-        let supabasePatientIds = new Set();
-        
-        if (supabaseClient) {
-            try {
-                const { data: messages } = await supabaseClient
-                    .from('messages')
-                    .select('sender_id, receiver_id, sender_type, receiver_type');
-                
-                if (messages) {
-                    messages.forEach(msg => {
-                        if (msg.sender_type === 'patient') {
-                            supabasePatientIds.add(msg.sender_id);
-                        }
-                        if (msg.receiver_type === 'patient') {
-                            supabasePatientIds.add(msg.receiver_id);
-                        }
-                    });
-                    console.log(`� Supabase'de ${supabasePatientIds.size} hasta mesajı bulundu`);
-                }
-            } catch (err) {
-                console.warn('⚠️ Supabase hasta listesi alınamadı:', err);
-            }
+        if (error) {
+            console.error('❌ Hastalar yüklenemedi:', error);
+            throw error;
         }
         
-        // 3️⃣ index.json + Supabase hastalarını birleştir
-        const indexPatientIds = new Set(indexPatients.map(p => p.id));
-        const missingPatients = [...supabasePatientIds].filter(id => !indexPatientIds.has(id));
+        console.log(`📋 Supabase'den ${patients?.length || 0} hasta yüklendi`);
         
-        if (missingPatients.length > 0) {
-            console.log(`⚠️ index.json'da EKSIK hastalar bulundu (Supabase'den):`, missingPatients);
-        }
-        
-        // 4️⃣ Tüm hasta listesini oluştur
-        const allPatientIds = [...indexPatients.map(p => p.id), ...missingPatients];
-        
-        // Her hasta için isim yükle
-        const patientPromises = allPatientIds.map(async (patientId) => {
-            const patientData = await loadPatientName(patientId);
-            const indexData = indexPatients.find(p => p.id === patientId);
+        // 2️⃣ Her hasta için patient nesnesi oluştur (name + surname birleştir)
+        allPatients = (patients || []).map(p => {
+            const fullName = `${p.name || ''} ${p.surname || ''}`.trim() || 'İsimsiz Hasta';
             
             return {
-                id: patientId,
-                name: patientData.name,
-                username: indexData?.username || patientData.username || '',
+                id: p.id,
+                patient_id: p.patient_id, // 🔥 CRITICAL: patient_id eklendi
+                name: fullName,
+                username: p.username || '',
+                phone: p.phone || '',
+                email: p.email || '',
                 lastMessage: '',
                 lastMessageTime: null,
                 unreadCount: 0
             };
         });
         
-        allPatients = await Promise.all(patientPromises);
-        
-        console.log(`✅ Toplam ${allPatients.length} hasta yüklendi (index: ${indexPatients.length}, Supabase'den eklenen: ${missingPatients.length})`);
+        console.log(`✅ Toplam ${allPatients.length} hasta yüklendi (Supabase)`);
         
     } catch (error) {
-        console.warn('index.json yüklenemedi, mesajlardan yüklenecek:', error);
-        // Yedek: Mesajlardan yükle
+        console.error('❌ Hastalar yüklenirken hata:', error);
+        // Yedek: Mesajlardan hasta ID'lerini al
         await loadPatientsFromMessages();
     }
 }
@@ -612,40 +587,38 @@ async function loadPatientsManually() {
 // Hasta dosyasından gerçek ismi yükle
 async function loadPatientName(patientId) {
     try {
-        // Hasta dosyasını yükle (CACHE BYPASS)
-        const response = await fetch(`./hastalar/${patientId}.json?t=` + Date.now(), {
-            cache: 'no-store',
-            headers: {
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                'Pragma': 'no-cache'
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error('Hasta dosyası bulunamadı');
+        if (!supabaseClient) {
+            console.warn('⚠️ Supabase client yok');
+            return { name: formatPatientName(patientId), username: '' };
         }
         
-        const data = await response.json();
+        // Supabase'den hasta bilgilerini yükle (name + surname)
+        const { data, error } = await supabaseClient
+            .from('patients')
+            .select('id, patient_id, name, surname, username')
+            .eq('id', patientId)
+            .single();
         
-        // İsim ve soyisim birleştir (personalInfo içinde)
-        const name = data.personalInfo?.name || data.name || '';
-        const surname = data.personalInfo?.surname || data.surname || '';
-        const fullName = `${name} ${surname}`.trim();
+        if (error || !data) {
+            console.warn(`⚠️ Hasta bulunamadı (${patientId}):`, error?.message);
+            return { name: formatPatientName(patientId), username: '' };
+        }
         
-        // Username'i de al
+        // name + surname birleştir
+        const fullName = `${data.name || ''} ${data.surname || ''}`.trim() || formatPatientName(patientId);
         const username = data.username || '';
         
-        if (fullName) {
-            console.log(`✅ Hasta ismi yüklendi: ${patientId} -> ${fullName} (${username})`);
-            return { name: fullName, username: username };
-        }
+        return { 
+            name: fullName, 
+            username: username,
+            patient_id: data.patient_id // 🔥 patient_id eklendi
+        };
         
-        // Eğer dosyada isim yoksa ID'den oluştur
-        return { name: formatPatientName(patientId), username: username };
+        console.log(`✅ Hasta ismi yüklendi: ${patientId} -> ${fullName} (${username})`);
+        return { name: fullName, username: username };
         
     } catch (error) {
         console.warn(`⚠️ Hasta ismi yüklenemedi (${patientId}):`, error.message);
-        // Hata durumunda ID'den isim oluştur
         return { name: formatPatientName(patientId), username: '' };
     }
 }
@@ -710,7 +683,9 @@ function displayPatients(patients) {
     patients.forEach(patient => {
         const div = document.createElement('div');
         div.className = 'patient-item';
-        div.onclick = () => selectPatient(patient.id);
+        // 🔥 CRITICAL: Önce patient_id dene, yoksa id kullan (ama her zaman aynısını kullan)
+        const patientIdentifier = patient.patient_id || patient.id;
+        div.onclick = () => selectPatient(patientIdentifier);
         
         const initials = getInitials(patient.name);
         const lastMsg = patient.lastMessage ? 
@@ -722,7 +697,7 @@ function displayPatients(patients) {
             (new Date() - new Date(patient.lastSeen)) < 120000 : false;
         
         // Mute durumu
-        const isMuted = mutedPatients.includes(patient.id);
+        const isMuted = mutedPatients.includes(patientIdentifier);
         
         div.innerHTML = `
             <div class="online-status ${isOnline ? 'online' : ''}"></div>
@@ -733,8 +708,8 @@ function displayPatients(patients) {
             </div>
             ${patient.unreadCount > 0 ? `<span class="unread-badge">${patient.unreadCount}</span>` : ''}
             <button class="mute-btn ${isMuted ? 'muted' : ''}" 
-                    data-patient-id="${patient.id}"
-                    onclick="togglePatientMute('${patient.id}', event)"
+                    data-patient-id="${patientIdentifier}"
+                    onclick="togglePatientMute('${patientIdentifier}', event)"
                     title="${isMuted ? 'Bildirimleri Aç' : 'Sessize Al'}">
                 ${isMuted ? '🔕' : '🔔'}
             </button>
@@ -782,10 +757,10 @@ function selectPatient(patientId) {
     }
     
     // Hasta bilgilerini göster
-    const patient = allPatients.find(p => p.id === patientId);
+    const patient = allPatients.find(p => (p.patient_id || p.id) === patientId);
     if (patient) {
         document.getElementById('chatPatientName').textContent = patient.name;
-        document.getElementById('chatPatientId').textContent = `ID: ${patient.id}`;
+        document.getElementById('chatPatientId').textContent = `ID: ${patient.patient_id || patient.id}`;
     }
     
     // Mesajları yükle
@@ -948,7 +923,15 @@ async function sendMessage() {
     const input = document.getElementById('messageInput');
     const message = input.value.trim();
     
-    if (!message || !selectedPatientId) return;
+    if (!selectedPatientId) {
+        alert('⚠️ Lütfen önce bir hasta seçin!');
+        return;
+    }
+    
+    if (!message) {
+        alert('⚠️ Lütfen bir mesaj yazın!');
+        return;
+    }
     
     try {
         const { data, error } = await supabaseClient

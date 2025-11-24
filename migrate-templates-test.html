@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Migration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover { background: #45a049; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        
+        .progress-container {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-box {
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .log-container {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+        
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .log-time {
+            color: #888;
+            margin-right: 10px;
+        }
+        
+        .batch-info {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Şablon Migration Testi</h1>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value" id="totalTemplates">0</div>
+                <div class="stat-label">Toplam Şablon</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="migratedCount">0</div>
+                <div class="stat-label">Migrate Edilen</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="errorCount">0</div>
+                <div class="stat-label">Hata</div>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar">0%</div>
+            </div>
+            <div id="progressText" class="info" style="text-align: center; margin-top: 10px;">
+                Başlamadı
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <button id="startBtn" onclick="startMigration()">🚀 Migration Başlat</button>
+            <button id="verifyBtn" onclick="verifyMigration()" disabled>✅ Doğrula</button>
+        </div>
+        
+        <div id="statusDiv"></div>
+        
+        <div class="log-container" id="logContainer">
+            <div class="log-entry">
+                <span class="log-time">[Hazır]</span>
+                <span>Migration başlamayı bekliyor...</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script>
+        let templates = [];
+        let migratedCount = 0;
+        let errorCount = 0;
+        let batches = [];
+        const BATCH_SIZE = 100;
+        let supabaseClient = null;
+
+        function log(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const time = new Date().toLocaleTimeString();
+            const colors = {
+                info: '#0c5460',
+                success: '#155724',
+                error: '#721c24',
+                warning: '#856404'
+            };
+            
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `
+                <span class="log-time">[${time}]</span>
+                <span style="color: ${colors[type]}">${message}</span>
+            `;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusDiv');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function updateProgress(current, total) {
+            const percent = Math.round((current / total) * 100);
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            progressBar.style.width = percent + '%';
+            progressBar.textContent = percent + '%';
+            progressText.textContent = `${current} / ${total} işlendi`;
+            
+            document.getElementById('migratedCount').textContent = migratedCount;
+            document.getElementById('errorCount').textContent = errorCount;
+        }
+
+        async function loadTemplates() {
+            log('🔍 Şablon dosyaları yükleniyor...', 'info');
+            
+            try {
+                // templates/index.json dosyasını yükle
+                const response = await fetch('templates/index.json');
+                if (!response.ok) {
+                    throw new Error('index.json yüklenemedi');
+                }
+                
+                const index = await response.json();
+                templates = index.templates || [];
+                
+                document.getElementById('totalTemplates').textContent = templates.length;
+                log(`✅ ${templates.length} şablon bulundu`, 'success');
+                
+                // Batch'lere böl
+                for (let i = 0; i < templates.length; i += BATCH_SIZE) {
+                    batches.push(templates.slice(i, i + BATCH_SIZE));
+                }
+                
+                log(`📦 ${batches.length} batch oluşturuldu (her biri ${BATCH_SIZE} öğe)`, 'info');
+                return true;
+            } catch (error) {
+                log(`❌ Şablon yükleme hatası: ${error.message}`, 'error');
+                showStatus(`Hata: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function migrateTemplate(template) {
+            try {
+                // Şablon dosyasını yükle
+                const response = await fetch(`templates/${template.filename || template.id + '.json'}`);
+                if (!response.ok) {
+                    throw new Error(`Dosya yüklenemedi: ${template.id}`);
+                }
+                
+                const templateData = await response.json();
+                
+                // Supabase'e kaydet
+                const { data, error } = await supabaseClient
+                    .from('templates')
+                    .insert({
+                        template_id: templateData.id,
+                        name: templateData.name,
+                        type: templateData.type || 'day',
+                        calories: templateData.totalCalories || 0,
+                        protein: templateData.totalMacros?.protein || 0,
+                        carbs: templateData.totalMacros?.karb || 0,
+                        fat: templateData.totalMacros?.yag || 0,
+                        data: templateData,
+                        created_at: templateData.createdDate ? new Date(templateData.createdDate).toISOString() : new Date().toISOString()
+                    });
+
+                if (error) throw error;
+                
+                migratedCount++;
+                return { success: true, id: templateData.id };
+            } catch (error) {
+                errorCount++;
+                return { success: false, id: template.id, error: error.message };
+            }
+        }
+
+        async function migrateBatch(batch, batchIndex) {
+            log(`📦 Batch ${batchIndex + 1}/${batches.length} işleniyor (${batch.length} şablon)`, 'info');
+            
+            const promises = batch.map(template => migrateTemplate(template));
+            const results = await Promise.all(promises);
+            
+            const successCount = results.filter(r => r.success).length;
+            const failCount = results.filter(r => !r.success).length;
+            
+            // İlk hatayı logla
+            const firstError = results.find(r => !r.success);
+            if (firstError) {
+                log(`❌ Örnek hata: ${firstError.error}`, 'error');
+            }
+            
+            if (failCount > 0) {
+                log(`⚠️ Batch ${batchIndex + 1}: ${successCount} başarılı, ${failCount} hatalı`, 'warning');
+            } else {
+                log(`✅ Batch ${batchIndex + 1}: ${successCount} şablon başarıyla kaydedildi`, 'success');
+            }
+            
+            return results;
+        }
+
+        async function startMigration() {
+            const startBtn = document.getElementById('startBtn');
+            const verifyBtn = document.getElementById('verifyBtn');
+            
+            startBtn.disabled = true;
+            migratedCount = 0;
+            errorCount = 0;
+            
+            log('🚀 Migration başlıyor...', 'info');
+            showStatus('Migration işlemi başlatılıyor...', 'info');
+            
+            // Şablonları yükle
+            const loaded = await loadTemplates();
+            if (!loaded) {
+                startBtn.disabled = false;
+                return;
+            }
+            
+            // Supabase bağlantısını kontrol et
+            if (!supabaseClient) {
+                showStatus('❌ Supabase bağlantısı bulunamadı!', 'error');
+                log('❌ Supabase bağlantısı kurulamadı', 'error');
+                startBtn.disabled = false;
+                return;
+            }
+            
+            log('🔗 Supabase bağlantısı aktif', 'success');
+            
+            // Her batch'i sırayla işle
+            for (let i = 0; i < batches.length; i++) {
+                await migrateBatch(batches[i], i);
+                updateProgress((i + 1) * BATCH_SIZE, templates.length);
+                
+                // Batch'ler arası kısa bekleme
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            
+            log('🎉 Migration tamamlandı!', 'success');
+            log(`✅ Başarılı: ${migratedCount}`, 'success');
+            if (errorCount > 0) {
+                log(`❌ Hatalı: ${errorCount}`, 'error');
+            }
+            
+            showStatus(
+                `Migration tamamlandı! Başarılı: ${migratedCount}, Hatalı: ${errorCount}`,
+                errorCount > 0 ? 'warning' : 'success'
+            );
+            
+            verifyBtn.disabled = false;
+            startBtn.disabled = false;
+        }
+
+        async function verifyMigration() {
+            log('🔍 Doğrulama başlıyor...', 'info');
+            showStatus('Supabase veritabanı kontrol ediliyor...', 'info');
+            
+            try {
+                const { count, error } = await supabaseClient
+                    .from('templates')
+                    .select('*', { count: 'exact', head: true });
+                
+                if (error) throw error;
+                
+                log(`📊 Supabase'de ${count} şablon var`, 'info');
+                
+                if (count === templates.length) {
+                    log('🎉 BAŞARILI! Tüm şablonlar migrate edildi!', 'success');
+                    showStatus(`✅ Doğrulama başarılı! ${count} şablon Supabase'de`, 'success');
+                } else {
+                    log(`⚠️ Uyarı: ${templates.length} şablon bekleniyor, ${count} bulundu`, 'warning');
+                    showStatus(`⚠️ Eksik: ${templates.length - count} şablon`, 'warning');
+                }
+            } catch (error) {
+                log(`❌ Doğrulama hatası: ${error.message}`, 'error');
+                showStatus(`Hata: ${error.message}`, 'error');
+            }
+        }
+
+        // Sayfa yüklendiğinde Supabase'i başlat
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Supabase kütüphanesinin yüklenmesini bekle
+            let attempts = 0;
+            const maxAttempts = 10;
+            
+            while (!window.supabase && attempts < maxAttempts) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+            }
+            
+            if (!window.supabase) {
+                log('❌ Supabase kütüphanesi yüklenemedi!', 'error');
+                showStatus('Supabase kütüphanesi yüklenemedi!', 'error');
+                return;
+            }
+            
+            const CONFIG = window.CONFIG || window.APP_CONFIG;
+            
+            if (CONFIG && CONFIG.supabase) {
+                try {
+                    supabaseClient = window.supabase.createClient(
+                        CONFIG.supabase.url,
+                        CONFIG.supabase.anonKey
+                    );
+                    log('✅ Supabase client hazır', 'success');
+                    
+                    // Test bağlantısı
+                    const { data, error } = await supabaseClient
+                        .from('templates')
+                        .select('count', { count: 'exact', head: true });
+                    
+                    if (error && !error.message.includes('relation')) {
+                        throw error;
+                    }
+                    
+                    log('✅ Supabase bağlantı testi başarılı', 'success');
+                } catch (error) {
+                    log(`⚠️ Bağlantı uyarısı: ${error.message}`, 'warning');
+                }
+            } else {
+                log('❌ Config bulunamadı!', 'error');
+                showStatus('Config dosyası yüklenemedi!', 'error');
+            }
+        });
+    </script>
+    
+</body>
+</html>

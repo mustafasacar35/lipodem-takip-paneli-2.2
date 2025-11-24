@@ -68,12 +68,20 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // GitHub API ve raw.githubusercontent çağrılarını ASLA cache'leme
+  // ✅ Sadece http: ve https: protokollerini destekle
   const url = event.request.url;
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    console.log('⚠️ Unsupported protocol - skipping:', url);
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  // GitHub API ve raw.githubusercontent çağrılarını ASLA cache'leme
   if (url.includes('api.github.com') || 
       url.includes('raw.githubusercontent.com') || 
-      url.includes('settings/config.json')) {
-    console.log('🌐 GitHub API - cache atlanıyor:', url);
+      url.includes('settings/config.json') ||
+      url.includes('food_list.json')) { // ✅ food_list.json cache'leme
+    console.log('🌐 GitHub API / Critical File - cache atlanıyor:', url);
     event.respondWith(fetch(event.request));
     return;
   }
@@ -94,7 +102,17 @@ self.addEventListener('fetch', (event) => {
       })
       .catch(() => {
         // Network başarısız, cache'den dön (sadece GET istekleri için)
-        return caches.match(event.request);
+        return caches.match(event.request).then(response => {
+          if (response) {
+            return response;
+          }
+          // Cache'de de yoksa, 404 veya offline sayfası döndür
+          return new Response("Offline and not cached", { 
+            status: 503, 
+            statusText: "Service Unavailable",
+            headers: { 'Content-Type': 'text/plain' }
+          });
+        });
       })
   );
 });

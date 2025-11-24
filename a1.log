@@ -1,0 +1,602 @@
+ OneSignal Config yüklendi: ✅ APP_ID mevcut
+ ✅ UTF-8 encoding helper yüklendi
+ ✅ Global admin fonksiyonları yüklendi
+ 🚀 Başlatılıyor...
+ 📥 Admin config yükleniyor...
+ ✅ Admin config yüklendi: Object
+ 📥 GitHub config.json RAW: Object
+ 🏷️ Hasta paneli - Rozet ayarları yüklendi: Object
+    ✅ Aktif rozetler: Array(0)
+    ❌ Kapalı rozetler: Array(6)
+ ✅ scoreBy admin ayarlarından yüklendi: Array(2)
+ ✅ Admin ayarları yüklendi: Object
+ ✅ Match kriterleri: Object
+ ✅ Benzerlik skoru kriterleri (scoreBy): Array(2)
+ ✅ PDF Export butonu gösteriliyor
+ ✅ Manuel eşleştirmeler yüklendi (tarif kartları): 194
+ 🔔 OneSignal v16 yapılandırması başlatılıyor (HASTA)...
+ 🔍 DEBUG: OneSignal init VERSION 3.0 (LOCALHOST + PATIENT + AUTO PROMPT)
+ 🔔 OneSignal App ID: 109f129c-cd73-4708-ba9a-b3c8103c52dc (Domain: localhost)
+ 🌐 Localhost mode: true
+ ✅ Yasak kuralları yüklendi (tarif kartları): 18
+ ❌ OneSignal init hatası (HASTA): 
+(anonymous) @ patient_nutrition.html:218
+ ✅ Yemek veritabanı eşleştirmeleri yüklendi: 15
+ ✅ Session bulundu (patient_session), chat başlatılıyor...
+ ✅ Auth sisteminden hasta ID alındı (patient_session): patient_1762097712792
+ ✅ Chat başlatıldı. Hasta ID: patient_1762097712792
+ 🔔 Hasta OneSignal başlatılıyor...
+ 📱 Mevcut izin durumu: false
+ 🔔 Bildirim izni isteniyor...
+ ❌ Admin yetkisi bulunamadı
+ 👤 Normal kullanıcı - Admin özellikleri gizli
+ 🔒 Admin özellikleri gizli
+ 🔧 Service Worker v19 (PWA Cache Only - Push -> OneSignal) kuruluyor...
+ ✅ Cache açıldı: lipodem-takip-v19-NO-PUSH
+ ✅ Service Worker v12 kaydedildi: http://localhost:8001/
+ 📱 iOS Safe Area Top: Yok
+ 💫 PWA yüklenebilir durumda
+patient_nutrition.html:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+ ✅ Yemek veritabanı yasakları yüklendi: 1
+ ✅ Tarif kartları list.json ile yüklendi: 322
+ 📥 Yemek veritabanı yükleniyor...
+ ✅ Yemek veritabanı yüklendi: 694 yemek
+ 📋 İlk 3 yemek: Array(3)
+ 🔍 Mercimek içeren yemekler (8): Array(8)
+ ✅ Session bulundu: Object
+ 🔍 Hasta verisi yükleniyor: hastalar/patient_1762097712792.json
+ 🟢 Heartbeat gönderildi: patient_1762097712792
+ ✅ Hasta bilgileri GitHub'dan yüklendi: Object
+ 👤 Hasta dosyasında admin yetkisi YOK (isAdmin: false)
+ ✅ Hafta verileri yüklendi ve migrate edildi: 5 hafta
+ 📊 Varsayılan scoreBy kullanılıyor: Array(2)
+ 🔒 Admin özellikleri gizli
+ 🧮 Hedef makrolar hesaplandı: Object
+ ✅ Settings hasta verilerinden güncellendi: Object
+ 🔍 DEBUG: loadTemplates() öncesi - DAL mevcut mu? undefined undefined
+ 🔍 [LOADTEMPLATES] Başlatılıyor...
+ 📥 Şablonlar Supabase'den yükleniyor...
+ 🔍 [LOADTEMPLATES] window.DAL var mı? undefined
+ 🔍 [LOADTEMPLATES] window.DAL.getDayTemplates var mı? undefined
+ ❌ DAL.getDayTemplates() bulunamadı! data-access-layer.js yüklü mü?
+loadTemplates @ patient_nutrition.html:6495
+ 🔍 window.DAL: undefined
+loadTemplates @ patient_nutrition.html:6496
+ ⚠️ DAL ve localStorage boş!
+loadTemplates @ patient_nutrition.html:6504
+ ⚠️ DAL.getMealTemplates() bulunamadı
+loadTemplates @ patient_nutrition.html:6522
+ ✅ Şablonlar yüklendi (Supabase): Object
+ 🔍 DEBUG: loadTemplates() sonrası - dayTemplates uzunluğu: 0
+ 🔄 GitHub'dan veriler yükleniyor...
+ ✅ Mevcut hafta verileri kullanılıyor: 5 hafta
+ 🔍 applySettingsToForm çalıştırılıyor, patientData: Object
+ 📋 PersonalInfo: Object
+ ⚙️ Settings: Object
+ ✅ Form dolduruldu - Ad: Suzan Soyad: SACAR Yaş: 47
+ 📝 Kullanıcı adı ayarlara yüklendi: ssacar
+ ✅ Veriler başarıyla yüklendi
+ ❌ Admin yetkisi bulunamadı
+ 👤 Normal kullanıcı - Admin özellikleri gizli
+ 🔒 Admin özellikleri gizli
+ 🔍 getFoodDatabaseMapping - Aranan: "ketojenik tost (2 ince dilim keten tohumu ekmeği arasına 30 gr kaşar peyniri, 2 dilim hindi füme, yeşillikler)" → Temiz: "ketojenik tost" → Normal: "ketojenik tost"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ❌ isFoodInDatabase: "ketojenik tost (2 ince dilim keten tohumu ekmeği arasına 30 gr kaşar peyniri, 2 dilim hindi füme, yeşillikler)" → BULUNAMADI
+ 🔴 Veritabanında YOK: Object
+ 🏷️ Rozet ayarları (ketojenik tost (2 ince dilim keten tohumu ekmeği arasına 30 gr kaşar peyniri, 2 dilim hindi füme, yeşillikler)): Object
+ 🔍 findFoodInDatabase: "ketojenik tost (2 ince dilim keten tohumu ekmeği arasına 30 gr kaşar peyniri, 2 dilim hindi füme, yeşillikler)" → normalized: "ketojeniktost2incedilimketentohumuekmegiarasina30grkasarpeyniri2dilimhindifumeyesillikler", normalizedTr: "ketojenik tost 2 ince dilim keten tohumu ekmegi arasina 30 gr kasar peyniri 2 dilim hindi fume yesillikler"
+ ✅ İçeriyor eşleşmesi: "ketojenik tost (2 ince dilim keten tohumu ekmeği arasına 30 gr kaşar peyniri, 2 dilim hindi füme, yeşillikler)" → "Ketojenik Tost (Haşhaş Ezmesi Ekmeği + Kaşar + Hindi Füme)"
+ 🔍 getFoodDatabaseMapping - Aranan: "salatalık (orta boy) ,cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → Temiz: "salatalık ,cherry domates, 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → Normal: "salatalik ,cherry domates, 4-5 dal roka, 4-5 dal tere, 2 adet kucuk yesil biber"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "salatalık (orta boy) ,cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (salatalık (orta boy) ,cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber): Object
+ 🔍 findFoodInDatabase: "salatalık (orta boy) ,cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → normalized: "salatalikortaboycherrydomates2adet45dalroka45daltere2adetkucukyesilbiber", normalizedTr: "salatalik orta boy cherry domates 2 adet  45 dal roka 45 dal tere 2 adet kucuk yesil biber"
+ ✅ Tam eşleşme: "salatalık (orta boy) ,cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → "salatalık (orta boy) ,cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber"
+ 🔍 getFoodDatabaseMapping - Aranan: "ceviz (3 adet)" → Temiz: "ceviz" → Normal: "ceviz"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "ceviz (3 adet)" → BULUNDU (tam eşleşme)
+ ⛔ Yasak kural nedeniyle kart gösterilmedi: ceviz (3 adet) -> cevizli_biber_yogurtlamasi.jpg
+ 🏷️ Rozet ayarları (ceviz (3 adet)): Object
+ 🔍 findFoodInDatabase: "ceviz (3 adet)" → normalized: "ceviz3adet", normalizedTr: "ceviz 3 adet"
+ ✅ Tam eşleşme: "ceviz (3 adet)" → "Ceviz (3 adet)"
+ 🔍 getFoodDatabaseMapping - Aranan: "ispanaklı tavuk dolması" → Temiz: "ispanaklı tavuk dolması" → Normal: "ispanakli tavuk dolmasi"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ❌ isFoodInDatabase: "ispanaklı tavuk dolması" → BULUNAMADI
+ 🔴 Veritabanında YOK: Object
+ ✅ Otomatik eşleştirme bulundu: ispanakli_tavuk_dolmasi.jpg
+ 🏷️ Rozet ayarları (ispanaklı tavuk dolması): Object
+ 🔍 findFoodInDatabase: "ispanaklı tavuk dolması" → normalized: "ispanaklitavukdolmasi", normalizedTr: "ispanakli tavuk dolmasi"
+ ✅ Token tabanlı fuzzy eşleşme: "ispanaklı tavuk dolması" → "Ispanaklı ya da Pazılı Tavuk Dolması"
+ 🔍 getFoodDatabaseMapping - Aranan: "mevsim salata (1 yemek kaşığı zeytinyağı ile)" → Temiz: "mevsim salata" → Normal: "mevsim salata"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ❌ isFoodInDatabase: "mevsim salata (1 yemek kaşığı zeytinyağı ile)" → BULUNAMADI
+ 🔴 Veritabanında YOK: Object
+ 🏷️ Rozet ayarları (mevsim salata (1 yemek kaşığı zeytinyağı ile)): Object
+ 🔍 findFoodInDatabase: "mevsim salata (1 yemek kaşığı zeytinyağı ile)" → normalized: "mevsimsalata1yemekkasigizeytinyagiile", normalizedTr: "mevsim salata 1 yemek kasigi zeytinyagi ile"
+ ✅ İçeriyor eşleşmesi: "mevsim salata (1 yemek kaşığı zeytinyağı ile)" → "Mevsim salata (marul, dereotu, roka, kırmızı lahana, turp + 1 yemek kaşığı zeytinyağı)"
+ 🔍 getFoodDatabaseMapping - Aranan: "çiğ badem (10 adet)" → Temiz: "çiğ badem" → Normal: "cig badem"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "çiğ badem (10 adet)" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (çiğ badem (10 adet)): Object
+ 🔍 findFoodInDatabase: "çiğ badem (10 adet)" → normalized: "cigbadem10adet", normalizedTr: "cig badem 10 adet"
+ ✅ Tam eşleşme: "çiğ badem (10 adet)" → "çiğ badem (10 adet)"
+ 🔍 getFoodDatabaseMapping - Aranan: "haşlanmış yumurta (2 adet) + (üzerine eritilmiş 1 tatlı kaşığı tereyağı ve istenilen baharatlar" → Temiz: "haşlanmış yumurta + (üzerine eritilmiş 1 tatlı kaşığı tereyağı ve istenilen baharatlar" → Normal: "haslanmis yumurta + (uzerine eritilmis 1 tatli kasigi tereyagi ve istenilen baharatlar"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "haşlanmış yumurta (2 adet) + (üzerine eritilmiş 1 tatlı kaşığı tereyağı ve istenilen baharatlar" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (haşlanmış yumurta (2 adet) + (üzerine eritilmiş 1 tatlı kaşığı tereyağı ve istenilen baharatlar): Object
+ 🔍 findFoodInDatabase: "haşlanmış yumurta (2 adet) + (üzerine eritilmiş 1 tatlı kaşığı tereyağı ve istenilen baharatlar" → normalized: "haslanmisyumurta2adetuzerineeritilmis1tatlikasigitereyagiveistenilenbaharatlar", normalizedTr: "haslanmis yumurta 2 adet  uzerine eritilmis 1 tatli kasigi tereyagi ve istenilen baharatlar"
+ ✅ Tam eşleşme: "haşlanmış yumurta (2 adet) + (üzerine eritilmiş 1 tatlı kaşığı tereyağı ve istenilen baharatlar" → "haşlanmış yumurta (2 adet) + (üzerine eritilmiş 1 tatlı kaşığı tereyağı ve istenilen baharatlar"
+ 🔍 getFoodDatabaseMapping - Aranan: "tulum / kaşar peyniri (30 gram)" → Temiz: "tulum / kaşar peyniri" → Normal: "tulum / kasar peyniri"
+ ✅ EŞLEŞME BULUNDU! Key: "tulum / kasar peyniri" → Normal: "tulum / kasar peyniri"
+ ❌ Admin yetkisi bulunamadı
+ ❌ isFoodInDatabase: "tulum / kaşar peyniri (30 gram)" → BULUNAMADI
+ 🔴 Veritabanında YOK: Object
+ 🏷️ Rozet ayarları (tulum / kaşar peyniri (30 gram)): Object
+ 🔍 findFoodInDatabase: "tulum / kaşar peyniri (30 gram)" → normalized: "tulumkasarpeyniri30gram", normalizedTr: "tulum kasar peyniri 30 gram"
+ ✅ İçeriyor eşleşmesi: "tulum / kaşar peyniri (30 gram)" → "Tulum /kaşar peyniri (50 gram)"
+ 🔍 getFoodDatabaseMapping - Aranan: "haşhaş ezmesi ekmeği (1 dilim)" → Temiz: "haşhaş ezmesi ekmeği" → Normal: "hashas ezmesi ekmegi"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "haşhaş ezmesi ekmeği (1 dilim)" → BULUNDU (tam eşleşme)
+ ✅ Otomatik eşleştirme bulundu: hashas_ezmesi_ekmegi.jpg
+ 🏷️ Rozet ayarları (haşhaş ezmesi ekmeği (1 dilim)): Object
+ 🔍 findFoodInDatabase: "haşhaş ezmesi ekmeği (1 dilim)" → normalized: "hashasezmesiekmegi1dilim", normalizedTr: "hashas ezmesi ekmegi 1 dilim"
+ ✅ Tam eşleşme: "haşhaş ezmesi ekmeği (1 dilim)" → "Haşhaş ezmesi ekmeği (1 dilim)"
+ 🔍 getFoodDatabaseMapping - Aranan: "zeytin (5 adet)" → Temiz: "zeytin" → Normal: "zeytin"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "zeytin (5 adet)" → BULUNDU (tam eşleşme)
+ ⛔ Yasak kural nedeniyle kart gösterilmedi: zeytin (5 adet) -> girit_usulu_zeytinli_meze.jpg
+ 🏷️ Rozet ayarları (zeytin (5 adet)): Object
+ 🔍 findFoodInDatabase: "zeytin (5 adet)" → normalized: "zeytin5adet", normalizedTr: "zeytin 5 adet"
+ ✅ Tam eşleşme: "zeytin (5 adet)" → "zeytin (5 adet)"
+ 🔍 getFoodDatabaseMapping - Aranan: "bonfile steak" → Temiz: "bonfile steak" → Normal: "bonfile steak"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "bonfile steak" → BULUNDU (tam eşleşme)
+ ✅ Otomatik eşleştirme bulundu: bonfile_steak.jpg
+ 🏷️ Rozet ayarları (bonfile steak): Object
+ 🔍 findFoodInDatabase: "bonfile steak" → normalized: "bonfilesteak", normalizedTr: "bonfile steak"
+ ✅ Tam eşleşme: "bonfile steak" → "Bonfile Steak"
+ 🔍 getFoodDatabaseMapping - Aranan: "yeşil salata (mevsim yeşillikleri+ 1 tatlı kaşığı zeytinyağı)" → Temiz: "yeşil salata" → Normal: "yesil salata"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ❌ isFoodInDatabase: "yeşil salata (mevsim yeşillikleri+ 1 tatlı kaşığı zeytinyağı)" → BULUNAMADI
+ 🔴 Veritabanında YOK: Object
+ 🏷️ Rozet ayarları (yeşil salata (mevsim yeşillikleri+ 1 tatlı kaşığı zeytinyağı)): Object
+ 🔍 findFoodInDatabase: "yeşil salata (mevsim yeşillikleri+ 1 tatlı kaşığı zeytinyağı)" → normalized: "yesilsalatamevsimyesillikleri1tatlikasigizeytinyagi", normalizedTr: "yesil salata mevsim yesillikleri 1 tatli kasigi zeytinyagi"
+ ✅ Parantez temizleme: "yeşil salata (mevsim yeşillikleri+ 1 tatlı kaşığı zeytinyağı)" → "Yeşil Salata"
+ 🔍 getFoodDatabaseMapping - Aranan: "ev yapımı turşu" → Temiz: "ev yapımı turşu" → Normal: "ev yapimi tursu"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "ev yapımı turşu" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (ev yapımı turşu): Object
+ 🔍 findFoodInDatabase: "ev yapımı turşu" → normalized: "evyapimitursu", normalizedTr: "ev yapimi tursu"
+ ✅ Tam eşleşme: "ev yapımı turşu" → "Ev yapımı turşu"
+ 🔍 getFoodDatabaseMapping - Aranan: "kabak çekirdeği (1 avuç)" → Temiz: "kabak çekirdeği" → Normal: "kabak cekirdegi"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "kabak çekirdeği (1 avuç)" → BULUNDU (tam eşleşme)
+ ✅ Otomatik eşleştirme bulundu: kabak__cekirdegi_unlu_tost.jpg
+ 🏷️ Rozet ayarları (kabak çekirdeği (1 avuç)): Object
+ 🔍 findFoodInDatabase: "kabak çekirdeği (1 avuç)" → normalized: "kabakcekirdegi1avuc", normalizedTr: "kabak cekirdegi 1 avuc"
+ ✅ Tam eşleşme: "kabak çekirdeği (1 avuç)" → "Kabak Çekirdeği (1 avuç)"
+ 🔍 getFoodDatabaseMapping - Aranan: "kollajen (1 ölçek 10 gram)" → Temiz: "kollajen" → Normal: "kollajen"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "kollajen (1 ölçek 10 gram)" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (kollajen (1 ölçek 10 gram)): Object
+ 🔍 findFoodInDatabase: "kollajen (1 ölçek 10 gram)" → normalized: "kollajen1olcek10gram", normalizedTr: "kollajen 1 olcek 10 gram"
+ ✅ Tam eşleşme: "kollajen (1 ölçek 10 gram)" → "Kollajen (1 ölçek 10 gram)"
+ 🔍 getFoodDatabaseMapping - Aranan: "ketojenik tost (2 ince dilim keten tohumu ekmeği arasına 30 gr kaşar peyniri, 2 dilim hindi füme, yeşillikler)" → Temiz: "ketojenik tost" → Normal: "ketojenik tost"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ❌ isFoodInDatabase: "ketojenik tost (2 ince dilim keten tohumu ekmeği arasına 30 gr kaşar peyniri, 2 dilim hindi füme, yeşillikler)" → BULUNAMADI
+ 🔴 Veritabanında YOK: Object
+ 🏷️ Rozet ayarları (ketojenik tost (2 ince dilim keten tohumu ekmeği arasına 30 gr kaşar peyniri, 2 dilim hindi füme, yeşillikler)): Object
+ 🔍 findFoodInDatabase: "ketojenik tost (2 ince dilim keten tohumu ekmeği arasına 30 gr kaşar peyniri, 2 dilim hindi füme, yeşillikler)" → normalized: "ketojeniktost2incedilimketentohumuekmegiarasina30grkasarpeyniri2dilimhindifumeyesillikler", normalizedTr: "ketojenik tost 2 ince dilim keten tohumu ekmegi arasina 30 gr kasar peyniri 2 dilim hindi fume yesillikler"
+ ✅ İçeriyor eşleşmesi: "ketojenik tost (2 ince dilim keten tohumu ekmeği arasına 30 gr kaşar peyniri, 2 dilim hindi füme, yeşillikler)" → "Ketojenik Tost (Haşhaş Ezmesi Ekmeği + Kaşar + Hindi Füme)"
+ 🔍 getFoodDatabaseMapping - Aranan: "salatalık (orta boy) ,cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → Temiz: "salatalık ,cherry domates, 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → Normal: "salatalik ,cherry domates, 4-5 dal roka, 4-5 dal tere, 2 adet kucuk yesil biber"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "salatalık (orta boy) ,cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (salatalık (orta boy) ,cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber): Object
+ 🔍 findFoodInDatabase: "salatalık (orta boy) ,cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → normalized: "salatalikortaboycherrydomates2adet45dalroka45daltere2adetkucukyesilbiber", normalizedTr: "salatalik orta boy cherry domates 2 adet  45 dal roka 45 dal tere 2 adet kucuk yesil biber"
+ ✅ Tam eşleşme: "salatalık (orta boy) ,cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → "salatalık (orta boy) ,cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber"
+ 🔍 getFoodDatabaseMapping - Aranan: "ceviz (3 adet)" → Temiz: "ceviz" → Normal: "ceviz"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "ceviz (3 adet)" → BULUNDU (tam eşleşme)
+ ⛔ Yasak kural nedeniyle kart gösterilmedi: ceviz (3 adet) -> cevizli_biber_yogurtlamasi.jpg
+ 🏷️ Rozet ayarları (ceviz (3 adet)): Object
+ 🔍 findFoodInDatabase: "ceviz (3 adet)" → normalized: "ceviz3adet", normalizedTr: "ceviz 3 adet"
+ ✅ Tam eşleşme: "ceviz (3 adet)" → "Ceviz (3 adet)"
+ 🔍 getFoodDatabaseMapping - Aranan: "ispanaklı tavuk dolması" → Temiz: "ispanaklı tavuk dolması" → Normal: "ispanakli tavuk dolmasi"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ❌ isFoodInDatabase: "ispanaklı tavuk dolması" → BULUNAMADI
+ 🔴 Veritabanında YOK: Object
+ ✅ Otomatik eşleştirme bulundu: ispanakli_tavuk_dolmasi.jpg
+ 🏷️ Rozet ayarları (ispanaklı tavuk dolması): Object
+ 🔍 findFoodInDatabase: "ispanaklı tavuk dolması" → normalized: "ispanaklitavukdolmasi", normalizedTr: "ispanakli tavuk dolmasi"
+ ✅ Token tabanlı fuzzy eşleşme: "ispanaklı tavuk dolması" → "Ispanaklı ya da Pazılı Tavuk Dolması"
+ 🔍 getFoodDatabaseMapping - Aranan: "mevsim salata (1 yemek kaşığı zeytinyağı ile)" → Temiz: "mevsim salata" → Normal: "mevsim salata"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ❌ isFoodInDatabase: "mevsim salata (1 yemek kaşığı zeytinyağı ile)" → BULUNAMADI
+ 🔴 Veritabanında YOK: Object
+ 🏷️ Rozet ayarları (mevsim salata (1 yemek kaşığı zeytinyağı ile)): Object
+ 🔍 findFoodInDatabase: "mevsim salata (1 yemek kaşığı zeytinyağı ile)" → normalized: "mevsimsalata1yemekkasigizeytinyagiile", normalizedTr: "mevsim salata 1 yemek kasigi zeytinyagi ile"
+ ✅ İçeriyor eşleşmesi: "mevsim salata (1 yemek kaşığı zeytinyağı ile)" → "Mevsim salata (marul, dereotu, roka, kırmızı lahana, turp + 1 yemek kaşığı zeytinyağı)"
+ 🔍 getFoodDatabaseMapping - Aranan: "çiğ badem (10 adet)" → Temiz: "çiğ badem" → Normal: "cig badem"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "çiğ badem (10 adet)" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (çiğ badem (10 adet)): Object
+ 🔍 findFoodInDatabase: "çiğ badem (10 adet)" → normalized: "cigbadem10adet", normalizedTr: "cig badem 10 adet"
+ ✅ Tam eşleşme: "çiğ badem (10 adet)" → "çiğ badem (10 adet)"
+ 🔍 getFoodDatabaseMapping - Aranan: "günlük su tüketimi 2 litrenin üzerinde olması önerilir" → Temiz: "günlük su tüketimi 2 litrenin üzerinde olması önerilir" → Normal: "gunluk su tuketimi 2 litrenin uzerinde olmasi onerilir"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ❌ isFoodInDatabase: "günlük su tüketimi 2 litrenin üzerinde olması önerilir" → BULUNAMADI
+ 🔴 Veritabanında YOK: Object
+ 🏷️ Rozet ayarları (günlük su tüketimi 2 litrenin üzerinde olması önerilir): Object
+ 🔍 findFoodInDatabase: "günlük su tüketimi 2 litrenin üzerinde olması önerilir" → normalized: "gunluksutuketimi2litreninuzerindeolmasionerilir", normalizedTr: "gunluk su tuketimi 2 litrenin uzerinde olmasi onerilir"
+ ❌ Eşleşme bulunamadı: "günlük su tüketimi 2 litrenin üzerinde olması önerilir"
+ 🔍 getFoodDatabaseMapping - Aranan: "günlük su tüketimi 2 litrenin üzerinde olması önerilir" → Temiz: "günlük su tüketimi 2 litrenin üzerinde olması önerilir" → Normal: "gunluk su tuketimi 2 litrenin uzerinde olmasi onerilir"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ 🔍 getFoodDatabaseMapping - Aranan: "badem unlu krep (1 yumurta ve 1 çorba kaşığı badem ununu çırpın. i̇stediğiniz baharatları ekleyin1 tatlı kaşığı zeytinyağı" → Temiz: "badem unlu krep (1 yumurta ve 1 çorba kaşığı badem ununu çırpın. i̇stediğiniz baharatları ekleyin1 tatlı kaşığı zeytinyağı" → Normal: "badem unlu krep (1 yumurta ve 1 corba kasigi badem ununu cirpin. istediginiz baharatlari ekleyin1 tatli kasigi zeytinyagi"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "badem unlu krep (1 yumurta ve 1 çorba kaşığı badem ununu çırpın. i̇stediğiniz baharatları ekleyin1 tatlı kaşığı zeytinyağı" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (badem unlu krep (1 yumurta ve 1 çorba kaşığı badem ununu çırpın. i̇stediğiniz baharatları ekleyin1 tatlı kaşığı zeytinyağı): Object
+ 🔍 findFoodInDatabase: "badem unlu krep (1 yumurta ve 1 çorba kaşığı badem ununu çırpın. i̇stediğiniz baharatları ekleyin1 tatlı kaşığı zeytinyağı" → normalized: "bademunlukrep1yumurtave1corbakasigibademununucirpinistediginizbaharatlariekleyin1tatlikasigizeytinyagi", normalizedTr: "badem unlu krep 1 yumurta ve 1 corba kasigi badem ununu cirpin istediginiz baharatlari ekleyin1 tatli kasigi zeytinyagi"
+ ✅ Tam eşleşme: "badem unlu krep (1 yumurta ve 1 çorba kaşığı badem ununu çırpın. i̇stediğiniz baharatları ekleyin1 tatlı kaşığı zeytinyağı" → "badem unlu krep (1 yumurta ve 1 çorba kaşığı badem ununu çırpın. i̇stediğiniz baharatları ekleyin1 tatlı kaşığı zeytinyağı"
+ 🔍 getFoodDatabaseMapping - Aranan: "zeytin (5 adet)" → Temiz: "zeytin" → Normal: "zeytin"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "zeytin (5 adet)" → BULUNDU (tam eşleşme)
+ ⛔ Yasak kural nedeniyle kart gösterilmedi: zeytin (5 adet) -> girit_usulu_zeytinli_meze.jpg
+ 🏷️ Rozet ayarları (zeytin (5 adet)): Object
+ 🔍 findFoodInDatabase: "zeytin (5 adet)" → normalized: "zeytin5adet", normalizedTr: "zeytin 5 adet"
+ ✅ Tam eşleşme: "zeytin (5 adet)" → "zeytin (5 adet)"
+ 🔍 getFoodDatabaseMapping - Aranan: "salatalık (orta boy), cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → Temiz: "salatalık, cherry domates, 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → Normal: "salatalik, cherry domates, 4-5 dal roka, 4-5 dal tere, 2 adet kucuk yesil biber"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "salatalık (orta boy), cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (salatalık (orta boy), cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber): Object
+ 🔍 findFoodInDatabase: "salatalık (orta boy), cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → normalized: "salatalikortaboycherrydomates2adet45dalroka45daltere2adetkucukyesilbiber", normalizedTr: "salatalik orta boy  cherry domates 2 adet  45 dal roka 45 dal tere 2 adet kucuk yesil biber"
+ ✅ Tam eşleşme: "salatalık (orta boy), cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → "salatalık (orta boy) ,cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber"
+ 🔍 getFoodDatabaseMapping - Aranan: "ceviz (3 adet)" → Temiz: "ceviz" → Normal: "ceviz"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "ceviz (3 adet)" → BULUNDU (tam eşleşme)
+ ⛔ Yasak kural nedeniyle kart gösterilmedi: ceviz (3 adet) -> cevizli_biber_yogurtlamasi.jpg
+ 🏷️ Rozet ayarları (ceviz (3 adet)): Object
+ 🔍 findFoodInDatabase: "ceviz (3 adet)" → normalized: "ceviz3adet", normalizedTr: "ceviz 3 adet"
+ ✅ Tam eşleşme: "ceviz (3 adet)" → "Ceviz (3 adet)"
+ 🔍 getFoodDatabaseMapping - Aranan: "ızgara tavuk göğsü (1 yemek kaşığı zeytinyağı ve istenilen baharatlarla ile marine edilmiş)" → Temiz: "ızgara tavuk göğsü" → Normal: "izgara tavuk gogsu"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "ızgara tavuk göğsü (1 yemek kaşığı zeytinyağı ve istenilen baharatlarla ile marine edilmiş)" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (ızgara tavuk göğsü (1 yemek kaşığı zeytinyağı ve istenilen baharatlarla ile marine edilmiş)): Object
+ 🔍 findFoodInDatabase: "ızgara tavuk göğsü (1 yemek kaşığı zeytinyağı ve istenilen baharatlarla ile marine edilmiş)" → normalized: "izgaratavukgogsu1yemekkasigizeytinyagiveistenilenbaharatlarlailemarineedilmis", normalizedTr: "izgara tavuk gogsu 1 yemek kasigi zeytinyagi ve istenilen baharatlarla ile marine edilmis"
+ ✅ Tam eşleşme: "ızgara tavuk göğsü (1 yemek kaşığı zeytinyağı ve istenilen baharatlarla ile marine edilmiş)" → "ızgara tavuk göğsü (1 yemek kaşığı zeytinyağı ve istenilen baharatlarla ile marine edilmiş)"
+ 🔍 getFoodDatabaseMapping - Aranan: "zeytinyağlı deniz börülcesi ya da mevsim salata" → Temiz: "zeytinyağlı deniz börülcesi ya da mevsim salata" → Normal: "zeytinyagli deniz borulcesi ya da mevsim salata"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ❌ isFoodInDatabase: "zeytinyağlı deniz börülcesi ya da mevsim salata" → BULUNAMADI
+ 🔴 Veritabanında YOK: Object
+ ✅ Otomatik eşleştirme bulundu: zeytinyagli_deniz_borulcesi.jpg
+ 🏷️ Rozet ayarları (zeytinyağlı deniz börülcesi ya da mevsim salata): Object
+ 🔍 findFoodInDatabase: "zeytinyağlı deniz börülcesi ya da mevsim salata" → normalized: "zeytinyaglidenizborulcesiyadamevsimsalata", normalizedTr: "zeytinyagli deniz borulcesi ya da mevsim salata"
+ ✅ İçeriyor eşleşmesi: "zeytinyağlı deniz börülcesi ya da mevsim salata" → "Zeytinyağlı Deniz Börülcesi"
+ 🔍 getFoodDatabaseMapping - Aranan: "yeşil salata (marul, dereotu, roka, kırmızı lahana, 1 yemek kaşığı zeytinyağı)" → Temiz: "yeşil salata" → Normal: "yesil salata"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "yeşil salata (marul, dereotu, roka, kırmızı lahana, 1 yemek kaşığı zeytinyağı)" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (yeşil salata (marul, dereotu, roka, kırmızı lahana, 1 yemek kaşığı zeytinyağı)): Object
+ 🔍 findFoodInDatabase: "yeşil salata (marul, dereotu, roka, kırmızı lahana, 1 yemek kaşığı zeytinyağı)" → normalized: "yesilsalatamaruldereoturokakirmizilahana1yemekkasigizeytinyagi", normalizedTr: "yesil salata marul dereotu roka kirmizi lahana 1 yemek kasigi zeytinyagi"
+ ✅ Tam eşleşme: "yeşil salata (marul, dereotu, roka, kırmızı lahana, 1 yemek kaşığı zeytinyağı)" → "Yeşil salata (marul, dereotu, roka, kırmızı lahana, 1 yemek kaşığı zeytinyağı)"
+ 🔍 getFoodDatabaseMapping - Aranan: "çilek" → Temiz: "çilek" → Normal: "cilek"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "çilek" → BULUNDU (tam eşleşme)
+ ✅ Otomatik eşleştirme bulundu: cilekli_limonlu_smoothie.jpg
+ 🏷️ Rozet ayarları (çilek): Object
+ 🔍 findFoodInDatabase: "çilek" → normalized: "cilek", normalizedTr: "cilek"
+ ✅ Tam eşleşme: "çilek" → "çilek"
+ 🔍 getFoodDatabaseMapping - Aranan: "kollajen (1 ölçek 10 gram)" → Temiz: "kollajen" → Normal: "kollajen"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "kollajen (1 ölçek 10 gram)" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (kollajen (1 ölçek 10 gram)): Object
+ 🔍 findFoodInDatabase: "kollajen (1 ölçek 10 gram)" → normalized: "kollajen1olcek10gram", normalizedTr: "kollajen 1 olcek 10 gram"
+ ✅ Tam eşleşme: "kollajen (1 ölçek 10 gram)" → "Kollajen (1 ölçek 10 gram)"
+ 🔍 getFoodDatabaseMapping - Aranan: "susamlı omlet" → Temiz: "susamlı omlet" → Normal: "susamli omlet"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "susamlı omlet" → BULUNDU (tam eşleşme)
+ ✅ Manuel eşleştirme bulundu: Array(1)
+ 🏷️ Rozet ayarları (susamlı omlet): Object
+ 🔍 findFoodInDatabase: "susamlı omlet" → normalized: "susamliomlet", normalizedTr: "susamli omlet"
+ ✅ Tam eşleşme: "susamlı omlet" → "Susamlı Omlet"
+ 🔍 getFoodDatabaseMapping - Aranan: "zeytin (5 adet)" → Temiz: "zeytin" → Normal: "zeytin"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "zeytin (5 adet)" → BULUNDU (tam eşleşme)
+ ⛔ Yasak kural nedeniyle kart gösterilmedi: zeytin (5 adet) -> girit_usulu_zeytinli_meze.jpg
+ 🏷️ Rozet ayarları (zeytin (5 adet)): Object
+ 🔍 findFoodInDatabase: "zeytin (5 adet)" → normalized: "zeytin5adet", normalizedTr: "zeytin 5 adet"
+ ✅ Tam eşleşme: "zeytin (5 adet)" → "zeytin (5 adet)"
+ 🔍 getFoodDatabaseMapping - Aranan: "çiğ badem (10 adet)" → Temiz: "çiğ badem" → Normal: "cig badem"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "çiğ badem (10 adet)" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (çiğ badem (10 adet)): Object
+ 🔍 findFoodInDatabase: "çiğ badem (10 adet)" → normalized: "cigbadem10adet", normalizedTr: "cig badem 10 adet"
+ ✅ Tam eşleşme: "çiğ badem (10 adet)" → "çiğ badem (10 adet)"
+ 🔍 getFoodDatabaseMapping - Aranan: "mevsim yeşillikleri (dereotu, roka, maydanoz, marul vs.sirke ve limon +1 tatlı kaşığı zeytinyağı ile)" → Temiz: "mevsim yeşillikleri" → Normal: "mevsim yesillikleri"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ❌ isFoodInDatabase: "mevsim yeşillikleri (dereotu, roka, maydanoz, marul vs.sirke ve limon +1 tatlı kaşığı zeytinyağı ile)" → BULUNAMADI
+ 🔴 Veritabanında YOK: Object
+ 🏷️ Rozet ayarları (mevsim yeşillikleri (dereotu, roka, maydanoz, marul vs.sirke ve limon +1 tatlı kaşığı zeytinyağı ile)): Object
+ 🔍 findFoodInDatabase: "mevsim yeşillikleri (dereotu, roka, maydanoz, marul vs.sirke ve limon +1 tatlı kaşığı zeytinyağı ile)" → normalized: "mevsimyesillikleridereoturokamaydanozmarulvssirkevelimon1tatlikasigizeytinyagiile", normalizedTr: "mevsim yesillikleri dereotu roka maydanoz marul vssirke ve limon 1 tatli kasigi zeytinyagi ile"
+ ✅ İçeriyor eşleşmesi: "mevsim yeşillikleri (dereotu, roka, maydanoz, marul vs.sirke ve limon +1 tatlı kaşığı zeytinyağı ile)" → "mevsim yeşillikleri (dereotu, roka, maydanoz, marul vs + limon, sirke ve 1 tatlı kaşığı zeytinyağı ile"
+ 🔍 getFoodDatabaseMapping - Aranan: "haşhaş ezmesi ekmeği (1 dilim)" → Temiz: "haşhaş ezmesi ekmeği" → Normal: "hashas ezmesi ekmegi"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "haşhaş ezmesi ekmeği (1 dilim)" → BULUNDU (tam eşleşme)
+ ✅ Otomatik eşleştirme bulundu: hashas_ezmesi_ekmegi.jpg
+ 🏷️ Rozet ayarları (haşhaş ezmesi ekmeği (1 dilim)): Object
+ 🔍 findFoodInDatabase: "haşhaş ezmesi ekmeği (1 dilim)" → normalized: "hashasezmesiekmegi1dilim", normalizedTr: "hashas ezmesi ekmegi 1 dilim"
+ ✅ Tam eşleşme: "haşhaş ezmesi ekmeği (1 dilim)" → "Haşhaş ezmesi ekmeği (1 dilim)"
+ 🔍 getFoodDatabaseMapping - Aranan: "ızgara ya da fırında balık (çupra, levrek, alabalık vs.)" → Temiz: "ızgara ya da fırında balık" → Normal: "izgara ya da firinda balik"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "ızgara ya da fırında balık (çupra, levrek, alabalık vs.)" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (ızgara ya da fırında balık (çupra, levrek, alabalık vs.)): Object
+ 🔍 findFoodInDatabase: "ızgara ya da fırında balık (çupra, levrek, alabalık vs.)" → normalized: "izgarayadafirindabalikcupralevrekalabalikvs", normalizedTr: "izgara ya da firinda balik cupra levrek alabalik vs"
+ ✅ Tam eşleşme: "ızgara ya da fırında balık (çupra, levrek, alabalık vs.)" → "ızgara ya da fırında balık (çupra, levrek, alabalık vs.)"
+ 🔍 getFoodDatabaseMapping - Aranan: "bir yemek kaşığı tahin içerisine, 1 adet ezilmiş ceviz içi ve hafif tarçın serpin)" → Temiz: "bir yemek kaşığı tahin içerisine, 1 adet ezilmiş ceviz içi ve hafif tarçın serpin)" → Normal: "bir yemek kasigi tahin icerisine, 1 adet ezilmis ceviz ici ve hafif tarcin serpin)"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "bir yemek kaşığı tahin içerisine, 1 adet ezilmiş ceviz içi ve hafif tarçın serpin)" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (bir yemek kaşığı tahin içerisine, 1 adet ezilmiş ceviz içi ve hafif tarçın serpin)): Object
+ 🔍 findFoodInDatabase: "bir yemek kaşığı tahin içerisine, 1 adet ezilmiş ceviz içi ve hafif tarçın serpin)" → normalized: "biryemekkasigitahinicerisine1adetezilmiscevizicivehafiftarcinserpin", normalizedTr: "bir yemek kasigi tahin icerisine 1 adet ezilmis ceviz ici ve hafif tarcin serpin"
+ ✅ Tam eşleşme: "bir yemek kaşığı tahin içerisine, 1 adet ezilmiş ceviz içi ve hafif tarçın serpin)" → "Bir yemek kaşığı tahin içerisine, 1 adet ezilmiş ceviz içi ve hafif tarçın serpin)"
+ 🔍 getFoodDatabaseMapping - Aranan: "haşlanmış yumurta (2 adet)" → Temiz: "haşlanmış yumurta" → Normal: "haslanmis yumurta"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "haşlanmış yumurta (2 adet)" → BULUNDU (tam eşleşme)
+ ✅ Otomatik eşleştirme bulundu: haslanmis_yumurta_kapama.jpg
+ 🏷️ Rozet ayarları (haşlanmış yumurta (2 adet)): Object
+ 🔍 findFoodInDatabase: "haşlanmış yumurta (2 adet)" → normalized: "haslanmisyumurta2adet", normalizedTr: "haslanmis yumurta 2 adet"
+ ✅ Tam eşleşme: "haşlanmış yumurta (2 adet)" → "haşlanmış yumurta (2 adet)"
+ 🔍 getFoodDatabaseMapping - Aranan: "beyaz peynir" → Temiz: "beyaz peynir" → Normal: "beyaz peynir"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "beyaz peynir" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (beyaz peynir): Object
+ 🔍 findFoodInDatabase: "beyaz peynir" → normalized: "beyazpeynir", normalizedTr: "beyaz peynir"
+ ✅ Tam eşleşme: "beyaz peynir" → "beyaz peynir"
+ 🔍 getFoodDatabaseMapping - Aranan: "salatalık (orta boy), cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber+1 yemek kaşığı zeytinyağı" → Temiz: "salatalık, cherry domates, 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber+1 yemek kaşığı zeytinyağı" → Normal: "salatalik, cherry domates, 4-5 dal roka, 4-5 dal tere, 2 adet kucuk yesil biber+1 yemek kasigi zeytinyagi"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "salatalık (orta boy), cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber+1 yemek kaşığı zeytinyağı" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (salatalık (orta boy), cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber+1 yemek kaşığı zeytinyağı): Object
+ 🔍 findFoodInDatabase: "salatalık (orta boy), cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber+1 yemek kaşığı zeytinyağı" → normalized: "salatalikortaboycherrydomates2adet45dalroka45daltere2adetkucukyesilbiber1yemekkasigizeytinyagi", normalizedTr: "salatalik orta boy  cherry domates 2 adet  45 dal roka 45 dal tere 2 adet kucuk yesil biber1 yemek kasigi zeytinyagi"
+ ✅ Tam eşleşme: "salatalık (orta boy), cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber+1 yemek kaşığı zeytinyağı" → "salatalık (orta boy), cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber+1 yemek kaşığı zeytinyağı"
+ 🔍 getFoodDatabaseMapping - Aranan: "çiğ badem (10 adet)" → Temiz: "çiğ badem" → Normal: "cig badem"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "çiğ badem (10 adet)" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (çiğ badem (10 adet)): Object
+ 🔍 findFoodInDatabase: "çiğ badem (10 adet)" → normalized: "cigbadem10adet", normalizedTr: "cig badem 10 adet"
+ ✅ Tam eşleşme: "çiğ badem (10 adet)" → "çiğ badem (10 adet)"
+ 🔍 getFoodDatabaseMapping - Aranan: "zeytin (10 adet)" → Temiz: "zeytin" → Normal: "zeytin"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "zeytin (10 adet)" → BULUNDU (tam eşleşme)
+ ⛔ Yasak kural nedeniyle kart gösterilmedi: zeytin (10 adet) -> girit_usulu_zeytinli_meze.jpg
+ 🏷️ Rozet ayarları (zeytin (10 adet)): Object
+ 🔍 findFoodInDatabase: "zeytin (10 adet)" → normalized: "zeytin10adet", normalizedTr: "zeytin 10 adet"
+ ✅ Tam eşleşme: "zeytin (10 adet)" → "Zeytin (10 adet)"
+ 🔍 getFoodDatabaseMapping - Aranan: "köfte" → Temiz: "köfte" → Normal: "kofte"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "köfte" → BULUNDU (tam eşleşme)
+ ✅ Manuel eşleştirme bulundu: Array(1)
+ 🏷️ Rozet ayarları (köfte): Object
+ 🔍 findFoodInDatabase: "köfte" → normalized: "kofte", normalizedTr: "kofte"
+ ✅ Tam eşleşme: "köfte" → "Köfte"
+ 🔍 getFoodDatabaseMapping - Aranan: "yeşil salata (marul, dereotu, roka, kırmızı lahana,1 yemek kaşığı zeytinyağı)" → Temiz: "yeşil salata" → Normal: "yesil salata"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "yeşil salata (marul, dereotu, roka, kırmızı lahana,1 yemek kaşığı zeytinyağı)" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (yeşil salata (marul, dereotu, roka, kırmızı lahana,1 yemek kaşığı zeytinyağı)): Object
+ 🔍 findFoodInDatabase: "yeşil salata (marul, dereotu, roka, kırmızı lahana,1 yemek kaşığı zeytinyağı)" → normalized: "yesilsalatamaruldereoturokakirmizilahana1yemekkasigizeytinyagi", normalizedTr: "yesil salata marul dereotu roka kirmizi lahana1 yemek kasigi zeytinyagi"
+ ✅ Tam eşleşme: "yeşil salata (marul, dereotu, roka, kırmızı lahana,1 yemek kaşığı zeytinyağı)" → "Yeşil salata (marul, dereotu, roka, kırmızı lahana, 1 yemek kaşığı zeytinyağı)"
+ 🔍 getFoodDatabaseMapping - Aranan: "kollajen (1 ölçek 10 gram)" → Temiz: "kollajen" → Normal: "kollajen"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "kollajen (1 ölçek 10 gram)" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (kollajen (1 ölçek 10 gram)): Object
+ 🔍 findFoodInDatabase: "kollajen (1 ölçek 10 gram)" → normalized: "kollajen1olcek10gram", normalizedTr: "kollajen 1 olcek 10 gram"
+ ✅ Tam eşleşme: "kollajen (1 ölçek 10 gram)" → "Kollajen (1 ölçek 10 gram)"
+ 🔍 getFoodDatabaseMapping - Aranan: "haşlanmış yumurta (2 adet) + (üzerine eritilmiş 1 tatlı kaşığı tereyağı ve istenilen baharatlar" → Temiz: "haşlanmış yumurta + (üzerine eritilmiş 1 tatlı kaşığı tereyağı ve istenilen baharatlar" → Normal: "haslanmis yumurta + (uzerine eritilmis 1 tatli kasigi tereyagi ve istenilen baharatlar"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "haşlanmış yumurta (2 adet) + (üzerine eritilmiş 1 tatlı kaşığı tereyağı ve istenilen baharatlar" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (haşlanmış yumurta (2 adet) + (üzerine eritilmiş 1 tatlı kaşığı tereyağı ve istenilen baharatlar): Object
+ 🔍 findFoodInDatabase: "haşlanmış yumurta (2 adet) + (üzerine eritilmiş 1 tatlı kaşığı tereyağı ve istenilen baharatlar" → normalized: "haslanmisyumurta2adetuzerineeritilmis1tatlikasigitereyagiveistenilenbaharatlar", normalizedTr: "haslanmis yumurta 2 adet  uzerine eritilmis 1 tatli kasigi tereyagi ve istenilen baharatlar"
+ ✅ Tam eşleşme: "haşlanmış yumurta (2 adet) + (üzerine eritilmiş 1 tatlı kaşığı tereyağı ve istenilen baharatlar" → "haşlanmış yumurta (2 adet) + (üzerine eritilmiş 1 tatlı kaşığı tereyağı ve istenilen baharatlar"
+ 🔍 getFoodDatabaseMapping - Aranan: "tulum / kaşar / lor peyniri (50 gram)" → Temiz: "tulum / kaşar / lor peyniri" → Normal: "tulum / kasar / lor peyniri"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "tulum / kaşar / lor peyniri (50 gram)" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (tulum / kaşar / lor peyniri (50 gram)): Object
+ 🔍 findFoodInDatabase: "tulum / kaşar / lor peyniri (50 gram)" → normalized: "tulumkasarlorpeyniri50gram", normalizedTr: "tulum kasar lor peyniri 50 gram"
+ ✅ Tam eşleşme: "tulum / kaşar / lor peyniri (50 gram)" → "tulum / kaşar / lor peyniri (50 gram)"
+ 🔍 getFoodDatabaseMapping - Aranan: "yeşillikler (dereotu, maydanoz, marul sirke + limon ve 1 yemek kaşığı zeytinyağı ile)" → Temiz: "yeşillikler" → Normal: "yesillikler"
+ ✅ EŞLEŞME BULUNDU! Key: "yesillikler" → Normal: "yesillikler"
+ ❌ Admin yetkisi bulunamadı
+ ❌ isFoodInDatabase: "yeşillikler (dereotu, maydanoz, marul sirke + limon ve 1 yemek kaşığı zeytinyağı ile)" → BULUNAMADI
+ 🔴 Veritabanında YOK: Object
+ 🏷️ Rozet ayarları (yeşillikler (dereotu, maydanoz, marul sirke + limon ve 1 yemek kaşığı zeytinyağı ile)): Object
+ 🔍 findFoodInDatabase: "yeşillikler (dereotu, maydanoz, marul sirke + limon ve 1 yemek kaşığı zeytinyağı ile)" → normalized: "yesilliklerdereotumaydanozmarulsirkelimonve1yemekkasigizeytinyagiile", normalizedTr: "yesillikler dereotu maydanoz marul sirke  limon ve 1 yemek kasigi zeytinyagi ile"
+ ✅ İçeriyor eşleşmesi: "yeşillikler (dereotu, maydanoz, marul sirke + limon ve 1 yemek kaşığı zeytinyağı ile)" → "mevsim yeşillikleri (dereotu, roka, maydanoz, marul vs + limon, sirke ve 1 tatlı kaşığı zeytinyağı ile"
+ 🔍 getFoodDatabaseMapping - Aranan: "zeytin (5 adet)" → Temiz: "zeytin" → Normal: "zeytin"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "zeytin (5 adet)" → BULUNDU (tam eşleşme)
+ ⛔ Yasak kural nedeniyle kart gösterilmedi: zeytin (5 adet) -> girit_usulu_zeytinli_meze.jpg
+ 🏷️ Rozet ayarları (zeytin (5 adet)): Object
+ 🔍 findFoodInDatabase: "zeytin (5 adet)" → normalized: "zeytin5adet", normalizedTr: "zeytin 5 adet"
+ ✅ Tam eşleşme: "zeytin (5 adet)" → "zeytin (5 adet)"
+ 🔍 getFoodDatabaseMapping - Aranan: "pita ekmeği (1 adet)" → Temiz: "pita ekmeği" → Normal: "pita ekmegi"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "pita ekmeği (1 adet)" → BULUNDU (tam eşleşme)
+ ✅ Otomatik eşleştirme bulundu: pita_ekmegi.jpg
+ 🏷️ Rozet ayarları (pita ekmeği (1 adet)): Object
+ 🔍 findFoodInDatabase: "pita ekmeği (1 adet)" → normalized: "pitaekmegi1adet", normalizedTr: "pita ekmegi 1 adet"
+ ✅ Tam eşleşme: "pita ekmeği (1 adet)" → "pita ekmeği (1 adet)"
+ 🔍 getFoodDatabaseMapping - Aranan: "fındık (20 adet)" → Temiz: "fındık" → Normal: "findik"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "fındık (20 adet)" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (fındık (20 adet)): Object
+ 🔍 findFoodInDatabase: "fındık (20 adet)" → normalized: "findik20adet", normalizedTr: "findik 20 adet"
+ ✅ Tam eşleşme: "fındık (20 adet)" → "fındık (20 adet)"
+ 🔍 getFoodDatabaseMapping - Aranan: "ızgara ya da fırında balık (çupra, levrek, alabalık vs.)" → Temiz: "ızgara ya da fırında balık" → Normal: "izgara ya da firinda balik"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "ızgara ya da fırında balık (çupra, levrek, alabalık vs.)" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (ızgara ya da fırında balık (çupra, levrek, alabalık vs.)): Object
+ 🔍 findFoodInDatabase: "ızgara ya da fırında balık (çupra, levrek, alabalık vs.)" → normalized: "izgarayadafirindabalikcupralevrekalabalikvs", normalizedTr: "izgara ya da firinda balik cupra levrek alabalik vs"
+ ✅ Tam eşleşme: "ızgara ya da fırında balık (çupra, levrek, alabalık vs.)" → "ızgara ya da fırında balık (çupra, levrek, alabalık vs.)"
+ 🔍 getFoodDatabaseMapping - Aranan: "badem unlu krep (1 yumurta ve 1 çorba kaşığı badem ununu çırpın. i̇stediğiniz baharatları ekleyin1 tatlı kaşığı zeytinyağı" → Temiz: "badem unlu krep (1 yumurta ve 1 çorba kaşığı badem ununu çırpın. i̇stediğiniz baharatları ekleyin1 tatlı kaşığı zeytinyağı" → Normal: "badem unlu krep (1 yumurta ve 1 corba kasigi badem ununu cirpin. istediginiz baharatlari ekleyin1 tatli kasigi zeytinyagi"
+ ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+ ❌ Admin yetkisi bulunamadı
+ ✅ isFoodInDatabase: "badem unlu krep (1 yumurta ve 1 çorba kaşığı badem ununu çırpın. i̇stediğiniz baharatları ekleyin1 tatlı kaşığı zeytinyağı" → BULUNDU (tam eşleşme)
+ 🏷️ Rozet ayarları (badem unlu krep (1 yumurta ve 1 çorba kaşığı badem ununu çırpın. i̇stediğiniz baharatları ekleyin1 tatlı kaşığı zeytinyağı): Object
+ 🔍 findFoodInDatabase: "badem unlu krep (1 yumurta ve 1 çorba kaşığı badem ununu çırpın. i̇stediğiniz baharatları ekleyin1 tatlı kaşığı zeytinyağı" → normalized: "bademunlukrep1yumurtave1corbakasigibademununucirpinistediginizbaharatlariekleyin1tatlikasigizeytinyagi", normalizedTr: "badem unlu krep 1 yumurta ve 1 corba kasigi badem ununu cirpin istediginiz baharatlari ekleyin1 tatli kasigi zeytinyagi"
+ ✅ Tam eşleşme: "badem unlu krep (1 yumurta ve 1 çorba kaşığı badem ununu çırpın. i̇stediğiniz baharatları ekleyin1 tatlı kaşığı zeytinyağı" → "badem unlu krep (1 yumurta ve 1 çorba kaşığı badem ununu çırpın. i̇stediğiniz baharatları ekleyin1 tatlı kaşığı zeytinyağı"
+patient_nutrition.html:3928 🔍 getFoodDatabaseMapping - Aranan: "kısık ateşte arkalı önlü pişirin.)" → Temiz: "kısık ateşte arkalı önlü pişirin.)" → Normal: "kisik ateste arkali onlu pisirin.)"
+patient_nutrition.html:3949 ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+patient_nutrition.html:10388 ❌ Admin yetkisi bulunamadı
+patient_nutrition.html:3896 ❌ isFoodInDatabase: "kısık ateşte arkalı önlü pişirin.)" → BULUNAMADI
+patient_nutrition.html:7796 🔴 Veritabanında YOK: Object
+patient_nutrition.html:4863 🏷️ Rozet ayarları (kısık ateşte arkalı önlü pişirin.)): Object
+patient_nutrition.html:4541 🔍 findFoodInDatabase: "kısık ateşte arkalı önlü pişirin.)" → normalized: "kisikatestearkalionlupisirin", normalizedTr: "kisik ateste arkali onlu pisirin"
+patient_nutrition.html:4661 ✅ Token tabanlı fuzzy eşleşme: "kısık ateşte arkalı önlü pişirin.)" → "1 yumurta, 1 çorba kaşığı lupin unu ile krep (1 çay kaşığı zeytinyağı tavayı yağlamak için)yumurta ve lupin ununu çırpın, istediğiniz baharatları ekleyin Kısık ateşli tavayı yağlayarak arkalı önlü pişirin"
+patient_nutrition.html:3928 🔍 getFoodDatabaseMapping - Aranan: "zeytin (5 adet)" → Temiz: "zeytin" → Normal: "zeytin"
+patient_nutrition.html:3949 ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+patient_nutrition.html:10388 ❌ Admin yetkisi bulunamadı
+patient_nutrition.html:3894 ✅ isFoodInDatabase: "zeytin (5 adet)" → BULUNDU (tam eşleşme)
+patient_nutrition.html:4795 ⛔ Yasak kural nedeniyle kart gösterilmedi: zeytin (5 adet) -> girit_usulu_zeytinli_meze.jpg
+patient_nutrition.html:4863 🏷️ Rozet ayarları (zeytin (5 adet)): Object
+patient_nutrition.html:4541 🔍 findFoodInDatabase: "zeytin (5 adet)" → normalized: "zeytin5adet", normalizedTr: "zeytin 5 adet"
+patient_nutrition.html:4592 ✅ Tam eşleşme: "zeytin (5 adet)" → "zeytin (5 adet)"
+patient_nutrition.html:3928 🔍 getFoodDatabaseMapping - Aranan: "salatalık (orta boy), cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → Temiz: "salatalık, cherry domates, 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → Normal: "salatalik, cherry domates, 4-5 dal roka, 4-5 dal tere, 2 adet kucuk yesil biber"
+patient_nutrition.html:3949 ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+patient_nutrition.html:10388 ❌ Admin yetkisi bulunamadı
+patient_nutrition.html:3894 ✅ isFoodInDatabase: "salatalık (orta boy), cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → BULUNDU (tam eşleşme)
+patient_nutrition.html:4863 🏷️ Rozet ayarları (salatalık (orta boy), cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber): Object
+patient_nutrition.html:4541 🔍 findFoodInDatabase: "salatalık (orta boy), cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → normalized: "salatalikortaboycherrydomates2adet45dalroka45daltere2adetkucukyesilbiber", normalizedTr: "salatalik orta boy  cherry domates 2 adet  45 dal roka 45 dal tere 2 adet kucuk yesil biber"
+patient_nutrition.html:4592 ✅ Tam eşleşme: "salatalık (orta boy), cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber" → "salatalık (orta boy) ,cherry domates (2 adet), 4-5 dal roka, 4-5 dal tere, 2 adet küçük yeşil biber"
+patient_nutrition.html:3928 🔍 getFoodDatabaseMapping - Aranan: "ceviz (3 adet)" → Temiz: "ceviz" → Normal: "ceviz"
+patient_nutrition.html:3949 ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+patient_nutrition.html:10388 ❌ Admin yetkisi bulunamadı
+patient_nutrition.html:3894 ✅ isFoodInDatabase: "ceviz (3 adet)" → BULUNDU (tam eşleşme)
+patient_nutrition.html:4795 ⛔ Yasak kural nedeniyle kart gösterilmedi: ceviz (3 adet) -> cevizli_biber_yogurtlamasi.jpg
+patient_nutrition.html:4863 🏷️ Rozet ayarları (ceviz (3 adet)): Object
+patient_nutrition.html:4541 🔍 findFoodInDatabase: "ceviz (3 adet)" → normalized: "ceviz3adet", normalizedTr: "ceviz 3 adet"
+patient_nutrition.html:4592 ✅ Tam eşleşme: "ceviz (3 adet)" → "Ceviz (3 adet)"
+patient_nutrition.html:3928 🔍 getFoodDatabaseMapping - Aranan: "ızgara tavuk göğsü (1 yemek kaşığı zeytinyağı ve istenilen baharatlarla ile marine edilmiş)" → Temiz: "ızgara tavuk göğsü" → Normal: "izgara tavuk gogsu"
+patient_nutrition.html:3949 ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+patient_nutrition.html:10388 ❌ Admin yetkisi bulunamadı
+patient_nutrition.html:3894 ✅ isFoodInDatabase: "ızgara tavuk göğsü (1 yemek kaşığı zeytinyağı ve istenilen baharatlarla ile marine edilmiş)" → BULUNDU (tam eşleşme)
+patient_nutrition.html:4863 🏷️ Rozet ayarları (ızgara tavuk göğsü (1 yemek kaşığı zeytinyağı ve istenilen baharatlarla ile marine edilmiş)): Object
+patient_nutrition.html:4541 🔍 findFoodInDatabase: "ızgara tavuk göğsü (1 yemek kaşığı zeytinyağı ve istenilen baharatlarla ile marine edilmiş)" → normalized: "izgaratavukgogsu1yemekkasigizeytinyagiveistenilenbaharatlarlailemarineedilmis", normalizedTr: "izgara tavuk gogsu 1 yemek kasigi zeytinyagi ve istenilen baharatlarla ile marine edilmis"
+patient_nutrition.html:4592 ✅ Tam eşleşme: "ızgara tavuk göğsü (1 yemek kaşığı zeytinyağı ve istenilen baharatlarla ile marine edilmiş)" → "ızgara tavuk göğsü (1 yemek kaşığı zeytinyağı ve istenilen baharatlarla ile marine edilmiş)"
+patient_nutrition.html:3928 🔍 getFoodDatabaseMapping - Aranan: "zeytinyağlı deniz börülcesi ya da semizotu salata" → Temiz: "zeytinyağlı deniz börülcesi ya da semizotu salata" → Normal: "zeytinyagli deniz borulcesi ya da semizotu salata"
+patient_nutrition.html:3949 ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+patient_nutrition.html:10388 ❌ Admin yetkisi bulunamadı
+patient_nutrition.html:3896 ❌ isFoodInDatabase: "zeytinyağlı deniz börülcesi ya da semizotu salata" → BULUNAMADI
+patient_nutrition.html:7796 🔴 Veritabanında YOK: Object
+patient_nutrition.html:4799 ✅ Otomatik eşleştirme bulundu: zeytinyagli_deniz_borulcesi.jpg
+patient_nutrition.html:4863 🏷️ Rozet ayarları (zeytinyağlı deniz börülcesi ya da semizotu salata): Object
+patient_nutrition.html:4541 🔍 findFoodInDatabase: "zeytinyağlı deniz börülcesi ya da semizotu salata" → normalized: "zeytinyaglidenizborulcesiyadasemizotusalata", normalizedTr: "zeytinyagli deniz borulcesi ya da semizotu salata"
+patient_nutrition.html:4651 ✅ İçeriyor eşleşmesi: "zeytinyağlı deniz börülcesi ya da semizotu salata" → "Zeytinyağlı Deniz Börülcesi"
+patient_nutrition.html:3928 🔍 getFoodDatabaseMapping - Aranan: "yeşil salata (marul, dereotu, roka, kırmızı lahana, 1 yemek kaşığı zeytinyağı)" → Temiz: "yeşil salata" → Normal: "yesil salata"
+patient_nutrition.html:3949 ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+patient_nutrition.html:10388 ❌ Admin yetkisi bulunamadı
+patient_nutrition.html:3894 ✅ isFoodInDatabase: "yeşil salata (marul, dereotu, roka, kırmızı lahana, 1 yemek kaşığı zeytinyağı)" → BULUNDU (tam eşleşme)
+patient_nutrition.html:4863 🏷️ Rozet ayarları (yeşil salata (marul, dereotu, roka, kırmızı lahana, 1 yemek kaşığı zeytinyağı)): Object
+patient_nutrition.html:4541 🔍 findFoodInDatabase: "yeşil salata (marul, dereotu, roka, kırmızı lahana, 1 yemek kaşığı zeytinyağı)" → normalized: "yesilsalatamaruldereoturokakirmizilahana1yemekkasigizeytinyagi", normalizedTr: "yesil salata marul dereotu roka kirmizi lahana 1 yemek kasigi zeytinyagi"
+patient_nutrition.html:4592 ✅ Tam eşleşme: "yeşil salata (marul, dereotu, roka, kırmızı lahana, 1 yemek kaşığı zeytinyağı)" → "Yeşil salata (marul, dereotu, roka, kırmızı lahana, 1 yemek kaşığı zeytinyağı)"
+patient_nutrition.html:3928 🔍 getFoodDatabaseMapping - Aranan: "çilek" → Temiz: "çilek" → Normal: "cilek"
+patient_nutrition.html:3949 ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+patient_nutrition.html:10388 ❌ Admin yetkisi bulunamadı
+patient_nutrition.html:3894 ✅ isFoodInDatabase: "çilek" → BULUNDU (tam eşleşme)
+patient_nutrition.html:4799 ✅ Otomatik eşleştirme bulundu: cilekli_limonlu_smoothie.jpg
+patient_nutrition.html:4863 🏷️ Rozet ayarları (çilek): Object
+patient_nutrition.html:4541 🔍 findFoodInDatabase: "çilek" → normalized: "cilek", normalizedTr: "cilek"
+patient_nutrition.html:4592 ✅ Tam eşleşme: "çilek" → "çilek"
+patient_nutrition.html:3928 🔍 getFoodDatabaseMapping - Aranan: "kollajen (1 ölçek 10 gram)" → Temiz: "kollajen" → Normal: "kollajen"
+patient_nutrition.html:3949 ❌ Eşleşme bulunamadı. Mevcut key'ler: Array(15)
+patient_nutrition.html:10388 ❌ Admin yetkisi bulunamadı
+patient_nutrition.html:3894 ✅ isFoodInDatabase: "kollajen (1 ölçek 10 gram)" → BULUNDU (tam eşleşme)
+patient_nutrition.html:4863 🏷️ Rozet ayarları (kollajen (1 ölçek 10 gram)): Object
+patient_nutrition.html:4541 🔍 findFoodInDatabase: "kollajen (1 ölçek 10 gram)" → normalized: "kollajen1olcek10gram", normalizedTr: "kollajen 1 olcek 10 gram"
+patient_nutrition.html:4592 ✅ Tam eşleşme: "kollajen (1 ölçek 10 gram)" → "Kollajen (1 ölçek 10 gram)"
+patient_nutrition.html:3645 🔒 Admin özellikleri gizli
+patient_nutrition.html:9860 🔄 Refresh - Diyet: eliminasyonlu_ketojenik, Uyumlu: eliminasyonlu_ketojenik, ketojenik
+patient_nutrition.html:9878 🔄 Refresh - 0 kullanılmamış şablon bulundu
+patient_nutrition.html:9882 ⚠️ Refresh için kullanılmamış şablon kalmadı, tüm şablonları kullanıma açıyoruz...
+patient_nutrition.html:9895 🔄 Refresh - Tüm şablonlar: 0 uyumlu şablon
+patient_nutrition.html:9860 🔄 Refresh - Diyet: eliminasyonlu_ketojenik, Uyumlu: eliminasyonlu_ketojenik, ketojenik
+patient_nutrition.html:9878 🔄 Refresh - 0 kullanılmamış şablon bulundu
+patient_nutrition.html:9882 ⚠️ Refresh için kullanılmamış şablon kalmadı, tüm şablonları kullanıma açıyoruz...
+patient_nutrition.html:9895 🔄 Refresh - Tüm şablonlar: 0 uyumlu şablon
+patient_nutrition.html:9860 🔄 Refresh - Diyet: eliminasyonlu_ketojenik, Uyumlu: eliminasyonlu_ketojenik, ketojenik
+patient_nutrition.html:9878 🔄 Refresh - 0 kullanılmamış şablon bulundu
+patient_nutrition.html:9882 ⚠️ Refresh için kullanılmamış şablon kalmadı, tüm şablonları kullanıma açıyoruz...
+patient_nutrition.html:9895 🔄 Refresh - Tüm şablonlar: 0 uyumlu şablon
+patient_nutrition.html:8019 🔍 Diyet türleri yükleniyor: Array(4)
+patient_nutrition.html:8038 ℹ️ Hasta ayarından diyet türü alındı: eliminasyonlu-ketojenik
+patient_nutrition.html:8043 ✅ Diyet türü dropdown dolduruldu, default: eliminasyonlu-ketojenik
+patient_nutrition.html:8989 loadDayTemplates baslat ildi: Object
+patient_nutrition.html:9044 ℹ️ loadDayTemplates: Tam veri yüklemeye gerek yok - şablon yok
+patient_nutrition.html:8989 loadDayTemplates baslat ildi: Object
+patient_nutrition.html:9044 ℹ️ loadDayTemplates: Tam veri yüklemeye gerek yok - şablon yok
+patient_nutrition.html:6880 💾 Haftalık planlar localStorage'a kaydedildi
+patient_nutrition.html:6916 ✅ Haftalık planlar GitHub'a kaydedildi
+patient_nutrition.html:7605 ℹ️ Boş hafta için büyük butonlar gösteriliyor
+patient_nutrition.html:8208 🎯 Otomatik Plan - Akıllı diyet türü: ketojenik (Hafta: 6 )
+patient_nutrition.html:8224 ℹ️ Hafta ayarları bulunamadı, varsayılan değerler kullanılıyor
+patient_nutrition.html:8358 📊 Kalori Hesaplama: Object
+patient_nutrition.html:8401 🔍 Diyet seçimi: Object
+patient_nutrition.html:8406 ⚙️ Formül: Object
+patient_nutrition.html:8416 🎯 Hedef: Object
+patient_nutrition.html:8562 💾 Hafta ayarları kaydedildi: Object
+patient_nutrition.html:8564 🎯 Hedef Kalori: 912 (GoalPct: 0%)
+patient_nutrition.html:8565 📊 Toplam Şablon: 0
+patient_nutrition.html:8613 📅 Son 4 haftada kullanılan şablon sayısı: 16
+patient_nutrition.html:8634 🔍 Seçili diyet türü: "ketojenik" → normalize: "ketojenik"
+patient_nutrition.html:8650 🍽️ Seçili diyet: ketojenik, Uyumlu diyet türleri: ketojenik
+patient_nutrition.html:8687 ✅ Filtrelenmiş Şablon (Son 4 hafta hariç): 0
+patient_nutrition.html:8691 ⚠️ Kullanılmamış şablon kalmadı, tüm şablonları kullanıma açıyoruz...
+patient_nutrition.html:8720 ✅ Tüm uygun şablonlar (ketojenik): 0
+chat_manager.js:765 🟢 Heartbeat gönderildi: patient_1762097712792

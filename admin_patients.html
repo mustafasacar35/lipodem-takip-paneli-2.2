@@ -11,7 +11,7 @@
     <meta name="application-name" content="Hasta Yönetimi">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#667eea">
-    <link rel="manifest" href="manifest-admin-patients.json">
+    <link id="manifestLink" rel="manifest" href="manifest-admin-patients.json">
     <link rel="apple-touch-icon" href="/logo3.png">
     <!-- / PWA ve Mobil Uygulama Meta Etiketleri -->
 
@@ -578,6 +578,208 @@
         // Remote admins.js with hard cache-busting, loaded synchronously to preserve order
         document.write('<script src="https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/settings/admins.js?t=' + Date.now() + '"><\\/scr' + 'ipt>');
     </script>
+    
+    <!-- Supabase & Data Access Layer -->
+    <!-- 1. Load Supabase Library (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- 2. Initialize Supabase Client (Robust Fallback) -->
+    <script>
+        (function() {
+            const supabaseUrl = 'https://qvpeqxzaprgesgrgzmuo.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2cGVxeHphcHJnZXNncmd6bXVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NjAzNjYsImV4cCI6MjA3OTAzNjM2Nn0.4Mo-9pgAk9vBHT48yVunuijSzqQX6cX07fCfDF48hLk';
+            
+            console.log('[Init] Checking Supabase Library...');
+            
+            // Fallback Shim if CDN failed
+            if (!window.supabase || !window.supabase.createClient) {
+                console.warn('[Init] Supabase CDN not loaded. Using FULL Shim.');
+                
+                class SupabaseShim {
+                    constructor(url, key) {
+                        this.url = url;
+                        this.key = key;
+                        this.headers = { 'apikey': key, 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
+                    }
+                    from(table) { return new QueryBuilder(this, table); }
+                }
+
+                class QueryBuilder {
+                    constructor(client, table) {
+                        this.client = client;
+                        this.table = table;
+                        this.queryParams = new URLSearchParams();
+                    }
+                    select(cols = '*') {
+                        this.queryParams.set('select', cols);
+                        this._selected = true;
+                        return this;
+                    }
+                    eq(col, val) { this.queryParams.append(col, `eq.${val}`); return this; }
+                    order(col, opts) {
+                        this.queryParams.append('order', `${col}.${opts?.ascending ? 'asc' : 'desc'}`);
+                        return this;
+                    }
+                    
+                    async then(resolve, reject) {
+                        try {
+                            let res;
+                            let data;
+                            // If we have a pending upsert, perform POST
+                            if (this._pendingType === 'upsert' && this._pendingUpsert) {
+                                const { data: upData, opts } = this._pendingUpsert;
+                                const headers = { ...this.client.headers, 'Prefer': 'return=representation' };
+                                if (opts?.onConflict) headers['Prefer'] += `,resolution=merge-duplicates`;
+                                res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, {
+                                    method: 'POST',
+                                    headers,
+                                    body: JSON.stringify(upData)
+                                });
+                                data = await res.json();
+                            } else if (this._pendingType === 'update' && this._pendingUpdate) {
+                                // Perform PATCH (update)
+                                res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, {
+                                    method: 'PATCH',
+                                    headers: { ...this.client.headers, 'Prefer': 'return=representation' },
+                                    body: JSON.stringify(this._pendingUpdate)
+                                });
+                                data = await res.json();
+                            } else if (this._pendingType === 'insert' && this._pendingInsert) {
+                                // Perform POST (insert)
+                                res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, {
+                                    method: 'POST',
+                                    headers: { ...this.client.headers, 'Prefer': 'return=representation' },
+                                    body: JSON.stringify(this._pendingInsert)
+                                });
+                                data = await res.json();
+                            } else if (this._pendingType === 'delete') {
+                                // Perform DELETE with current filters
+                                res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, {
+                                    method: 'DELETE',
+                                    headers: this.client.headers
+                                });
+                                // Some PostgREST delete returns empty body
+                                try {
+                                    data = await res.json();
+                                } catch (_) {
+                                    data = null;
+                                }
+                            } else {
+                                // Default GET for selects
+                                res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, { headers: this.client.headers });
+                                data = await res.json();
+                            }
+                            const result = { data: res.ok ? data : null, error: res.ok ? null : data };
+                            // clear pending state after request
+                            this._pendingType = undefined;
+                            this._pendingUpsert = undefined;
+                            this._pendingUpdate = undefined;
+                            this._pendingInsert = undefined;
+                            if (resolve) resolve(result);
+                            return result;
+                        } catch (e) {
+                            const err = { data: null, error: e };
+                            if (resolve) resolve(err);
+                            return err;
+                        }
+                    }
+                    
+                    async single() {
+                        this.headers = { ...this.client.headers, 'Accept': 'application/vnd.pgrst.object+json' };
+                        try {
+                            const res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, { headers: this.headers });
+                            const data = await res.json();
+                            return { data: res.ok ? data : null, error: res.ok ? null : data };
+                        } catch(e) { return { data: null, error: e }; }
+                    }
+
+                    async maybeSingle() {
+                        // Same as single but returns null data if no match instead of error
+                        try {
+                            const res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, { headers: this.client.headers });
+                            if (res.status === 406 || res.status === 404) {
+                                return { data: null, error: null };
+                            }
+                            const data = await res.json();
+                            return { data: res.ok ? (Array.isArray(data) ? data[0] : data) : null, error: res.ok ? null : data };
+                        } catch(e) { return { data: null, error: null }; }
+                    }
+
+                    upsert(data, opts) {
+                        // Store upsert params for later use in .select()
+                        this._pendingUpsert = { data, opts };
+                        this._pendingType = 'upsert';
+                        return this;
+                    }
+
+                    update(data) {
+                        // Store update params for execution in then()
+                        this._pendingUpdate = data;
+                        this._pendingType = 'update';
+                        return this;
+                    }
+
+                    insert(data) {
+                        // Store insert params for execution in then()
+                        this._pendingInsert = data;
+                        this._pendingType = 'insert';
+                        return this;
+                    }
+
+                    
+                    
+                    delete() {
+                        // Mark delete as pending; allow filters like .eq() to be chained after
+                        this._pendingType = 'delete';
+                        return this;
+                    }
+                }
+
+                window.supabase = {
+                    createClient: (url, key) => new SupabaseShim(url, key)
+                };
+            }
+
+            // Initialize Client
+            if (window.supabase && window.supabase.createClient) {
+                try {
+                    const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+                    window.supabase = client;
+                    console.log('✅ Supabase client initialized (CDN or Shim)');
+                } catch (e) {
+                    console.error('❌ Error creating Supabase client:', e);
+                }
+            }
+        })();
+    </script>
+
+    <!-- 3. Load Config -->
+    <script src="config.local.js"></script>
+    
+    <!-- 4. Load DAL (Waits for Supabase) -->
+    <script>
+        (async function() {
+            // Wait for Supabase client to be ready
+            let retries = 0;
+            while ((!window.supabase || !window.supabase.from) && retries < 50) {
+                await new Promise(r => setTimeout(r, 50));
+                retries++;
+            }
+            
+            if (!window.supabase || !window.supabase.from) {
+                console.error('❌ Supabase client TIMEOUT before DAL load. window.supabase:', window.supabase);
+            } else {
+                console.log('✅ Supabase client READY for DAL');
+            }
+            
+            // Load DAL dynamically
+            const script = document.createElement('script');
+            script.src = "data-access-layer.js";
+            // Use document.head or document.documentElement if body is not ready
+            (document.body || document.head || document.documentElement).appendChild(script);
+        })();
+    </script>
+    
     <!-- Patient auth (for patientAdmins support when served over http/https) -->
     <script src="auth.js"></script>
     <script>
@@ -602,53 +804,33 @@
                         throw new Error('Web Crypto API not available');
                     },
                     async loadPatientIndex() {
-                        const ts = Date.now();
-                        const response = await fetch(`https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/hastalar/index.json?t=${ts}`, { cache: 'no-store' });
-                        if (response.ok) return await response.json();
-                        throw new Error('Patient index not found');
+                        // ✅ SUPABASE: DAL üzerinden hasta listesi çek
+                        console.log('🔄 [PatientAuth] Supabase\'den hasta listesi çekiliyor...');
+                        // Ensure DAL is ready
+                        if (!window.DAL) {
+                             console.warn('DAL not ready in PatientAuth shim, waiting...');
+                             await new Promise(r => setTimeout(r, 500));
+                        }
+                        if (window.DAL) {
+                            const patients = await window.DAL.getPatientList();
+                            return { patients: patients || [] };
+                        }
+                        return { patients: [] };
                     },
                     async loadPatientDetails(patientId) {
-                        const ts = Date.now();
-                        const response = await fetch(`https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/hastalar/${patientId}.json?t=${ts}`, { cache: 'no-store' });
-                        if (response.ok) return await response.json();
-                        throw new Error('Patient details not found');
-                    },
-                    async login(username, password, rememberMe = false) {
-                        try {
-                            const index = await this.loadPatientIndex();
-                            const norm = (v) => (v || '').toString().trim().toLowerCase();
-                            const patient = index.patients.find(p => norm(p.username) === norm(username));
-                            if (!patient) return { success: false, error: 'Kullanıcı adı veya şifre hatalı' };
-                            if (patient.status === 'archived') return { success: false, error: 'Bu hesap arşivlenmiştir' };
-                            
-                            const inputHash = await this.hashPassword(password);
-                            let effectiveHash = patient.passwordHash || '';
-                            
-                            try {
-                                const details = await this.loadPatientDetails(patient.id);
-                                const detailsHash = details?.passwordHash || details?.personalInfo?.passwordHash;
-                                if (detailsHash && typeof detailsHash === 'string') {
-                                    effectiveHash = detailsHash;
-                                }
-                            } catch (e) {
-                                console.warn('[Shim PatientAuth] Details not loaded, using index hash');
-                            }
-                            
-                            if (inputHash !== effectiveHash) return { success: false, error: 'Kullanıcı adı veya şifre hatalı' };
-                            
-                            return { success: true, patient: { username: patient.username, patientId: patient.id } };
-                        } catch (error) {
-                            console.error('[Shim PatientAuth] Login error:', error);
-                            return { success: false, error: 'Giriş sırasında bir hata oluştu' };
+                        // ✅ SUPABASE: DAL üzerinden hasta detayı çek
+                        console.log('🔄 [PatientAuth] Supabase\'den hasta detayı çekiliyor:', patientId);
+                        if (!window.DAL) {
+                             console.warn('DAL not ready in PatientAuth shim, waiting...');
+                             await new Promise(r => setTimeout(r, 500));
                         }
+                        const patient = await window.DAL.getPatient(patientId);
+                        if (!patient) throw new Error('Patient details not found');
+                        return patient;
                     }
                 };
-                console.info('[Shim] Emergency PatientAuth created on window');
             }
-        } catch(e) { 
-            console.error('[Shim] Error:', e); 
-        }
-        console.info('[Shim] Final check - window.PatientAuth:', !!window.PatientAuth);
+        } catch (e) { console.error('[Shim] Error setting up PatientAuth:', e); }
     </script>
     <!-- Page init moved to end of body -->
     <!-- Define page functions in head so they're available immediately -->
@@ -658,13 +840,8 @@
         let editingPatientId = null;
         let progressLogCounter = 0;
 
-        // GitHub Configuration
-        const CONFIG = {
-            get token() { return document.getElementById('githubToken')?.value || ''; },
-            get owner() { return document.getElementById('githubOwner')?.value || 'mustafasacar35'; },
-            get repo() { return document.getElementById('githubRepo')?.value || 'lipodem-takip-paneli'; },
-            branch: 'main'
-        };
+        // ⚠️ GITHUB_CONFIG is defined in config.js - do not redefine here
+        // Using global GITHUB_CONFIG from config.js
 
         function addLogoutButton(){
             console.info('[addLogoutButton] Starting...');
@@ -693,14 +870,36 @@
         async function loadPatients() {
             console.info('[loadPatients] Starting...');
             try {
-                const response = await fetch(
-                    `https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/${CONFIG.branch}/hastalar/index.json`
-                );
+                if (!window.DAL) {
+                    console.error('[loadPatients] DAL is not defined!');
+                    throw new Error('Veri katmanı (DAL) yüklenemedi');
+                }
+
+                // DAL kullanarak hastaları çek (JSON veya Supabase'den)
+                console.log('[loadPatients] Calling DAL.getPatientList()...');
+                const patientList = await window.DAL.getPatientList();
+                console.log('[loadPatients] Raw data from DAL:', patientList);
                 
-                if (!response.ok) throw new Error('Hasta listesi yüklenemedi');
+                if (!patientList || patientList.length === 0) {
+                    console.warn('[loadPatients] No patients returned from DAL');
+                }
+
+                // Normalize et (patient_data JSONB'yi önce merge et, sonra kolonlar override etsin)
+                patients = patientList.map(p => ({
+                    ...(p.patient_data || {}),  // JSONB'den tüm verileri al
+                    ...p,                        // Kolonları üzerine yaz
+                    id: p.patient_id || p.id,
+                    patient_id: p.patient_id || p.id,
+                    username: (p.username ?? p.patient_data?.username ?? p.data?.username ?? ''),
+                    name: (p.name ?? p.patient_data?.name ?? p.data?.personalInfo?.name ?? ''),
+                    surname: (p.surname ?? p.patient_data?.surname ?? p.data?.personalInfo?.surname ?? ''),
+                    status: (p.status ?? p.patient_data?.status ?? p.data?.status ?? 'active'),
+                    maxDevices: (p.max_devices ?? p.patient_data?.maxDevices ?? p.maxDevices ?? 1),
+                    sessionDays: (p.session_days ?? p.patient_data?.sessionDays ?? p.sessionDays ?? 30),
+                    role: (p.role ?? p.patient_data?.role ?? 'patient')
+                }));
                 
-                const data = await response.json();
-                patients = data.patients || [];
+                console.info(`[loadPatients] ${patients.length} hasta yüklendi`);
                 
                 const loadingEl = document.getElementById('loadingState');
                 const tableEl = document.getElementById('patientTable');
@@ -711,13 +910,11 @@
             } catch (error) {
                 console.error('Error loading patients:', error);
                 const errorMsg = 'Hasta listesi yüklenirken hata oluştu: ' + error.message;
-                if (typeof showError === 'function') {
-                    showError(errorMsg);
-                } else {
-                    alert(errorMsg);
-                }
+                showError(errorMsg);
+                
+                // Hata durumunda loading'i gizle
                 const loadingEl = document.getElementById('loadingState');
-                if (loadingEl) loadingEl.innerHTML = '<p style="color: #dc3545;">❌ Yükleme hatası</p>';
+                if (loadingEl) loadingEl.innerHTML = `<p style="color:red">${errorMsg}</p>`;
             }
         }
         window.loadPatients = loadPatients;
@@ -986,9 +1183,9 @@
             // Search filter
             if (searchText) {
                 filtered = filtered.filter(p => 
-                    p.name.toLowerCase().includes(searchText) ||
-                    p.surname.toLowerCase().includes(searchText) ||
-                    p.username.toLowerCase().includes(searchText)
+                    (p.name || '').toLowerCase().includes(searchText) ||
+                    (p.surname || '').toLowerCase().includes(searchText) ||
+                    (p.username || '').toLowerCase().includes(searchText)
                 );
             }
             
@@ -1007,16 +1204,18 @@
             
             patientList.forEach(patient => {
                 const row = document.createElement('tr');
+                const createdAt = patient.created_at || patient.createdAt || null;
+                const createdAtText = createdAt ? (()=>{ const d = new Date(createdAt); return isNaN(d) ? '-' : d.toLocaleDateString('tr-TR'); })() : '-';
                 row.innerHTML = `
                     <td data-label="ID">${patient.id}</td>
                     <td data-label="Ad Soyad">${patient.name} ${patient.surname}</td>
-                    <td data-label="Kullanıcı Adı">${patient.username}</td>
+                    <td data-label="Kullanıcı Adı">${patient.username ?? '-'}</td>
                     <td data-label="Durum">
                         <span class="status-badge ${patient.status === 'active' ? 'status-active' : 'status-archived'}">
                             ${patient.status === 'active' ? '✅ Aktif' : '📦 Arşiv'}
                         </span>
                     </td>
-                    <td data-label="Kayıt Tarihi">${new Date(patient.createdAt).toLocaleDateString('tr-TR')}</td>
+                    <td data-label="Kayıt Tarihi">${createdAtText}</td>
                     <td data-label="İşlemler">
                         <div class="action-buttons">
                             <button class="btn btn-primary btn-sm" onclick="editPatient('${patient.id}')">
@@ -1061,14 +1260,44 @@
         // Edit patient
         async function editPatient(patientId) {
             try {
-                // Load patient details
-                const response = await fetch(
-                    `https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/${CONFIG.branch}/hastalar/${patientId}.json`
-                );
+                // Load patient details using DAL
+                console.log('🔄 Loading patient details for edit:', patientId);
+                let patient = await window.DAL.getPatient(patientId);
                 
-                if (!response.ok) throw new Error('Hasta bilgileri yüklenemedi');
+                if (!patient) throw new Error('Hasta bilgileri yüklenemedi (DAL returned null)');
                 
-                const patient = await response.json();
+                console.log('🔍 editPatient - patient:', patient);
+                console.log('🔍 editPatient - patient.maxDevices:', patient.maxDevices);
+                console.log('🔍 editPatient - patient.sessionDays:', patient.sessionDays);
+                
+                // NOT: DAL zaten normalize edilmiş veri dönüyor, .data kontrolüne gerek yok!
+                // .data field'ı JSONB'den gelebilir ve eski değerler içerebilir
+                
+                // Normalize data structure - sadece personalInfo yoksa reconstruction yap
+                if (!patient.personalInfo) {
+                    // If it's flat Supabase object, convert to expected structure
+                    patient = {
+                        id: patient.patient_id || patient.id,
+                        username: patient.username ?? patient.personalInfo?.username ?? '',
+                        passwordHash: patient.password_hash,
+                        sessionDays: patient.session_days || 7,
+                        maxDevices: patient.max_devices || 1,
+                        alternativeCount: patient.alternative_count,
+                        status: patient.status || 'active',
+                        isAdmin: (patient.role === 'admin') || patient.is_admin || false,
+                        notes: patient.notes,
+                        personalInfo: {
+                            name: patient.name ?? '',
+                            surname: patient.surname ?? '',
+                            age: patient.age,
+                            gender: patient.gender,
+                            weight: patient.weight,
+                            height: patient.height,
+                            activity: patient.activity_level
+                        },
+                        progressLog: patient.progress_log || []
+                    };
+                }
                 
                 editingPatientId = patientId;
                 document.getElementById('modalTitle').textContent = 'Hasta Düzenle';
@@ -1077,20 +1306,23 @@
                 document.getElementById('passwordHint').textContent = 'Boş bırakılırsa değişmez';
                 
                 // Fill form
-                document.getElementById('patientName').value = patient.personalInfo.name;
-                document.getElementById('patientSurname').value = patient.personalInfo.surname;
-                document.getElementById('patientAge').value = patient.personalInfo.age;
-                document.getElementById('patientGender').value = patient.personalInfo.gender;
-                document.getElementById('patientWeight').value = patient.personalInfo.weight;
-                document.getElementById('patientHeight').value = patient.personalInfo.height;
-                document.getElementById('patientActivity').value = patient.personalInfo.activity || '3';
-                document.getElementById('patientUsername').value = patient.username;
+                document.getElementById('patientName').value = patient.personalInfo?.name || '';
+                document.getElementById('patientSurname').value = patient.personalInfo?.surname || '';
+                document.getElementById('patientAge').value = patient.personalInfo?.age || '';
+                document.getElementById('patientGender').value = patient.personalInfo?.gender || '';
+                document.getElementById('patientWeight').value = patient.personalInfo?.weight || '';
+                document.getElementById('patientHeight').value = patient.personalInfo?.height || '';
+                document.getElementById('patientActivity').value = patient.personalInfo?.activity || '3';
+                document.getElementById('patientUsername').value = patient.username || '';
                 document.getElementById('patientPassword').value = '';
-                document.getElementById('patientSessionDays').value = patient.sessionDays;
-                document.getElementById('patientMaxDevices').value = patient.maxDevices || 1; // Varsayılan 1
+                document.getElementById('patientSessionDays').value = patient.sessionDays || 7;
+                document.getElementById('patientMaxDevices').value = patient.maxDevices || 1;
                 document.getElementById('patientAlternativeCount').value = patient.alternativeCount || '';
-                document.getElementById('patientStatus').value = patient.status;
-                document.getElementById('patientIsAdmin').checked = patient.isAdmin || false;
+                document.getElementById('patientStatus').value = patient.status || 'active';
+                const isAdminEl = document.getElementById('patientIsAdmin');
+                if (isAdminEl) {
+                    isAdminEl.checked = !!(patient.isAdmin || patient.is_admin || patient.role === 'admin');
+                }
                 document.getElementById('patientNotes').value = patient.notes || '';
                 
                 calculateBMI();
@@ -1120,23 +1352,16 @@
                 return;
             }
             
-            if (!CONFIG.token) {
-                showError('GitHub token girilmedi!');
-                return;
-            }
-            
             try {
-                // Remove from index
-                patients = patients.filter(p => p.id !== patientId);
+                // DAL ile sil
+                const success = await window.DAL.deletePatient(patientId);
                 
-                // Update index.json
-                await saveToGitHub('hastalar/index.json', {
-                    version: '1.0',
-                    lastUpdated: new Date().toISOString(),
-                    patients: patients
-                });
+                if (!success) {
+                    throw new Error('Silme işlemi başarısız');
+                }
                 
-                // Note: We don't delete the patient detail file, just remove from index
+                // Local array'den kaldır
+                patients = patients.filter(p => p.patient_id !== patientId && p.id !== patientId);
                 
                 showSuccess('Hasta başarıyla silindi!');
                 applyFilters();
@@ -1183,14 +1408,15 @@
             try {
                 showInfo('İlerleme verileri yükleniyor...');
                 
-                // GitHub'dan hasta verisini çek
-                const response = await fetch(`https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/main/hastalar/${patientId}.json`);
+                // DAL ile hasta verisini çek
+                const patientData = await window.DAL.getPatient(patientId);
                 
-                if (!response.ok) {
+                if (!patientData) {
                     throw new Error('Hasta verisi bulunamadı');
                 }
                 
-                const patientData = await response.json();
+                // data field içinde olabilir
+                const actualData = patientData.data || patientData;
                 
                 // Modal açıklama
                 document.getElementById('progressPatientName').textContent = patientName;
@@ -1582,11 +1808,6 @@
         document.getElementById('patientForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            if (!CONFIG.token) {
-                showError('GitHub token girilmedi!');
-                return;
-            }
-            
             // Get form data
             const name = document.getElementById('patientName').value.trim();
             const surname = document.getElementById('patientSurname').value.trim();
@@ -1598,12 +1819,16 @@
             const username = document.getElementById('patientUsername').value.trim();
             const password = document.getElementById('patientPassword').value;
             const sessionDays = parseInt(document.getElementById('patientSessionDays').value);
-            const maxDevices = parseInt(document.getElementById('patientMaxDevices').value) || 1; // Varsayılan 1
+            const maxDevices = parseInt(document.getElementById('patientMaxDevices').value) || 1;
             const alternativeCountInput = document.getElementById('patientAlternativeCount').value.trim();
             const alternativeCount = alternativeCountInput ? parseInt(alternativeCountInput) : null;
             const status = document.getElementById('patientStatus').value;
             const notes = document.getElementById('patientNotes').value.trim();
             const progressLog = getProgressLog();
+            
+            console.log('📝 Form values:');
+            console.log('  maxDevices:', maxDevices);
+            console.log('  sessionDays:', sessionDays);
             
             // Calculate BMI
             const heightM = height / 100;
@@ -1618,22 +1843,11 @@
                     // Editing existing patient - MEVCUT VERİLERİ YÜKLE
                     patientId = editingPatientId;
                     
-                    // 🔥 GitHub'dan mevcut hasta verisini çek (settings, weeks vs. korumak için)
+                    // DAL ile mevcut hasta verisini çek
                     try {
-                        const patientFileUrl = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/hastalar/${patientId}.json`;
-                        const patientFileResp = await fetch(patientFileUrl, {
-                            headers: {
-                                'Authorization': `token ${CONFIG.token}`,
-                                'Accept': 'application/vnd.github.v3+json'
-                            }
-                        });
-                        
-                        if (patientFileResp.ok) {
-                            const patientFileData = await patientFileResp.json();
-                            const decodedContent = decodeURIComponent(escape(atob(patientFileData.content)));
-                            existingPatientData = JSON.parse(decodedContent);
-                            console.log('✅ Mevcut hasta verisi yüklendi:', existingPatientData);
-                        }
+                        existingPatientData = await window.DAL.getPatient(patientId);
+                        // NOT: DAL zaten doğru formatta veri dönüyor, .data kontrolüne gerek yok!
+                        // .data field'ı JSONB'den gelebilir ve eski değerler içerebilir, KULLANMA!
                     } catch (err) {
                         console.warn('⚠️ Mevcut hasta verisi yüklenemedi, yeni veri oluşturulacak:', err);
                     }
@@ -1643,12 +1857,12 @@
                         passwordHash = await hashPassword(password);
                     } else {
                         // Keep existing password
-                        const existingPatient = patients.find(p => p.id === patientId);
-                        passwordHash = existingPatient.passwordHash;
+                        passwordHash = existingPatientData?.passwordHash || 
+                                     patients.find(p => p.id === patientId)?.passwordHash;
                     }
                     
                     // Update in patients array
-                    const index = patients.findIndex(p => p.id === patientId);
+                    const index = patients.findIndex(p => p.id === patientId || p.patient_id === patientId);
                     if (index !== -1) {
                         patients[index] = {
                             ...patients[index],
@@ -1657,8 +1871,9 @@
                             username: username,
                             passwordHash: passwordHash,
                             sessionDays: sessionDays,
-                            maxDevices: maxDevices, // 🖥️ Cihaz limiti
-                            status: status
+                            maxDevices: maxDevices,
+                            status: status,
+                            role: document.getElementById('patientIsAdmin').checked ? 'admin' : 'patient'
                         };
                     }
                 } else {
@@ -1669,10 +1884,11 @@
                     // Add to patients array
                     patients.push({
                         id: patientId,
+                        patient_id: patientId,
                         username: username,
                         passwordHash: passwordHash,
                         sessionDays: sessionDays,
-                        maxDevices: maxDevices, // 🖥️ Cihaz limiti
+                        maxDevices: maxDevices,
                         status: status,
                         name: name,
                         surname: surname,
@@ -1687,13 +1903,18 @@
                     
                     // Sonra güncellenenleri üzerine yaz
                     id: patientId,
+                    patient_id: patientId,  // Ensure both id and patient_id are set
                     username: username,
                     passwordHash: passwordHash,
                     sessionDays: sessionDays,
-                    maxDevices: maxDevices, // 🖥️ Cihaz limiti
+                    maxDevices: maxDevices,
                     alternativeCount: alternativeCount,
                     status: status,
                     isAdmin: document.getElementById('patientIsAdmin').checked,
+                    role: document.getElementById('patientIsAdmin').checked ? 'admin' : 'patient',
+                    // 🔥 CRITICAL: Top-level name/surname for Supabase columns (override old values)
+                    name: name,
+                    surname: surname,
                     personalInfo: {
                         name: name,
                         surname: surname,
@@ -1734,15 +1955,16 @@
                     };
                 }
                 
-                console.log('💾 Kaydedilecek hasta verisi:', patientDetail);
+                console.log('💾 Final patientDetail before save:');
+                console.log('  patientDetail.maxDevices:', patientDetail.maxDevices);
+                console.log('  patientDetail.sessionDays:', patientDetail.sessionDays);
 
-                // Save to GitHub
-                await saveToGitHub(`hastalar/${patientId}.json`, patientDetail);
-                await saveToGitHub('hastalar/index.json', {
-                    version: '1.0',
-                    lastUpdated: new Date().toISOString(),
-                    patients: patients
-                });
+                // DAL ile kaydet (Dual mode: JSON + Supabase)
+                const success = await window.DAL.savePatient(patientDetail);
+                
+                if (!success) {
+                    throw new Error('Hasta kaydedilemedi');
+                }
                 
                 // Close modal first
                 closeModal();
@@ -1754,23 +1976,23 @@
                 showSuccess(successMessage);
                 
                 // Reload the patient list
-                applyFilters();
+                await loadPatients();
             } catch (error) {
                 console.error('Error saving patient:', error);
                 showError('Hasta kaydedilirken hata oluştu: ' + error.message);
             }
         });
 
-        // Save to GitHub
+        // Save to GitHub (DEPRECATED - Using DAL/Supabase now)
         async function saveToGitHub(path, content) {
-            const url = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${path}`;
+            const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${path}`;
             
             // Get current file SHA (for updates)
             let sha = null;
             try {
                 const getResponse = await fetch(url, {
                     headers: {
-                        'Authorization': `token ${CONFIG.token}`,
+                        'Authorization': `token ${GITHUB_CONFIG.token}`,
                         'Accept': 'application/vnd.github.v3+json'
                     }
                 });
@@ -1786,14 +2008,14 @@
             const response = await fetch(url, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `token ${CONFIG.token}`,
+                    'Authorization': `token ${GITHUB_CONFIG.token}`,
                     'Accept': 'application/vnd.github.v3+json',
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     message: `Update ${path}`,
                     content: btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2)))),
-                    branch: CONFIG.branch,
+                    branch: GITHUB_CONFIG.branch,
                     sha: sha
                 })
             });
@@ -1885,7 +2107,12 @@
 
                 const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
                 const manifestURL = URL.createObjectURL(manifestBlob);
-                document.querySelector('#manifestLink').setAttribute('href', manifestURL);
+                const manifestLink = document.querySelector('#manifestLink');
+                if (manifestLink) {
+                    manifestLink.setAttribute('href', manifestURL);
+                } else {
+                    console.warn('⚠️ #manifestLink element not found - PWA manifest not updated');
+                }
 
                 const serviceWorkerContent = `
                     const CACHE_NAME = '${CACHE_NAME}';
@@ -1930,9 +2157,10 @@
                 const swBlob = new Blob([serviceWorkerContent], { type: 'application/javascript' });
                 const swURL = URL.createObjectURL(swBlob);
 
-                navigator.serviceWorker.register(swURL)
-                    .then(registration => console.log('ServiceWorker registered:', registration.scope))
-                    .catch(err => console.log('ServiceWorker registration failed:', err));
+                // navigator.serviceWorker.register(swURL)
+                //    .then(registration => console.log('ServiceWorker registered:', registration.scope))
+                //    .catch(err => console.log('ServiceWorker registration failed:', err));
+                console.log('ServiceWorker registration disabled for debugging.');
             }
         }
 
@@ -1993,6 +2221,27 @@
             console.info('[Patients] .container check:', document.querySelector('.container'));
             const relogin = new URLSearchParams(location.search).get('relogin') === '1';
             
+            // Wait for DAL to be ready before anything else
+            let dalRetries = 0;
+            while (!window.DAL && dalRetries < 100) { // Increased retries
+                console.log('Waiting for DAL...');
+                await new Promise(r => setTimeout(r, 100));
+                dalRetries++;
+            }
+            
+            if (!window.DAL) {
+                console.error('❌ DAL failed to load after waiting. Checking script injection...');
+                // Emergency load if DAL is missing
+                if (!document.querySelector('script[src="data-access-layer.js"]')) {
+                    console.warn('⚠️ DAL script tag missing, injecting manually...');
+                    const s = document.createElement('script');
+                    s.src = 'data-access-layer.js';
+                    s.onload = () => location.reload();
+                    document.head.appendChild(s);
+                    return;
+                }
+            }
+            
             if (window.AdminAuth && typeof AdminAuth.protectPage === 'function') {
                 console.info('[Patients] Calling AdminAuth.protectPage');
                 try {
@@ -2000,6 +2249,14 @@
                         forcePrompt: relogin,
                         afterLogin: () => {
                             console.info('[Patients] afterLogin callback fired');
+                            // Call page functions AFTER login
+                            if (typeof window.addLogoutButton === 'function') {
+                                window.addLogoutButton();
+                            }
+                            
+                            if (typeof window.loadPatients === 'function') {
+                                window.loadPatients();
+                            }
                         }
                     });
                     console.info('[Patients] Auth successful, session:', AdminAuth.getSession());
@@ -2011,14 +2268,14 @@
             
             console.info('[Patients] DOM is ready, .container:', document.querySelector('.container'));
             
-            // Call page functions
-            if (typeof window.addLogoutButton === 'function') {
-                window.addLogoutButton();
-            }
+            // Call page functions (MOVED INSIDE afterLogin)
+            // if (typeof window.addLogoutButton === 'function') {
+            //     window.addLogoutButton();
+            // }
             
-            if (typeof window.loadPatients === 'function') {
-                window.loadPatients();
-            }
+            // if (typeof window.loadPatients === 'function') {
+            //     window.loadPatients();
+            // }
         }, 10);
     </script>
     
@@ -2056,10 +2313,31 @@
     
     <!-- Service Worker Registration -->
     <script>
+        /*
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/service-worker.js')
                 .then(reg => console.log('✅ Service Worker kayıtlı:', reg.scope))
                 .catch(err => console.error('❌ Service Worker hatası:', err));
+        }
+        */
+       console.log('Service Worker registration disabled in admin_patients.html');
+    </script>
+
+    <!-- Force Unregister Service Workers to clear cache -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    console.log('Unregistering Service Worker:', registration);
+                    registration.unregister();
+                }
+            });
+            caches.keys().then(function(names) {
+                for (let name of names) {
+                    console.log('Deleting Cache:', name);
+                    caches.delete(name);
+                }
+            });
         }
     </script>
 </body>

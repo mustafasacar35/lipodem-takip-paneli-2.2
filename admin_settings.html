@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
@@ -441,12 +441,150 @@
             }
         }
     </style>
-    <!-- Admins config: local fallback first, then remote authoritative override -->
-    <script src="settings/admins.js"></script>
+    <!-- Admins config removed - using Supabase only -->
+    
+    <!-- Supabase & Data Access Layer -->
+    <!-- 1. Load Supabase Library (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- 2. Initialize Supabase Client (Robust Fallback) -->
     <script>
-        // Remote admins.js with hard cache-busting, loaded synchronously to preserve order
-        document.write('<script src="https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/settings/admins.js?t=' + Date.now() + '"><\\/scr' + 'ipt>');
+        (function() {
+            const supabaseUrl = 'https://qvpeqxzaprgesgrgzmuo.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2cGVxeHphcHJnZXNncmd6bXVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NjAzNjYsImV4cCI6MjA3OTAzNjM2Nn0.4Mo-9pgAk9vBHT48yVunuijSzqQX6cX07fCfDF48hLk';
+            
+            console.log('[Init] Checking Supabase Library...');
+            
+            // Fallback Shim if CDN failed
+            if (!window.supabase || !window.supabase.createClient) {
+                console.warn('[Init] Supabase CDN not loaded. Using FULL Shim.');
+                
+                class SupabaseShim {
+                    constructor(url, key) {
+                        this.url = url;
+                        this.key = key;
+                        this.headers = { 'apikey': key, 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
+                    }
+                    from(table) { return new QueryBuilder(this, table); }
+                }
+
+                class QueryBuilder {
+                    constructor(client, table) {
+                        this.client = client;
+                        this.table = table;
+                        this.queryParams = new URLSearchParams();
+                    }
+                    select(cols = '*') {
+                        this.queryParams.set('select', cols);
+                        this._selected = true;
+                        return this;
+                    }
+                    eq(col, val) { this.queryParams.append(col, `eq.${val}`); return this; }
+                    order(col, opts) {
+                        this.queryParams.append('order', `${col}.${opts?.ascending ? 'asc' : 'desc'}`);
+                        return this;
+                    }
+                    
+                    async then(resolve, reject) {
+                        try {
+                            let res;
+                            let data;
+                            // If we have a pending upsert, perform POST
+                            if (this._pendingType === 'upsert' && this._pendingUpsert) {
+                                const { data: upData, opts } = this._pendingUpsert;
+                                const headers = { ...this.client.headers, 'Prefer': 'return=representation' };
+                                if (opts?.onConflict) headers['Prefer'] += `,resolution=merge-duplicates`;
+                                res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, {
+                                    method: 'POST',
+                                    headers,
+                                    body: JSON.stringify(upData)
+                                });
+                                data = await res.json();
+                            } else if (this._pendingType === 'update' && this._pendingUpdate) {
+                                // Perform PATCH (update)
+                                res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, {
+                                    method: 'PATCH',
+                                    headers: { ...this.client.headers, 'Prefer': 'return=representation' },
+                                    body: JSON.stringify(this._pendingUpdate)
+                                });
+                                data = await res.json();
+                            } else if (this._pendingType === 'insert' && this._pendingInsert) {
+                                // Perform POST (insert)
+                                res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, {
+                                    method: 'POST',
+                                    headers: { ...this.client.headers, 'Prefer': 'return=representation' },
+                                    body: JSON.stringify(this._pendingInsert)
+                                });
+                                data = await res.json();
+                            } else if (this._pendingType === 'delete') {
+                                // Perform DELETE
+                                res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, {
+                                    method: 'DELETE',
+                                    headers: { ...this.client.headers, 'Prefer': 'return=representation' }
+                                });
+                                data = res.status === 204 ? null : await res.json();
+                            } else {
+                                // Default: SELECT
+                                res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, {
+                                    headers: this.client.headers
+                                });
+                                data = await res.json();
+                            }
+                            
+                            if (res.ok) {
+                                resolve({ data, error: null });
+                            } else {
+                                resolve({ data: null, error: data });
+                            }
+                        } catch (error) {
+                            reject({ data: null, error });
+                        }
+                    }
+                    
+                    upsert(data, opts) {
+                        this._pendingType = 'upsert';
+                        this._pendingUpsert = { data, opts };
+                        return this;
+                    }
+                    
+                    update(data) {
+                        this._pendingType = 'update';
+                        this._pendingUpdate = data;
+                        return this;
+                    }
+                    
+                    insert(data) {
+                        this._pendingType = 'insert';
+                        this._pendingInsert = data;
+                        return this;
+                    }
+                    
+                    delete() {
+                        this._pendingType = 'delete';
+                        return this;
+                    }
+                }
+
+                window.supabase = { createClient: (url, key) => new SupabaseShim(url, key) };
+                console.log('[Shim] Created SupabaseShim with CRUD methods');
+            } else {
+                console.log('[Init] ✅ Supabase library loaded from CDN');
+            }
+            
+            // Create global Supabase client
+            try {
+                window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+                // DAL expects window.supabase to be the client instance
+                window.supabase = window.supabaseClient;
+                console.log('[Init] ✅ Global supabaseClient created and assigned to window.supabase');
+            } catch (error) {
+                console.error('[Init] ❌ Failed to create Supabase client:', error);
+            }
+        })();
     </script>
+    <script src="config.js"></script>
+    <script src="data-access-layer.js"></script>
+    
     <!-- Patient auth (for patientAdmins support when served over http/https) -->
     <script src="auth.js"></script>
     <script>
@@ -471,24 +609,32 @@
                         throw new Error('Web Crypto API not available');
                     },
                     async loadPatientIndex() {
-                        const ts = Date.now();
-                        const response = await fetch(`https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/hastalar/index.json?t=${ts}`, { cache: 'no-store' });
-                        if (response.ok) return await response.json();
-                        throw new Error('Patient index not found');
+                        // ✅ SUPABASE: DAL üzerinden hasta listesi çek
+                        console.log('🔄 [PatientAuth] Supabase\'den hasta listesi çekiliyor...');
+                        const patients = await window.DAL.getPatientList();
+                        return { patients: patients || [] };
                     },
                     async loadPatientDetails(patientId) {
-                        const ts = Date.now();
-                        const response = await fetch(`https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/hastalar/${patientId}.json?t=${ts}`, { cache: 'no-store' });
-                        if (response.ok) return await response.json();
-                        throw new Error('Patient details not found');
+                        // ✅ SUPABASE: DAL üzerinden hasta detayı çek
+                        console.log('🔄 [PatientAuth] Supabase\'den hasta detayı çekiliyor:', patientId);
+                        const patient = await window.DAL.getPatient(patientId);
+                        if (!patient) throw new Error('Patient details not found');
+                        return patient;
                     },
                     async login(username, password, rememberMe = false) {
                         try {
+                            console.log('🔐 [PatientAuth] Supabase login başlıyor:', username);
                             const index = await this.loadPatientIndex();
                             const norm = (v) => (v || '').toString().trim().toLowerCase();
                             const patient = index.patients.find(p => norm(p.username) === norm(username));
-                            if (!patient) return { success: false, error: 'Kullanıcı adı veya şifre hatalı' };
-                            if (patient.status === 'archived') return { success: false, error: 'Bu hesap arşivlenmiştir' };
+                            if (!patient) {
+                                console.warn('❌ [PatientAuth] Kullanıcı bulunamadı:', username);
+                                return { success: false, error: 'Kullanıcı adı veya şifre hatalı' };
+                            }
+                            if (patient.status === 'archived') {
+                                console.warn('⚠️ [PatientAuth] Arşivlenmiş hesap:', username);
+                                return { success: false, error: 'Bu hesap arşivlenmiştir' };
+                            }
                             
                             const inputHash = await this.hashPassword(password);
                             let effectiveHash = patient.passwordHash || '';
@@ -500,14 +646,18 @@
                                     effectiveHash = detailsHash;
                                 }
                             } catch (e) {
-                                console.warn('[Shim PatientAuth] Details not loaded, using index hash');
+                                console.warn('[PatientAuth] Supabase\'den detay alınamadı, index hash kullanılıyor');
                             }
                             
-                            if (inputHash !== effectiveHash) return { success: false, error: 'Kullanıcı adı veya şifre hatalı' };
+                            if (inputHash !== effectiveHash) {
+                                console.warn('❌ [PatientAuth] Şifre hatalı');
+                                return { success: false, error: 'Kullanıcı adı veya şifre hatalı' };
+                            }
                             
+                            console.log('✅ [PatientAuth] Supabase login başarılı:', username);
                             return { success: true, patient: { username: patient.username, patientId: patient.id } };
                         } catch (error) {
-                            console.error('[Shim PatientAuth] Login error:', error);
+                            console.error('❌ [PatientAuth] Supabase login hatası:', error);
                             return { success: false, error: 'Giriş sırasında bir hata oluştu' };
                         }
                     }
@@ -540,32 +690,14 @@
             if (typeof registerInputHandlers === 'function') registerInputHandlers();
             if (typeof attachActionHandlers === 'function') attachActionHandlers();
             if (typeof fetchSuggestions === 'function') fetchSuggestions();
-            if (typeof loadSettingsFromGitHub === 'function') loadSettingsFromGitHub();
+            if (typeof loadSettings === 'function') loadSettings();
             // Admins UI
             if (typeof loadAdminsRuntime === 'function') loadAdminsRuntime();
             if (typeof renderAdminsList === 'function') renderAdminsList();
             if (typeof renderPatientAdmins === 'function') renderPatientAdmins();
             if (typeof attachAdminsUIHandlers === 'function') attachAdminsUIHandlers();
-            if (typeof fetchAdminsSha === 'function') fetchAdminsSha();
+            // GitHub admin functions removed - using Supabase only
             if (typeof renderActiveAdmin === 'function') renderActiveAdmin();
-            // If only local fallback is present (e.g., only 'admin'), try to reload remote admins.js to override
-            try {
-                if (typeof window.ghAdmins !== 'undefined' && (!window.ghAdmins || !Array.isArray(window.ghAdmins.admins) || window.ghAdmins.admins.length <= 1)) {
-                    if (typeof reloadRemoteAdminsConfig === 'function') reloadRemoteAdminsConfig();
-                }
-            } catch(_) { /* noop */ }
-            // Additionally, fetch and parse raw admins.js as authoritative source and apply it
-            if (typeof fetchRemoteAdminsObject === 'function') {
-                fetchRemoteAdminsObject().then(obj => {
-                    if (obj && Array.isArray(obj.admins)){
-                        window.ghAdmins = obj;
-                        if (typeof ensureGhAdminsShape === 'function') ensureGhAdminsShape();
-                        if (typeof renderAdminsList === 'function') renderAdminsList();
-                        if (typeof renderPatientAdmins === 'function') renderPatientAdmins();
-                        if (typeof showStatus === 'function') showStatus('Uzaktan admins.js içeriği uygulandı.', 'info');
-                    }
-                }).catch(()=>{});
-            }
         }
         window.init = init;
         
@@ -579,7 +711,7 @@
         <header class="settings-header">
             <div>
                 <h1>Yönetici Ayarları</h1>
-                <p>Bu panelden <code>settings/config.json</code> dosyasını düzenleyebilirsiniz. Kaydetmek için repo yazma yetkisi olan bir GitHub token'ı gerekir.</p>
+                <p>Bu panelden sistem ayarlarını düzenleyebilirsiniz. Tüm ayarlar Supabase veritabanına kaydedilir.</p>
             </div>
             
             <!-- Admin Navigasyon Butonları -->
@@ -596,7 +728,7 @@
             </div>
             
             <div class="info-banner">
-                Token'ı tarayıcıda tutmak için <strong>Yerel depolama</strong> kullanılır. Ortak cihazlarda <em>Kaydet</em> işleminden sonra <strong>token'ı temizlemeyi</strong> unutmayın.
+                Tüm ayarlar <strong>Supabase veritabanına</strong> kaydedilir ve anında aktif olur. Değişiklikler tüm kullanıcılar için geçerli olacaktır.
             </div>
         </header>
 
@@ -1154,8 +1286,8 @@
             <section class="settings-section">
                 <h2>📋 Şablon Yükleme</h2>
                 <div class="settings-row">
-                    <label for="templateFileInput">Gün Şablonları JSON Dosyası</label>
-                    <input type="file" id="templateFileInput" accept=".json" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; font-size: 13px;">
+                    <label for="templateFileInput">Gün Şablonları JSON Dosyası (Çoklu seçim yapabilirsiniz)</label>
+                    <input type="file" id="templateFileInput" accept=".json" multiple style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; font-size: 13px;">
                 </div>
                 <div class="settings-row">
                     <button class="btn-primary" id="uploadTemplatesButton" type="button" style="width: fit-content;">📥 Şablonları Yükle ve Birleştir</button>
@@ -1167,19 +1299,12 @@
                 </div>
             </section>
 
-            <section class="settings-section">
-                <h2>GitHub Erişimi</h2>
-                <div class="settings-row">
-                    <label for="githubTokenInput">Kişisel Erişim Token'ı</label>
-                    <input type="password" id="githubTokenInput" placeholder="ghp_...">
-                </div>
-            </section>
+            <!-- GitHub Token Section - Kaldırıldı, Supabase kullanılıyor -->
         </main>
 
         <footer class="actions-row">
             <p class="status-text" id="statusText"><strong>Hazır.</strong></p>
             <div class="actions-right">
-                <button class="btn-secondary" id="clearTokenButton" type="button">Token Temizle</button>
                 <button class="btn-secondary" id="reloadButton" type="button">Ayarları Yükle</button>
                 <button class="btn-primary" id="saveSettingsButton" type="button">Kaydet</button>
             </div>
@@ -1187,11 +1312,7 @@
     </div>
 
     <script>
-        const REPO_OWNER = 'mustafasacar35';
-    const REPO_NAME = 'lipodem-takip-paneli';
-        const SETTINGS_PATH = 'settings/config.json';
-        const SETTINGS_BRANCH = 'main';
-        const LOCAL_STORAGE_TOKEN_KEY = 'lipodemSettingsGithubToken';
+        // GitHub constants removed - using Supabase only
 
         const defaultSettings = {
             version: 1,
@@ -1277,7 +1398,7 @@
         };
 
         let appSettings = { ...defaultSettings };
-        let settingsSha = null;
+        // settingsSha removed - not needed for Supabase
         let settingsDraft = null;
         let isSaving = false;
         let isLoading = false;
@@ -1310,8 +1431,7 @@
         const activity5 = document.getElementById('activity5');
         const rotationChunkSizeInput = document.getElementById('rotationChunkSizeInput');
         const rotationResetDayInput = document.getElementById('rotationResetDayInput');
-        const githubTokenInput = document.getElementById('githubTokenInput');
-        const clearTokenButton = document.getElementById('clearTokenButton');
+        // GitHub inputs removed - using Supabase only
         const reloadButton = document.getElementById('reloadButton');
         const saveSettingsButton = document.getElementById('saveSettingsButton');
         const tagExclusionList = document.getElementById('tagExclusionList');
@@ -1449,9 +1569,9 @@
         }
 
         // ---------- Admins state ----------
-        const ADMINS_PATH = 'settings/admins.js';
+        // ADMINS_PATH removed - using Supabase only
         let ghAdmins = { admins: [], patientAdmins: [] };
-        let adminsSha = null;
+        // adminsSha removed - not needed for Supabase
         let editingAdminIndex = -1; // -1 => create, >=0 => edit
 
         function clone(obj){ return JSON.parse(JSON.stringify(obj || {})); }
@@ -1471,40 +1591,13 @@
             if (!Array.isArray(ghAdmins.patientAdmins)) ghAdmins.patientAdmins = [];
         }
         function loadAdminsRuntime(){
-            try { ghAdmins = clone(window.GH_ADMINS || { admins: [], patientAdmins: [] }); }
-            catch(_) { ghAdmins = { admins: [], patientAdmins: [] }; }
-            ensureGhAdminsShape();
+            // Load from Supabase instead of window.GH_ADMINS
+            loadAdmins().catch(() => {
+                ghAdmins = { admins: [], patientAdmins: [] };
+                ensureGhAdminsShape();
+            });
         }
-        async function fetchAdminsSha(){
-            try{
-                const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${ADMINS_PATH}?ref=${SETTINGS_BRANCH}`;
-                const res = await fetch(url);
-                if (res.ok){ const data = await res.json(); adminsSha = data.sha || null; }
-            } catch(_) { adminsSha = null; }
-        }
-        function parseAdminsFromRawText(text){
-            try{
-                const idx = text.indexOf('window.GH_ADMINS');
-                if (idx === -1) return null;
-                const eq = text.indexOf('=', idx);
-                if (eq === -1) return null;
-                const startObj = text.indexOf('{', eq);
-                const endObj = text.lastIndexOf('}');
-                if (startObj === -1 || endObj === -1 || endObj <= startObj) return null;
-                const jsonStr = text.substring(startObj, endObj + 1);
-                const obj = JSON.parse(jsonStr);
-                if (!obj || !Array.isArray(obj.admins)) return null;
-                return obj;
-            }catch(_){ return null; }
-        }
-        async function fetchRemoteAdminsObject(){
-            try{
-                const res = await fetch(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${SETTINGS_BRANCH}/${ADMINS_PATH}?t=${Date.now()}`, { cache: 'no-store' });
-                if (!res.ok) return null;
-                const txt = await res.text();
-                return parseAdminsFromRawText(txt);
-            }catch(_){ return null; }
-        }
+        // GitHub admin fetch functions removed - using Supabase only
         function renderAdminsList(){
             adminsListDiv.innerHTML = '';
             ensureGhAdminsShape();
@@ -1631,84 +1724,67 @@
             if (!exists){ ghAdmins.patientAdmins.push(val); renderPatientAdmins(); showStatus('Hasta admin eklendi (henüz kaydetmediniz).', 'success'); }
             patientAdminInput.value = '';
         }
-        function reloadRemoteAdminsConfig(){
-            try{
-                const s = document.createElement('script');
-                s.src = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${SETTINGS_BRANCH}/${ADMINS_PATH}?t=${Date.now()}`;
-                s.onload = ()=>{ try { loadAdminsRuntime(); renderAdminsList(); renderPatientAdmins(); showStatus('Uzaktan admins.js yeniden yüklendi.', 'info'); } catch(_){} };
-                s.onerror = ()=>{};
-                document.head.appendChild(s);
-            }catch(_){/* noop */}
-        }
-        async function ensureAdminsSha(){
-            if (!adminsSha){ await fetchAdminsSha(); }
-        }
-        async function saveAdminsToGitHub(){
-            const token = githubTokenInput.value.trim();
-            if (!token){ showStatus('Admins dosyasını kaydetmek için GitHub token gerekli.', 'error'); return; }
+        // reloadRemoteAdminsConfig removed - using Supabase only
+        // ensureAdminsSha removed - not needed for Supabase
+        async function saveAdmins(){
             ensureGhAdminsShape();
-            const contentJs = `window.GH_ADMINS = ${JSON.stringify(ghAdmins, null, 2)};\n`;
-            const endpoint = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${ADMINS_PATH}`;
-            const encoded = btoa(unescape(encodeURIComponent(contentJs)));
-            const body = { message: 'Admin panelinden admins.js güncellemesi', content: encoded, branch: SETTINGS_BRANCH };
-            await ensureAdminsSha();
-            if (adminsSha) body.sha = adminsSha;
+            
             try{
                 saveAdminsFileBtn.disabled = true;
                 saveAdminsFileBtn.textContent = 'Kaydediliyor...';
-                showStatus('admins.js GitHub üzerinde güncelleniyor...', 'info');
-                let res = await fetch(endpoint, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/vnd.github+json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(body)
-                });
-                if (!res.ok){
-                    // Olası sha hatasında bir kez daha dene
-                    const firstErr = await res.json().catch(()=>({}));
-                    if (res.status === 409 || String(firstErr?.message||'').toLowerCase().includes('sha')){
-                        await fetchAdminsSha();
-                        const retryBody = { ...body, sha: adminsSha };
-                        res = await fetch(endpoint, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/vnd.github+json',
-                                'Authorization': `Bearer ${token}`
-                            },
-                            body: JSON.stringify(retryBody)
-                        });
-                    }
+                showStatus('Adminler Supabase\'e kaydediliyor...', 'info');
+                
+                // 💾 Save all admins to Supabase
+                let savedAdmins = 0;
+                for (const admin of ghAdmins.admins) {
+                    const success = await DAL.saveAdmin({
+                        username: admin.username,
+                        password_hash: admin.password,
+                        roles: admin.roles || ['admin'],
+                        is_active: true
+                    });
+                    if (success) savedAdmins++;
                 }
-                if (!res.ok){
-                    const eb = await res.json().catch(()=>({}));
-                    throw new Error(eb.message || `Hata: ${res.status}`);
+                
+                // 💾 Save all patient admins to Supabase
+                let savedPatientAdmins = 0;
+                for (const patientUsername of ghAdmins.patientAdmins) {
+                    const success = await DAL.savePatientAdmin(patientUsername);
+                    if (success) savedPatientAdmins++;
                 }
-                const data = await res.json();
-                adminsSha = data.content?.sha || adminsSha;
-                showStatus('admins.js kaydedildi. Doğrulanıyor...', 'success');
-                // Doğrula ve gerekirse uzaktan konfigi yeniden yükle
-                try{
-                    const verifyRes = await fetch(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${SETTINGS_BRANCH}/${ADMINS_PATH}?t=${Date.now()}`);
-                    if (verifyRes.ok){
-                        const txt = await verifyRes.text();
-                        const anyUser = (ghAdmins.admins[ghAdmins.admins.length-1]||{}).username || '';
-                        if (anyUser && txt.includes(anyUser)){
-                            showStatus('Değişiklik doğrulandı ve yansıtıldı.', 'success');
-                        } else {
-                            showStatus('Kaydedildi ancak tarayıcı önbelleği olabilir. Sayfayı yenileyin.', 'info');
-                        }
-                    }
-                }catch(_){/* ignore */}
-                reloadRemoteAdminsConfig();
+                
+                showStatus(`✅ ${savedAdmins} admin ve ${savedPatientAdmins} hasta admin kaydedildi.`, 'success');
+                
+                // Reload admin list from Supabase
+                await loadAdmins();
+                renderAdminsList();
+                renderPatientAdmins();
+                
             }catch(err){
-                showStatus(err.message || 'admins.js kaydedilemedi.', 'error');
+                showStatus(err.message || 'Adminler kaydedilemedi.', 'error');
             } finally {
                 saveAdminsFileBtn.disabled = false;
                 saveAdminsFileBtn.textContent = 'Admins Dosyasını Kaydet';
+            }
+        }
+        
+        async function loadAdmins(){
+            try {
+                const admins = await DAL.getAdmins();
+                const patientAdmins = await DAL.getPatientAdmins();
+                
+                ghAdmins = {
+                    admins: admins.map(a => ({
+                        username: a.username,
+                        password: a.password_hash,
+                        roles: a.roles
+                    })),
+                    patientAdmins: patientAdmins
+                };
+                
+                console.log('✅ Admins loaded from Supabase:', ghAdmins);
+            } catch (error) {
+                console.error('❌ Failed to load admins from Supabase:', error);
             }
         }
         function attachAdminsUIHandlers(){
@@ -1716,7 +1792,7 @@
             if (adminClearBtn) adminClearBtn.addEventListener('click', clearAdminForm);
             if (patientAdminAddBtn) patientAdminAddBtn.addEventListener('click', addPatientAdmin);
             if (patientAdminInput) patientAdminInput.addEventListener('keydown', (e)=>{ if (e.key==='Enter'){ e.preventDefault(); addPatientAdmin(); } });
-            if (saveAdminsFileBtn) saveAdminsFileBtn.addEventListener('click', saveAdminsToGitHub);
+            if (saveAdminsFileBtn) saveAdminsFileBtn.addEventListener('click', saveAdmins);
             if (forceReloginBtn) forceReloginBtn.addEventListener('click', ()=>{
                 const u = new URL(location.href);
                 u.searchParams.set('relogin','1');
@@ -1729,12 +1805,12 @@
             const disabled = active || isSaving;
             [defaultAlternativeCountInput, enableTagFilterInput, tagExclusionInput,
                 roleExclusionInput, categoryExclusionInput, rotationEnabledInput,
-                rotationChunkSizeInput, rotationResetDayInput, githubTokenInput,
-                saveSettingsButton, reloadButton, clearTokenButton]
+                rotationChunkSizeInput, rotationResetDayInput,
+                saveSettingsButton, reloadButton]
                 .forEach(element => {
                     element.disabled = !!disabled;
                     if (element.tagName === 'INPUT' && element.type !== 'checkbox') {
-                        element.classList.toggle('disabled', !!disabled && element !== githubTokenInput);
+                        element.classList.toggle('disabled', !!disabled);
                     }
                 });
         }
@@ -1860,6 +1936,11 @@
                         protein: appSettings.dietFormulas?.lowcarb?.protein ?? 0.8,
                         fat: appSettings.dietFormulas?.lowcarb?.fat ?? 1.0
                     },
+                    akdeniz: {
+                        carb: appSettings.dietFormulas?.akdeniz?.carb ?? 0.6,
+                        protein: appSettings.dietFormulas?.akdeniz?.protein ?? 0.8,
+                        fat: appSettings.dietFormulas?.akdeniz?.fat ?? 1.0
+                    },
                     activityMultipliers: {
                         1: appSettings.dietFormulas?.activityMultipliers?.[1] ?? 0.8,
                         2: appSettings.dietFormulas?.activityMultipliers?.[2] ?? 0.9,
@@ -1890,7 +1971,7 @@
             rotationEnabledInput.checked = settingsDraft.rotation.enabled;
             rotationChunkSizeInput.value = settingsDraft.rotation.chunkSize;
             rotationResetDayInput.value = settingsDraft.rotation.resetDay === '' ? '' : settingsDraft.rotation.resetDay;
-            githubTokenInput.value = getStoredToken();
+            // githubTokenInput removed - using Supabase only
 
             // Diyet Formül Ayarlarını Doldur
             if (settingsDraft.dietFormulas) {
@@ -2117,45 +2198,34 @@
             };
 
             return {
-                ...appSettings,
-                defaultAlternativeCount: settingsDraft.defaultAlternativeCount,
+                defaultAlternatives: settingsDraft.defaultAlternativeCount,
+                defaultAlternativeCount: settingsDraft.defaultAlternativeCount,  // Both formats for compatibility
                 enableTagFilter: settingsDraft.enableTagFilter,
-                calorieTolerancePercent: settingsDraft.calorieTolerancePercent,
+                calorieTolerance: settingsDraft.calorieTolerancePercent,
+                calorieTolerancePercent: settingsDraft.calorieTolerancePercent,  // Both formats
                 templateReuseWeeks: settingsDraft.templateReuseWeeks,
                 tagExclusions: sanitizeStringList(settingsDraft.tagExclusions),
                 tagExemptions: {
                     roles: sanitizeStringList(settingsDraft.tagExemptions.roles),
                     categories: sanitizeStringList(settingsDraft.tagExemptions.categories)
                 },
-                rotation: rotationPayload,
+                rotationEnabled: rotationPayload.enabled,
+                rotationDailyAlternatives: rotationPayload.chunkSize,
+                rotationResetDay: rotationPayload.resetDay,
+                rotation: rotationPayload,  // Keep nested object too
                 filterCriteria: settingsDraft.filterCriteria,
                 scoreCriteria: settingsDraft.scoreCriteria,
                 scoringMode: settingsDraft.scoringMode || 'simple',
                 sensitivityDivider: settingsDraft.sensitivityDivider || 10,
                 dietFormulas: settingsDraft.dietFormulas,
+                activityMultipliers: settingsDraft.dietFormulas.activityMultipliers,
                 badgeVisibility: badgeVisibilityPayload,
+                featureVisibility: appSettings.featureVisibility || { pdfButton: true },  // Keep existing feature visibility
                 updatedAt: new Date().toISOString()
             };
         }
 
-        function getStoredToken() {
-            try {
-                return window.localStorage ? (window.localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY) || '') : '';
-            } catch (error) {
-                console.warn('⚠️ Token okunamadı:', error);
-                return '';
-            }
-        }
-
-        function persistToken(token) {
-            try {
-                if (!window.localStorage) return;
-                if (token) window.localStorage.setItem(LOCAL_STORAGE_TOKEN_KEY, token);
-                else window.localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
-            } catch (error) {
-                console.warn('⚠️ Token kaydedilemedi:', error);
-            }
-        }
+        // GitHub token functions removed - using Supabase only
 
         function updateRotationFieldStates() {
             const isEnabled = rotationEnabledInput.checked;
@@ -2256,116 +2326,116 @@
             }
         }
 
-        async function loadSettingsFromGitHub() {
+        async function loadSettings() {
             setLoadingState(true);
             showStatus('Ayarlar yükleniyor...', 'info');
-            settingsSha = null;
-            const token = githubTokenInput.value.trim();
             
             try {
-                const headers = {
-                    'Accept': 'application/vnd.github+json'
-                };
-                if (token) {
-                    headers['Authorization'] = `Bearer ${token}`;
-                }
+                // 💾 Supabase'den ayarları yükle
+                const supabaseSettings = await DAL.getSettings();
                 
-                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${SETTINGS_PATH}?ref=${SETTINGS_BRANCH}`, {
-                    headers: headers
-                });
-                if (!response.ok) throw new Error(`Ayarlar yüklenemedi: ${response.status}`);
-                const data = await response.json();
-                settingsSha = data.sha;
-                const decoded = atob((data.content || '').replace(/\n/g, ''));
-                appSettings = { ...defaultSettings, ...JSON.parse(decoded) };
-                
-                // 🔍 DEBUG: GitHub'dan yüklenen ham veri
-                console.log('📥 GitHub config.json RAW:', {
-                    scoringMode: appSettings.scoringMode,
-                    sensitivityDivider: appSettings.sensitivityDivider,
-                    badgeVisibility: appSettings.badgeVisibility,
-                    scoreCriteria: appSettings.scoreCriteria
-                });
-                
-                appSettings.tagExclusions = sanitizeStringList(appSettings.tagExclusions);
-                appSettings.tagExemptions = {
-                    roles: sanitizeStringList(appSettings.tagExemptions?.roles),
-                    categories: sanitizeStringList(appSettings.tagExemptions?.categories)
-                };
-                showStatus('Ayarlar GitHub üzerinden yüklendi.', 'success');
-            } catch (error) {
-                console.warn('⚠️ Ayarlar API ile alınamadı:', error.message);
-                try {
-                    const fallback = await fetch(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${SETTINGS_BRANCH}/${SETTINGS_PATH}`);
-                    if (fallback.ok) {
-                        const fallbackSettings = await fallback.json();
-                        appSettings = { ...defaultSettings, ...fallbackSettings };
-                        appSettings.tagExclusions = sanitizeStringList(appSettings.tagExclusions);
-                        appSettings.tagExemptions = {
-                            roles: sanitizeStringList(appSettings.tagExemptions?.roles),
-                            categories: sanitizeStringList(appSettings.tagExemptions?.categories)
+                if (supabaseSettings && Object.keys(supabaseSettings).length > 0) {
+                    // Check if it's already in camelCase format (from localStorage)
+                    // or needs conversion from snake_case (from Supabase columns)
+                    const hasSnakeCase = 'default_alternatives' in supabaseSettings || 
+                                        'enable_tag_filter' in supabaseSettings;
+                    
+                    if (hasSnakeCase) {
+                        // Convert from snake_case (Supabase columns)
+                        appSettings = {
+                            defaultAlternatives: supabaseSettings.default_alternatives,
+                            defaultAlternativeCount: supabaseSettings.default_alternatives,  // Both names for compatibility
+                            enableTagFilter: supabaseSettings.enable_tag_filter,
+                            calorieTolerance: supabaseSettings.calorie_tolerance,
+                            calorieTolerancePercent: supabaseSettings.calorie_tolerance,  // Both names
+                            templateReuseWeeks: supabaseSettings.template_reuse_weeks,
+                            dietFormulas: supabaseSettings.diet_formulas,
+                            activityMultipliers: supabaseSettings.activity_multipliers,
+                            tagExclusions: supabaseSettings.tag_exclusions,
+                            tagExemptions: supabaseSettings.tag_exemptions,
+                            rotationEnabled: supabaseSettings.rotation_enabled,
+                            rotationDailyAlternatives: supabaseSettings.rotation_daily_alternatives,
+                            rotationResetDay: supabaseSettings.rotation_reset_day,
+                            filterCriteria: supabaseSettings.filter_criteria,
+                            scoreCriteria: supabaseSettings.score_criteria,
+                            scoringMode: supabaseSettings.scoring_mode,
+                            sensitivityDivider: supabaseSettings.sensitivity_divider,
+                            badgeVisibility: supabaseSettings.badge_visibility,
+                            featureVisibility: supabaseSettings.feature_visibility
                         };
-                        showStatus('Ham dosyadan yüklendi (salt okunur).', 'info');
                     } else {
-                        appSettings = { ...defaultSettings };
-                        showStatus('Ayar dosyası bulunamadı. Varsayılanlar kullanılacak.', 'error');
+                        // Already in camelCase (from localStorage), use as-is
+                        appSettings = supabaseSettings;
+                        
+                        // Ensure both property name variants exist for compatibility
+                        appSettings.defaultAlternativeCount = appSettings.defaultAlternativeCount || appSettings.defaultAlternatives || 3;
+                        appSettings.defaultAlternatives = appSettings.defaultAlternatives || appSettings.defaultAlternativeCount || 3;
+                        appSettings.calorieTolerancePercent = appSettings.calorieTolerancePercent || appSettings.calorieTolerance || 5;
+                        appSettings.calorieTolerance = appSettings.calorieTolerance || appSettings.calorieTolerancePercent || 5;
                     }
-                } catch (fallbackError) {
-                    console.warn('⚠️ Ayarların ham dosyası da alınamadı:', fallbackError.message);
+                    
+                    // 🔍 DEBUG: Supabase'den yüklenen veri
+                    console.log('📥 Supabase settings loaded:', {
+                        defaultAlternatives: appSettings.defaultAlternatives,
+                        scoringMode: appSettings.scoringMode,
+                        sensitivityDivider: appSettings.sensitivityDivider,
+                        badgeVisibility: appSettings.badgeVisibility,
+                        scoreCriteria: appSettings.scoreCriteria
+                    });
+                    
+                    // Sanitize lists
+                    appSettings.tagExclusions = sanitizeStringList(appSettings.tagExclusions);
+                    appSettings.tagExemptions = {
+                        roles: sanitizeStringList(appSettings.tagExemptions?.roles),
+                        categories: sanitizeStringList(appSettings.tagExemptions?.categories)
+                    };
+                    
+                    showStatus('✅ Ayarlar Supabase\'den yüklendi.', 'success');
+                } else {
+                    // Fallback to defaults
                     appSettings = { ...defaultSettings };
-                    showStatus('Ayarlar yüklenemedi. Varsayılan değerler kullanılıyor.', 'error');
+                    showStatus('⚠️ Ayarlar bulunamadı. Varsayılanlar kullanılıyor.', 'info');
                 }
+            } catch (error) {
+                console.error('❌ Ayarlar yüklenirken hata:', error);
+                appSettings = { ...defaultSettings };
+                showStatus('❌ Ayarlar yüklenemedi. Varsayılan değerler kullanılıyor.', 'error');
             } finally {
                 setLoadingState(false);
                 populateSettingsForm();
             }
         }
 
-        async function saveSettingsToGitHub(payload, token) {
-            const repo = 'mustafasacar35/lipodem-takip-paneli';
-            const path = 'settings/config.json';
-            const branch = 'main';
-            
-            // Önce mevcut dosyanın SHA'sını al
-            let sha = null;
-            try {
-                const checkUrl = `https://api.github.com/repos/${repo}/contents/${path}?ref=${branch}`;
-                const checkResp = await fetch(checkUrl, {
-                    headers: { 'Authorization': `token ${token}` }
-                });
-                if (checkResp.ok) {
-                    const data = await checkResp.json();
-                    sha = data.sha;
-                }
-            } catch (e) {
-                console.warn('SHA alınamadı, yeni dosya oluşturulacak');
-            }
-
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
-            const updateUrl = `https://api.github.com/repos/${repo}/contents/${path}`;
-            
-            const body = {
-                message: `Ayarlar güncellendi (${new Date().toLocaleString('tr-TR')})`,
-                content: content,
-                branch: branch
+        async function saveSettings(payload) {
+            // 💾 Supabase'e kaydet
+            // payload'u Supabase formatına dönüştür
+            const supabasePayload = {
+                default_alternatives: payload.defaultAlternatives,
+                enable_tag_filter: payload.enableTagFilter,
+                calorie_tolerance: payload.calorieTolerance,
+                template_reuse_weeks: payload.templateReuseWeeks,
+                diet_formulas: payload.dietFormulas,
+                activity_multipliers: payload.activityMultipliers,
+                tag_exclusions: payload.tagExclusions,
+                tag_exemptions: payload.tagExemptions,
+                rotation_enabled: payload.rotationEnabled,
+                rotation_daily_alternatives: payload.rotationDailyAlternatives,
+                rotation_reset_day: payload.rotationResetDay,
+                filter_criteria: payload.filterCriteria,
+                score_criteria: payload.scoreCriteria,
+                scoring_mode: payload.scoringMode,
+                sensitivity_divider: payload.sensitivityDivider,
+                badge_visibility: payload.badgeVisibility,
+                feature_visibility: payload.featureVisibility
             };
             
-            if (sha) body.sha = sha;
-
-            const response = await fetch(updateUrl, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(body)
-            });
-
-            if (!response.ok) {
-                throw new Error(`GitHub güncellemesi başarısız: ${response.status}`);
+            const success = await DAL.saveSettings(supabasePayload);
+            
+            if (!success) {
+                throw new Error('Ayarlar Supabase\'e kaydedilemedi');
             }
             
-            return await response.json();
+            return { success: true, message: 'Ayarlar Supabase\'e kaydedildi' };
         }
 
         // Local dosyayı güncelle (File System Access API - sadece modern tarayıcılarda çalışır)
@@ -2451,11 +2521,6 @@
         function attachActionHandlers() {
             saveSettingsButton.addEventListener('click', async () => {
                 if (isSaving) return;
-                const token = githubTokenInput.value.trim();
-                if (!token) {
-                    showStatus('Kaydetmek için bir GitHub token gerekli.', 'error');
-                    return;
-                }
                 const payload = collectPayloadFromForm();
                 console.log('🔵 AYARLAR KAYDEDİLİYOR:');
                 console.log('   📊 Badge Visibility:', payload.badgeVisibility);
@@ -2464,11 +2529,11 @@
                 try {
                     setSavingState(true);
                     saveSettingsButton.textContent = 'Kaydediliyor...';
-                    showStatus('GitHub üzerinde güncelleniyor...', 'info');
+                    showStatus('Supabase veritabanına kaydediliyor...', 'info');
                     
-                    // 1. GitHub'a kaydet
-                    const result = await saveSettingsToGitHub(payload, token);
-                    console.log('✅ GitHub\'a başarıyla kaydedildi!');
+                    // Supabase'e kaydet
+                    const result = await saveSettings(payload);
+                    console.log('✅ Supabase\'e başarıyla kaydedildi!');
                     console.log('   🏷️ Rozet Ayarları:', payload.badgeVisibility);
                     
                     // Rozet ayarlarının durumunu göster
@@ -2481,12 +2546,10 @@
                     
                     console.log('   ✅ Aktif Rozetler:', enabledBadges);
                     console.log('   ❌ Kapalı Rozetler:', disabledBadges);
-                    persistToken(token);
-                    settingsSha = result.content?.sha || settingsSha;
                     appSettings = payload;
                     
-                    // ✅ GitHub'a kaydedildi - local indirme yok
-                    showStatus('Ayarlar GitHub\'a kaydedildi.', 'success');
+                    // ✅ Supabase'e kaydedildi
+                    showStatus('Ayarlar Supabase veritabanına kaydedildi.', 'success');
                     
                 } catch (error) {
                     console.error('❌ Ayarlar kaydedilemedi:', error);
@@ -2499,429 +2562,76 @@
 
             reloadButton.addEventListener('click', () => {
                 if (isSaving) return;
-                loadSettingsFromGitHub();
+                loadSettings();
             });
 
-            clearTokenButton.addEventListener('click', () => {
-                persistToken('');
-                githubTokenInput.value = '';
-                showStatus('Token yerel depolamadan temizlendi.', 'info');
-            });
+            // clearTokenButton - Artık Supabase kullanıldığı için devre dışı
+            // Token yönetimi artık gerekli değil
 
             // Template Upload Functionality
             uploadTemplatesButton.addEventListener('click', async () => {
-                const file = templateFileInput.files[0];
-                if (!file) {
-                    showStatus('❌ Lütfen bir JSON dosyası seçin.', 'error');
+                const files = templateFileInput.files;
+                if (!files || files.length === 0) {
+                    showStatus('❌ Lütfen en az bir JSON dosyası seçin.', 'error');
                     return;
                 }
 
-                if (!file.name.endsWith('.json')) {
-                    showStatus('❌ Lütfen sadece .json dosyası yükleyin.', 'error');
-                    return;
+                // Validate all files are JSON
+                for (let file of files) {
+                    if (!file.name.endsWith('.json')) {
+                        showStatus(`❌ "${file.name}" JSON dosyası değil. Lütfen sadece .json dosyaları yükleyin.`, 'error');
+                        return;
+                    }
                 }
 
                 try {
                     uploadTemplatesButton.disabled = true;
-                    uploadTemplatesButton.textContent = '⏳ Şablonlar yükleniyor...';
-                    showStatus('📥 Şablonlar okunuyor...', 'info');
+                    uploadTemplatesButton.textContent = `⏳ ${files.length} dosya yükleniyor...`;
+                    showStatus(`📥 ${files.length} dosya okunuyor...`, 'info');
 
-                    // Read file as text with UTF-8 encoding
-                    const fileContent = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = (e) => resolve(e.target.result);
-                        reader.onerror = () => reject(new Error('Dosya okunamadı'));
-                        reader.readAsText(file, 'UTF-8');
-                    });
+                    let allTemplates = [];
 
-                    // Parse JSON
-                    const parsedData = JSON.parse(fileContent);
-                    
-                    // Handle different JSON structures
-                    let newTemplates;
-                    if (Array.isArray(parsedData)) {
-                        // Direct array of templates
-                        newTemplates = parsedData;
-                    } else if (parsedData.templates && Array.isArray(parsedData.templates)) {
-                        // Object with templates array (exported format)
-                        newTemplates = parsedData.templates;
-                    } else {
-                        throw new Error('JSON dosyası bir şablon dizisi veya templates özelliği içeren obje olmalıdır');
-                    }
-
-                    showStatus('🔄 Mevcut şablonlar GitHub\'dan alınıyor...', 'info');
-
-                    // Get existing templates from GitHub (INDEX ONLY - NEW SYSTEM)
-                    const token = githubTokenInput.value.trim();
-                    if (!token) {
-                        throw new Error('GitHub token bulunamadı. Lütfen token girin.');
-                    }
-
-                    const templatesResponse = await fetch(
-                        'https://api.github.com/repos/mustafasacar35/lipodem-takip-paneli/contents/templates/index.json',
-                        {
-                            headers: {
-                                'Authorization': `token ${token}`,
-                                'Accept': 'application/vnd.github.v3+json'
-                            }
-                        }
-                    );
-
-                    if (!templatesResponse.ok) {
-                        throw new Error('Mevcut şablon index\'i GitHub\'dan alınamadı');
-                    }
-
-                    const templatesData = await templatesResponse.json();
-                    // Properly decode UTF-8 content to preserve Turkish characters
-                    const existingContent = decodeURIComponent(escape(atob(templatesData.content)));
-                    const existingData = JSON.parse(existingContent);
-                    
-                    // Handle different JSON structures for existing templates
-                    let existingTemplates;
-                    if (Array.isArray(existingData)) {
-                        existingTemplates = existingData;
-                    } else if (existingData && typeof existingData === 'object' && existingData.templates && Array.isArray(existingData.templates)) {
-                        existingTemplates = existingData.templates;
-                    } else {
-                        console.warn('⚠️ GitHub\'dan alınan veri beklenmedik formatta, boş liste kullanılıyor');
-                        existingTemplates = [];
-                    }
-
-                    console.log(`📊 Mevcut şablon sayısı: ${existingTemplates.length}`);
-                    
-                    // Fix Turkish characters in existing templates if they are corrupted
-                    function fixTurkishInObject(obj) {
-                        if (typeof obj === 'string') {
-                            return fixTurkishChars(obj);
-                        } else if (Array.isArray(obj)) {
-                            return obj.map(item => fixTurkishInObject(item));
-                        } else if (obj && typeof obj === 'object') {
-                            const fixed = {};
-                            for (const [key, value] of Object.entries(obj)) {
-                                fixed[fixTurkishChars(key)] = fixTurkishInObject(value);
-                            }
-                            return fixed;
-                        }
-                        return obj;
-                    }
-                    
-                    // Check and fix existing templates for Turkish character corruption
-                    let fixedExistingTemplates = false;
-                    existingTemplates = existingTemplates.map(template => {
-                        const originalName = template.name || '';
-                        const fixedTemplate = fixTurkishInObject(template);
-                        
-                        // Check if template name contains corrupted Turkish characters
-                        if (originalName.includes('Ã') || originalName.includes('Ä') || originalName.includes('Å')) {
-                            console.log(`🔧 Türkçe karakter düzeltmesi: "${originalName}" → "${fixedTemplate.name}"`);
-                            fixedExistingTemplates = true;
-                        }
-                        
-                        return fixedTemplate;
-                    });
-                    
-                    if (fixedExistingTemplates) {
-                        console.log('✅ Mevcut şablonlarda Türkçe karakter düzeltmeleri yapıldı');
-                    }
-
-                    // Helper function to normalize Turkish text for comparison
-                    function normalizeTurkishText(text) {
-                        if (!text || typeof text !== 'string') return '';
-                        return fixTurkishChars(text)
-                            .toLowerCase()
-                            .replace(/\s+/g, ' ')
-                            .trim();
-                    }
-
-                    // Helper function to generate detailed content hash for duplicate detection
-                    function getTemplateContentHash(template) {
-                        if (!template.ogunler || !Array.isArray(template.ogunler)) {
-                            console.warn('⚠️ Şablon öğün bilgisi eksik:', template.name || 'İsimsiz şablon');
-                            return '';
-                        }
-                        
-                        // Create detailed hash based on meal structure including all yemek properties
-                        const contentData = template.ogunler.map(ogun => ({
-                            ogunAdi: normalizeTurkishText(ogun.ogunAdi || ''),
-                            yemekler: (ogun.yemekler || []).map(yemek => {
-                                // Normalize food name for comparison - use multiple possible fields
-                                const foodName = normalizeTurkishText(
-                                    yemek.foodName || yemek.originalText || yemek.name || ''
-                                );
-                                
-                                return {
-                                    foodName: foodName,
-                                    originalText: normalizeTurkishText(yemek.originalText || ''),
-                                    calories: Math.round(parseFloat(yemek.calories) || 0),
-                                    protein: Math.round(parseFloat(yemek.protein) || 0),
-                                    carbs: Math.round(parseFloat(yemek.carbs) || 0),
-                                    fat: Math.round(parseFloat(yemek.fat) || 0),
-                                    // Include eşleşen yemek info if available
-                                    eslesenYemekName: yemek.eslesenYemek ? 
-                                        normalizeTurkishText(yemek.eslesenYemek.name || '') : '',
-                                    // Include any additional identifying fields
-                                    portion: yemek.portion || '',
-                                    unit: normalizeTurkishText(yemek.unit || '')
-                                };
-                            }).sort((a, b) => a.foodName.localeCompare(b.foodName))
-                        })).sort((a, b) => a.ogunAdi.localeCompare(b.ogunAdi));
-                        
-                        const hashString = JSON.stringify(contentData);
-                        console.log(`🔍 "${template.name}" için hash oluşturuldu (${hashString.length} karakter)`);
-                        return hashString;
-                    }
-                    
-                    // Enhanced function to check if templates have identical meal content
-                    function hasIdenticalMealContent(template1, template2) {
-                        if (!template1 || !template2) return false;
-                        
-                        const hash1 = getTemplateContentHash(template1);
-                        const hash2 = getTemplateContentHash(template2);
-                        
-                        // If either hash is empty, consider them different
-                        if (!hash1 || !hash2) {
-                            console.log(`⚠️ Hash boş: "${template1.name}" (${hash1 ? 'OK' : 'BOŞ'}) vs "${template2.name}" (${hash2 ? 'OK' : 'BOŞ'})`);
-                            return false;
-                        }
-                        
-                        // If hashes are identical, content is the same
-                        if (hash1 === hash2) {
-                            console.log(`🔍 İçerik eşleşmesi bulundu: "${template1.name}" ve "${template2.name}" aynı yemek içeriğine sahip`);
-                            return true;
-                        }
-                        
-                        return false;
-                    }
-
-                    // Function to check meal content difference (even one different line should allow addition)
-                    function hasDifferentMealContent(newTemplate, existingTemplates) {
-                        const newHash = getTemplateContentHash(newTemplate);
-                        if (!newHash) return true; // If can't generate hash, assume different
-                        
-                        for (const existing of existingTemplates) {
-                            const existingHash = getTemplateContentHash(existing);
-                            if (existingHash && newHash === existingHash) {
-                                console.log(`❌ Aynı içerik tespit edildi: "${newTemplate.name}" = "${existing.name}"`);
-                                return false; // Found identical content
-                            }
-                        }
-                        
-                        console.log(`✅ Benzersiz içerik: "${newTemplate.name}" eklemeye uygun`);
-                        return true; // No identical content found
-                    }
-
-                    // Ensure existingTemplates is properly initialized as array
-                    if (!Array.isArray(existingTemplates)) {
-                        console.error('❌ existingTemplates array değil, boş array kullanılıyor');
-                        existingTemplates = [];
-                    }
-
-                    // Merge templates (skip duplicates by ID and content)
-                    const existingIds = new Set();
-                    const templatesAdded = [];
-                    const templatesSkipped = [];
-                    const templatesSkippedByContent = [];
-                    
-                    // Safely extract existing IDs
-                    existingTemplates.forEach(t => {
-                        if (t && t.id) {
-                            existingIds.add(t.id);
-                        }
-                    });
-
-                    console.log(`📊 İşlem öncesi durum:`);
-                    console.log(`   - Mevcut şablon sayısı: ${existingTemplates.length}`);
-                    console.log(`   - Yüklenecek şablon sayısı: ${newTemplates.length}`);
-                    console.log(`   - Mevcut ID'ler: [${Array.from(existingIds).join(', ')}]`);
-
-                    newTemplates.forEach((template, templateIndex) => {
-                        if (!template || typeof template !== 'object') {
-                            console.warn(`⚠️ ${templateIndex + 1}. şablon geçersiz:`, template);
-                            return;
-                        }
-
-                        if (!template.id) {
-                            console.warn(`⚠️ ${templateIndex + 1}. şablon ID olmadan atlandı:`, template.name || 'İsimsiz');
-                            return;
-                        }
-                        
-                        console.log(`\n🔍 ${templateIndex + 1}/${newTemplates.length} - Şablon kontrol ediliyor: "${template.name}" (ID: ${template.id})`);
-                        
-                        // First check: ID already exists
-                        if (existingIds.has(template.id)) {
-                            console.log(`⚠️ Aynı ID'li şablon zaten mevcut: ${template.id}`);
-                            templatesSkipped.push({
-                                id: template.id, 
-                                name: template.name || 'İsimsiz', 
-                                reason: 'ID zaten mevcut'
-                            });
-                            return;
-                        }
-                        
-                        // Second check: Content already exists (even one different meal line should allow addition)
-                        if (!hasDifferentMealContent(template, existingTemplates)) {
-                            const duplicateTemplate = existingTemplates.find(t => 
-                                getTemplateContentHash(t) === getTemplateContentHash(template)
-                            );
-                            console.log(`⚠️ Aynı yemek içeriği mevcut: "${template.name}"`);
-                            if (duplicateTemplate) {
-                                console.log(`   Mevcut şablon: "${duplicateTemplate.name}" (ID: ${duplicateTemplate.id})`);
-                            }
-                            templatesSkippedByContent.push({
-                                id: template.id, 
-                                name: template.name || 'İsimsiz', 
-                                reason: 'Aynı yemek içeriği mevcut',
-                                duplicateOf: duplicateTemplate?.name || 'Bilinmeyen'
-                            });
-                            return;
-                        }
-                        
-                        // Template can be added - generate new menu number
-                        console.log(`✅ Yeni şablon ekleniyor: "${template.name}"`);
-                        
-                        const existingMenuNumbers = existingTemplates
-                            .map(t => {
-                                if (!t || !t.name) return 0;
-                                const match = String(t.name).match(/^(\d+)\./);
-                                return match ? parseInt(match[1]) : 0;
-                            })
-                            .filter(num => num > 0);
-                        
-                        const nextMenuNumber = existingMenuNumbers.length > 0 
-                            ? Math.max(...existingMenuNumbers) + 1 
-                            : existingTemplates.length + 1;
-                        
-                            // Generate clean menu name format
-                            const templateName = template.name || `Şablon ${template.id}`;
-                            
-                            // Extract any existing menu number or create new one
-                            let cleanMenuName;
-                            const existingMenuMatch = templateName.match(/^(\d+)\./);
-                            
-                            if (existingMenuMatch) {
-                                // Already has menu number, keep it but clean the name
-                                cleanMenuName = `Menü ${existingMenuMatch[1]}`;
-                            } else {
-                                // No menu number, create new clean name
-                                cleanMenuName = `Menü ${nextMenuNumber}`;
-                            }
-                            
-                            const oldName = template.name;
-                            template.name = cleanMenuName;
-                            console.log(`📝 Şablon adı düzenlendi: "${oldName}" → "${template.name}"`);
-                            
-                            // Also update the display name if it exists
-                            if (template.displayName) {
-                                template.displayName = cleanMenuName;
-                            }                        // Deep clean template data and preserve Turkish characters
-                        const cleanedTemplate = JSON.parse(JSON.stringify(template));
-                        
-                        // Recursively fix Turkish characters in the entire template
-                        function fixTurkishInObject(obj) {
-                            if (typeof obj === 'string') {
-                                return fixTurkishChars(obj);
-                            } else if (Array.isArray(obj)) {
-                                return obj.map(item => fixTurkishInObject(item));
-                            } else if (obj && typeof obj === 'object') {
-                                const fixed = {};
-                                for (const [key, value] of Object.entries(obj)) {
-                                    fixed[fixTurkishChars(key)] = fixTurkishInObject(value);
-                                }
-                                return fixed;
-                            }
-                            return obj;
-                        }
-                        
-                        const turkishFixedTemplate = fixTurkishInObject(cleanedTemplate);
-                        
-                        existingTemplates.push(turkishFixedTemplate);
-                        templatesAdded.push({
-                            id: turkishFixedTemplate.id, 
-                            name: turkishFixedTemplate.name,
-                            menuNumber: nextMenuNumber
+                    // Read all files
+                    for (let file of files) {
+                        const fileContent = await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => resolve(e.target.result);
+                            reader.onerror = () => reject(new Error(`Dosya okunamadı: ${file.name}`));
+                            reader.readAsText(file, 'UTF-8');
                         });
-                        existingIds.add(turkishFixedTemplate.id);
-                    });
 
-                    console.log(`\n📊 İşlem sonucu özeti:`);
-                    console.log(`   - Toplam şablon sayısı: ${existingTemplates.length}`);
-                    console.log(`   - Eklenen: ${templatesAdded.length}`);
-                    console.log(`   - ID'ye göre atlanan: ${templatesSkipped.length}`);
-                    console.log(`   - İçeriğe göre atlanan: ${templatesSkippedByContent.length}`);
-
-                    showStatus('💾 Birleştirilmiş şablonlar GitHub\'a kaydediliyor...', 'info');
-
-                    // Preserve original JSON structure with metadata - maintain Turkish character integrity
-                    const mergedData = {
-                        version: existingData.version || "1.0",
-                        exportDate: new Date().toISOString(),
-                        totalCount: existingTemplates.length,
-                        templates: existingTemplates,
-                        lastUpdate: {
-                            date: new Date().toISOString(),
-                            addedCount: templatesAdded.length,
-                            skippedCount: templatesSkipped.length + templatesSkippedByContent.length,
-                            description: `${templatesAdded.length} yeni şablon eklendi, ${templatesSkipped.length + templatesSkippedByContent.length} duplicate atlandı`
+                        const parsedData = JSON.parse(fileContent);
+                        
+                        // Handle different JSON structures
+                        if (Array.isArray(parsedData)) {
+                            allTemplates.push(...parsedData);
+                        } else if (parsedData.templates && Array.isArray(parsedData.templates)) {
+                            allTemplates.push(...parsedData.templates);
+                        } else if (parsedData.id && parsedData.ogunler) {
+                            allTemplates.push(parsedData);
+                        } else {
+                            console.warn(`[Upload] "${file.name}" beklenmeyen format, atlanıyor`);
                         }
-                    };
-
-                    // Ensure proper UTF-8 encoding for Turkish characters
-                    const mergedContent = JSON.stringify(mergedData, null, 2);
-                    
-                    // Properly encode UTF-8 content for GitHub API to preserve Turkish characters
-                    const encodedContent = btoa(unescape(encodeURIComponent(mergedContent)));
-                    
-                    console.log('📝 JSON içeriği UTF-8 ile kodlandı, Türkçe karakterler korundu');
-
-                    const updateResponse = await fetch(
-                        'https://api.github.com/repos/mustafasacar35/lipodem-takip-paneli/contents/templates/index.json',
-                        {
-                            method: 'PUT',
-                            headers: {
-                                'Authorization': `token ${token}`,
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/vnd.github.v3+json'
-                            },
-                            body: JSON.stringify({
-                                message: `📥 Şablon index güncelleme (Türkçe karakter korundu): ${templatesAdded.length} yeni menü, ${templatesSkipped.length + templatesSkippedByContent.length} duplicate atlandı`,
-                                content: encodedContent,
-                                sha: templatesData.sha
-                            })
-                        }
-                    );
-
-                    if (!updateResponse.ok) {
-                        throw new Error('Şablon index\'i GitHub\'a kaydedilemedi');
                     }
 
+                    showStatus('📤 Şablonlar Supabase\'e kaydediliyor...', 'info');
+
+                    // 💾 Bulk save templates to Supabase
+                    const result = await DAL.bulkSaveTemplates(allTemplates);
+                    
                     // Show detailed success message
-                    let message = '✅ Şablon yükleme işlemi başarıyla tamamlandı!\\n\\n📊 ÖZET:\\n';
-                    message += `� Toplam mevcut şablon sayısı: ${existingTemplates.length}\n`;
-                    message += `�📥 ${templatesAdded.length} yeni şablon eklendi\n`;
+                    let message = `✅ Şablon yükleme işlemi başarıyla tamamlandı!<br><br>📊 ÖZET:<br>`;
+                    message += `📁 ${files.length} dosya okundu<br>`;
+                    message += `📥 ${allTemplates.length} şablon bulundu<br>`;
+                    message += `✅ ${result.added} yeni şablon eklendi<br>`;
+                    message += `⏭️ ${result.skipped} şablon (zaten mevcut) atlandı<br>`;
                     
-                    if (templatesSkipped.length > 0) {
-                        message += `⏭️ ${templatesSkipped.length} şablon (aynı ID) atlandı\n`;
+                    if (result.errors && result.errors.length > 0) {
+                        message += `⚠️ ${result.errors.length} şablonda hata oluştu<br>`;
+                        console.error('Template upload errors:', result.errors);
                     }
                     
-                    if (templatesSkippedByContent.length > 0) {
-                        message += `🔄 ${templatesSkippedByContent.length} şablon (aynı yemek içeriği) atlandı\n`;
-                    }
-                    
-                    message += `\n🎯 Karşılaştırma kriteri: Öğün adları ve yemek satırlarının tam eşleşmesi\n`;
-                    message += `📝 Yeni şablonlar otomatik menü numarası aldı`;
-                    
-                    // Show details in console for debugging
-                    if (templatesAdded.length > 0) {
-                        console.log('📥 Eklenen şablonlar:', templatesAdded.map(t => t.name));
-                    }
-                    if (templatesSkipped.length > 0) {
-                        console.log('⏭️ ID\'ye göre atlanan şablonlar:', templatesSkipped.map(t => t.name));
-                    }
-                    if (templatesSkippedByContent.length > 0) {
-                        console.log('🔄 İçerik benzerlişine göre atlanan şablonlar:', templatesSkippedByContent.map(t => t.name));
-                    }
-
-                    showStatus(message.replace(/\n/g, '<br>'), 'success');
+                    showStatus(message, 'success');
                     
                     // Clear file input
                     templateFileInput.value = '';
@@ -2969,7 +2679,10 @@
 
                 const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
                 const manifestURL = URL.createObjectURL(manifestBlob);
-                document.querySelector('#manifestLink').setAttribute('href', manifestURL);
+                const manifestLink = document.querySelector('#manifestLink') || document.querySelector('link[rel="manifest"]');
+                if (manifestLink) {
+                    manifestLink.setAttribute('href', manifestURL);
+                }
 
                 const serviceWorkerContent = `
                     const CACHE_NAME = '${CACHE_NAME}';
@@ -3014,9 +2727,12 @@
                 const swBlob = new Blob([serviceWorkerContent], { type: 'application/javascript' });
                 const swURL = URL.createObjectURL(swBlob);
 
+                /*
                 navigator.serviceWorker.register(swURL)
                     .then(registration => console.log('ServiceWorker registered:', registration.scope))
                     .catch(err => console.log('ServiceWorker registration failed:', err));
+                */
+               console.log('ServiceWorker registration disabled in admin_settings.html');
             }
         }
 
@@ -3029,57 +2745,38 @@
                     event.preventDefault();
                 }
                 lastTouchEnd = now;
-            }, { passive: false });
+            }, false);
 
             document.addEventListener('gesturestart', function(event) {
                 event.preventDefault();
-            }, { passive: false });
+            });
+
+            document.addEventListener('dblclick', function(event) {
+                event.preventDefault();
+            });
         })();
     </script>
     
-    <!-- Page initialization - runs after body is parsed -->
+    <!-- Page initialization - runs after all scripts loaded -->
     <script>
-        // Use setTimeout to ensure DOM is fully parsed
-        setTimeout(async () => {
-            console.info('[Settings] Script running at end of body (after timeout)');
-            console.info('[Settings] .settings-wrapper check:', document.querySelector('.settings-wrapper'));
-            const relogin = new URLSearchParams(location.search).get('relogin') === '1';
-            
-            if (window.AdminAuth && typeof AdminAuth.protectPage === 'function') {
-                console.info('[Settings] Calling AdminAuth.protectPage');
-                try {
-                    await AdminAuth.protectPage({ 
-                        forcePrompt: relogin,
-                        afterLogin: () => {
-                            console.info('[Settings] afterLogin callback fired');
-                        }
-                    });
-                    console.info('[Settings] Auth successful, session:', AdminAuth.getSession());
-                } catch(err) {
-                    console.error('[Settings] protectPage error:', err);
-                    return;
+        // Initialize page after DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                console.info('[Init] DOMContentLoaded - calling init()');
+                if (typeof window.init === 'function') {
+                    window.init();
+                } else {
+                    console.error('[Init] window.init is not defined!');
                 }
-            }
-            
-            console.info('[Settings] DOM is ready, .settings-wrapper:', document.querySelector('.settings-wrapper'));
-            
-            // Call page functions
-            if (typeof window.addLogoutButton === 'function') {
-                window.addLogoutButton();
-            }
-            
+            });
+        } else {
+            // DOM already loaded
+            console.info('[Init] DOM already loaded - calling init()');
             if (typeof window.init === 'function') {
                 window.init();
+            } else {
+                console.error('[Init] window.init is not defined!');
             }
-        }, 10);
-    </script>
-    
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then(reg => console.log('✅ Service Worker kayıtlı:', reg.scope))
-                .catch(err => console.error('❌ Service Worker hatası:', err));
         }
     </script>
 </body>
