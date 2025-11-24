@@ -10934,6 +10934,10 @@
             modal.style.display = 'block';
             
             console.log('✅ Admin Food Modal açıldı - Veritabanına Ekle tab aktif - Yemek:', foodName);
+            
+            // 🔥 MODAL AÇILINCA TAB 5 FORM'UNU YENİDEN YÜKLE (Supabase'den fresh data)
+            console.log('🔄 Modal açıldı, Tab 5 formu yeniden yükleniyor...');
+            reloadTab5Form();
         }
 
         // Admin modal kapat
