@@ -185,28 +185,40 @@ const PatientAuth = {
                 };
             }
             
-            // Hasta detaylarını yükle (isAdmin için gerekli)
+            // Hasta detaylarını yükle (isAdmin + name/surname için gerekli)
             let isAdminUser = false;
+            let fullName = patient.name || 'İsimsiz';
+            let surName = '';
+            
             try {
-                const patientDetails = await this.loadPatientDetails(patient.id);
-                if (patientDetails && patientDetails.isAdmin === true) {
-                    isAdminUser = true;
-                    console.log('👑 Admin kullanıcı tespit edildi:', patient.username);
+                const patientDetails = await this.loadPatientDetails(patientId);
+                if (patientDetails) {
+                    // ✅ Admin kontrolü
+                    if (patientDetails.patient_data?.isAdmin === true) {
+                        isAdminUser = true;
+                        console.log('👑 Admin kullanıcı tespit edildi:', patient.username);
+                    }
+                    
+                    // ✅ Ad-Soyad bilgisini patient_data.personalInfo'dan al
+                    if (patientDetails.patient_data?.personalInfo) {
+                        fullName = patientDetails.patient_data.personalInfo.name || patient.name || 'İsimsiz';
+                        surName = patientDetails.patient_data.personalInfo.surname || '';
+                    }
                 }
             } catch (e) {
-                console.warn('Hasta detayları isAdmin kontrolü başarısız:', e);
+                console.warn('Hasta detayları yükleme hatası:', e);
             }
             
             // Session oluştur
             const sessionData = {
                 patientId: patientId,
                 username: patient.username,
-                name: patient.name || 'İsimsiz',
-                surname: patient.surname || '',
+                name: fullName,
+                surname: surName,
                 loginTime: new Date().toISOString(),
                 expiresAt: this.calculateExpiry(patient.session_days || patient.sessionDays || 7),
                 rememberMe: rememberMe,
-                isAdmin: isAdminUser  // ✅ Admin yetkisi eklendi
+                isAdmin: isAdminUser
             };
 
             // Session'ı kaydet

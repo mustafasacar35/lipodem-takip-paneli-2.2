@@ -6237,15 +6237,42 @@
                     console.log('👤 Admin yetkisi YOK');
                 }
                 
-                // Weeks verisini yükle
-                if (patientData.weeks && Array.isArray(patientData.weeks)) {
-                    // Eski formatı yeni formata dönüştür
-                    weeks = migrateWeeksData(patientData.weeks);
-                    console.log('✅ Hafta verileri yüklendi ve migrate edildi:', weeks.length, 'hafta');
-                } else {
-                    // weeks undefined bırak, loadDataFromGitHub() varsayılan oluşturacak
-                    weeks = undefined;
-                    console.log('⚠️ Hafta verisi bulunamadı');
+                // 📅 Weeks verisini Supabase nutrition_weeks tablosundan çek
+                try {
+                    console.log('📅 Hafta verileri Supabase nutrition_weeks\'den çekiliyor...');
+                    const { data: weekData, error: weekError } = await window.supabase
+                        .from('nutrition_weeks')
+                        .select('*')
+                        .eq('patient_id', patientId)
+                        .order('week_number', { ascending: true });
+                    
+                    if (weekError) throw weekError;
+                    
+                    if (weekData && weekData.length > 0) {
+                        // Supabase → Local format
+                        weeks = weekData.map(w => ({
+                            id: w.week_id,
+                            name: w.week_name || `${w.week_number}. Hafta`,
+                            weekNumber: w.week_number,
+                            startDate: w.start_date,
+                            endDate: w.end_date,
+                            status: w.status || 'active',
+                            createdDate: w.created_at,
+                            days: w.week_data?.days || [],
+                            weekStats: w.week_data?.weekStats || {}
+                        }));
+                        console.log(`✅ ${weeks.length} hafta Supabase'den yüklendi`);
+                    } else {
+                        console.log('⚠️ nutrition_weeks boş, patient_data kontrolü...');
+                        weeks = (patientData.weeks && patientData.weeks.length > 0) 
+                            ? migrateWeeksData(patientData.weeks) 
+                            : undefined;
+                    }
+                } catch (weekFetchError) {
+                    console.error('❌ Hafta fetch hatası:', weekFetchError);
+                    weeks = (patientData.weeks && patientData.weeks.length > 0) 
+                        ? migrateWeeksData(patientData.weeks) 
+                        : undefined;
                 }
                 
                 // Header'daki hasta adını güncelle
@@ -6490,14 +6517,24 @@
                     ogunSablonlari: mealTemplates.length
                 });
 
-                // Cache'e kaydet (offline için)
+                // Cache'e kaydet (offline için) - SADECE SON 30 ŞABLON
                 if (dayTemplates.length > 0) {
-                    localStorage.setItem('day_templates_cache', JSON.stringify(dayTemplates));
-                    console.log('💾 Gün şablonları cache\'e kaydedildi');
+                    try {
+                        // Son 30 şablonu al (999 yerine)
+                        const recentTemplates = dayTemplates.slice(-30);
+                        localStorage.setItem('day_templates_cache', JSON.stringify(recentTemplates));
+                        console.log(`💾 Gün şablonları cache'e kaydedildi (${recentTemplates.length}/${dayTemplates.length})`);
+                    } catch (quotaError) {
+                        console.warn('⚠️ LocalStorage quota exceeded, cache atlanıyor');
+                    }
                 }
                 if (mealTemplates.length > 0) {
-                    localStorage.setItem('meal_templates_cache', JSON.stringify(mealTemplates));
-                    console.log('💾 Öğün şablonları cache\'e kaydedildi');
+                    try {
+                        localStorage.setItem('meal_templates_cache', JSON.stringify(mealTemplates));
+                        console.log('💾 Öğün şablonları cache\'e kaydedildi');
+                    } catch (quotaError) {
+                        console.warn('⚠️ LocalStorage quota exceeded, öğün cache atlanıyor');
+                    }
                 }
             } catch (error) {
                 console.error('❌ loadTemplates() FATAL ERROR:', error);
