@@ -2127,34 +2127,26 @@ class DataAccessLayer {
                 firstCategoryItemsCount: foodListData?.categories?.[0]?.items?.length
             });
             
-            // 🔥 RADİKAL FIX: JSONB'yi tamamen yeniden yaz - PostgreSQL JSON_BUILD_OBJECT kullan
-            console.log('🔥 [DAL] RADIKAL UPDATE: Tüm JSONB yeniden yazılıyor...');
+            // 🔥 RADİKAL FIX: UPSERT kullan ama onConflict ile REPLACE yap
+            console.log('🔥 [DAL] RADIKAL UPDATE: UPSERT with onConflict REPLACE...');
             
-            // Önce mevcut kaydı sil
-            const { error: deleteError } = await this.supabaseClient
-                .from('app_settings')
-                .delete()
-                .eq('setting_key', 'food_list');
-            
-            if (deleteError) {
-                console.warn('⚠️ [DAL] Delete uyarısı (normal olabilir):', deleteError);
-            }
-            
-            // Sonra tamamen yeni kayıt ekle
             const { data, error } = await this.supabaseClient
                 .from('app_settings')
-                .insert({
+                .upsert({
                     setting_key: 'food_list',
                     value: foodListData,
                     updated_at: new Date().toISOString()
+                }, {
+                    onConflict: 'setting_key',  // Eğer setting_key zaten varsa
+                    ignoreDuplicates: false      // Duplicate'i ignore etme, UPDATE et!
                 })
                 .select();
             
-            console.log('🔍 [DAL] Supabase INSERT yanıtı - data:', data);
-            console.log('🔍 [DAL] Supabase INSERT yanıtı - error:', error);
+            console.log('🔍 [DAL] Supabase UPSERT yanıtı - data:', data);
+            console.log('🔍 [DAL] Supabase UPSERT yanıtı - error:', error);
 
             if (error) {
-                console.error('❌ [DAL] Supabase INSERT HATASI:', error);
+                console.error('❌ [DAL] Supabase UPSERT HATASI:', error);
                 throw error;
             }
             
