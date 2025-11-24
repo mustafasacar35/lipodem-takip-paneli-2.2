@@ -10944,6 +10944,95 @@
             }
         }
 
+        /**
+         * Tab 5 formunu yeniden yükle (kayıt sonrası güncel değerleri göster)
+         */
+        async function reloadTab5Form() {
+            const foodName = document.getElementById('admin_db_ekle_yemek_adi').value;
+            
+            if (!foodName) {
+                console.warn('⚠️ Yemek adı yok, form yenileme atlandı');
+                return;
+            }
+            
+            const safeSetValue = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.value = value || '';
+            };
+            const safeSetChecked = (id, checked) => {
+                const el = document.getElementById(id);
+                if (el) el.checked = checked || false;
+            };
+            
+            try {
+                console.log('📥 Tab 5 için Supabase\'den food_list çekiliyor...');
+                const foodListFromDb = await window.DAL.getFoodList();
+                
+                let existingFood = null;
+                if (foodListFromDb && foodListFromDb.categories) {
+                    for (const category of foodListFromDb.categories) {
+                        const found = category.items.find(item => item.name === foodName);
+                        if (found) {
+                            existingFood = found;
+                            console.log('✅ Tab 5: Güncel yemek bulundu:', existingFood);
+                            break;
+                        }
+                    }
+                }
+                
+                if (existingFood) {
+                    // Tüm alanları doldur
+                    safeSetValue('admin_db_ekle_protein', existingFood.protein || 0);
+                    safeSetValue('admin_db_ekle_karb', existingFood.carbs || 0);
+                    safeSetValue('admin_db_ekle_yag', existingFood.fat || 0);
+                    calculateKaloriForAddFood();
+                    
+                    safeSetValue('admin_db_ekle_min', existingFood.minQuantity || 1);
+                    safeSetValue('admin_db_ekle_max', existingFood.maxQuantity || 1);
+                    safeSetValue('admin_db_ekle_step', existingFood.step || 1);
+                    safeSetValue('admin_db_ekle_portion', existingFood.multiplier || 1);
+                    safeSetValue('admin_db_ekle_portion2', existingFood.multiplier || 1);
+                    safeSetValue('admin_db_ekle_kategori', existingFood.category || '');
+                    safeSetValue('admin_db_ekle_rol', existingFood.role || '');
+                    
+                    if (existingFood.seasonRange) {
+                        const match = existingFood.seasonRange.match(/\[(\d+),(\d+)\]/);
+                        if (match) {
+                            safeSetValue('admin_db_ekle_season_min', match[1]);
+                            safeSetValue('admin_db_ekle_season_max', match[2]);
+                        }
+                    }
+                    
+                    safeSetValue('admin_db_ekle_tags', (existingFood.tags || []).join(', '));
+                    safeSetValue('admin_db_ekle_compat', (existingFood.compatibilityTags || []).join(', '));
+                    safeSetValue('admin_db_ekle_incompat', (existingFood.incompatibilityTags || []).join(', '));
+                    safeSetValue('admin_db_ekle_notes', existingFood.notes || '');
+                    
+                    const mealTypes = existingFood.mealType || [];
+                    safeSetChecked('admin_mealType_breakfast', mealTypes.includes('breakfast'));
+                    safeSetChecked('admin_mealType_lunch', mealTypes.includes('lunch'));
+                    safeSetChecked('admin_mealType_dinner', mealTypes.includes('dinner'));
+                    
+                    const dietTypes = existingFood.dietTypes || [];
+                    safeSetChecked('admin_dietType_ketojenik', dietTypes.includes('ketojenik'));
+                    safeSetChecked('admin_dietType_akdeniz', dietTypes.includes('akdeniz'));
+                    safeSetChecked('admin_dietType_vegan', dietTypes.includes('vegan'));
+                    safeSetChecked('admin_dietType_glutensiz', dietTypes.includes('glutensiz'));
+                    
+                    safeSetChecked('admin_keto', existingFood.keto === true);
+                    safeSetChecked('admin_lowcarb', existingFood.lowcarb === true);
+                    safeSetChecked('admin_portionFixed', existingFood.portionFixed === true);
+                    safeSetChecked('admin_fillerLunch', existingFood.fillerLunch === true);
+                    safeSetChecked('admin_fillerDinner', existingFood.fillerDinner === true);
+                    safeSetChecked('admin_reversedSeason', existingFood.isReversedSeason === true);
+                    
+                    console.log('✅ Tab 5 form güncellendi');
+                }
+            } catch (error) {
+                console.error('❌ Tab 5 form yenileme hatası:', error);
+            }
+        }
+
         // Tab değiştir (5 TAB MODAL için)
         function switchAdminTab(tabName) {
             console.log('🔄 Tab değiştir:', tabName);
@@ -10959,6 +11048,13 @@
                 btn.style.background = '#ccc';
                 btn.style.color = '#666';
             });
+            
+            // 🔄 TAB 5'E GEÇİLDİĞİNDE FORMU YENİDEN YÜKLE
+            if (tabName === 'db-ekle') {
+                console.log('🔄 Tab 5 (Veritabanına Ekle) açılıyor, form yeniden yükleniyor...');
+                // Modal yeniden açılış kodunu çağır (sadece form doldurma kısmı)
+                reloadTab5Form();
+            }
             
             // Seçili tab'ı göster
             const tabId = `admin-tab-${tabName}`;
