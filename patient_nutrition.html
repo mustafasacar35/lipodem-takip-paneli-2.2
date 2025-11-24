@@ -10826,26 +10826,86 @@
             safeSetValue('admin_db_ekle_kategori', foodData.category || '');
             safeSetValue('admin_db_ekle_rol', foodData.role || '');
             
-            // Diğer alanları temizle/varsayılan yap
-            safeSetValue('admin_db_ekle_tags', '');
-            safeSetValue('admin_db_ekle_compat', '');
-            safeSetValue('admin_db_ekle_incompat', '');
-            safeSetValue('admin_db_ekle_notes', '');
+            // 🔍 Yemeği food_list.json'da ara (mevcut değerleri yüklemek için)
+            const existingFood = foodData ? foodData : findFoodInDatabase(foodName);
             
-            // Checkboxları temizle
-            safeSetChecked('admin_mealType_breakfast', false);
-            safeSetChecked('admin_mealType_lunch', false);
-            safeSetChecked('admin_mealType_dinner', false);
-            safeSetChecked('admin_dietType_ketojenik', false);
-            safeSetChecked('admin_dietType_akdeniz', false);
-            safeSetChecked('admin_dietType_vegan', false);
-            safeSetChecked('admin_dietType_glutensiz', false);
-            safeSetChecked('admin_keto', false);
-            safeSetChecked('admin_lowcarb', false);
-            safeSetChecked('admin_portionFixed', false);
-            safeSetChecked('admin_fillerLunch', false);
-            safeSetChecked('admin_fillerDinner', false);
-            safeSetChecked('admin_reversedSeason', false);
+            if (existingFood && existingFood.name) {
+                console.log('📥 Mevcut yemek food_list.json\'dan yükleniyor:', existingFood);
+                
+                // Makroları güncelle
+                safeSetValue('admin_db_ekle_protein', existingFood.protein || 0);
+                safeSetValue('admin_db_ekle_karb', existingFood.carbs || 0);
+                safeSetValue('admin_db_ekle_yag', existingFood.fat || 0);
+                calculateKaloriForAddFood();
+                
+                // Diğer alanları doldur
+                safeSetValue('admin_db_ekle_min', existingFood.minQuantity || 1);
+                safeSetValue('admin_db_ekle_max', existingFood.maxQuantity || 1);
+                safeSetValue('admin_db_ekle_step', existingFood.step || 1);
+                safeSetValue('admin_db_ekle_portion', existingFood.multiplier || 1);
+                safeSetValue('admin_db_ekle_kategori', existingFood.category || '');
+                safeSetValue('admin_db_ekle_rol', existingFood.role || '');
+                
+                // Sezon range parse et
+                if (existingFood.seasonRange) {
+                    const match = existingFood.seasonRange.match(/\[(\d+),(\d+)\]/);
+                    if (match) {
+                        safeSetValue('admin_db_ekle_season_min', match[1]);
+                        safeSetValue('admin_db_ekle_season_max', match[2]);
+                    }
+                }
+                
+                // Tags
+                safeSetValue('admin_db_ekle_tags', (existingFood.tags || []).join(', '));
+                safeSetValue('admin_db_ekle_compat', (existingFood.compatibilityTags || []).join(', '));
+                safeSetValue('admin_db_ekle_incompat', (existingFood.incompatibilityTags || []).join(', '));
+                safeSetValue('admin_db_ekle_notes', existingFood.notes || '');
+                
+                // Meal types
+                const mealTypes = existingFood.mealType || [];
+                safeSetChecked('admin_mealType_breakfast', mealTypes.includes('breakfast'));
+                safeSetChecked('admin_mealType_lunch', mealTypes.includes('lunch'));
+                safeSetChecked('admin_mealType_dinner', mealTypes.includes('dinner'));
+                
+                // Diet types
+                const dietTypes = existingFood.dietTypes || [];
+                safeSetChecked('admin_dietType_ketojenik', dietTypes.includes('ketojenik'));
+                safeSetChecked('admin_dietType_akdeniz', dietTypes.includes('akdeniz'));
+                safeSetChecked('admin_dietType_vegan', dietTypes.includes('vegan'));
+                safeSetChecked('admin_dietType_glutensiz', dietTypes.includes('glutensiz'));
+                
+                // Boolean özellikleri YÜK (mevcut değerleri koru!)
+                safeSetChecked('admin_keto', existingFood.keto || false);
+                safeSetChecked('admin_lowcarb', existingFood.lowcarb || false);
+                safeSetChecked('admin_portionFixed', existingFood.portionFixed || false);
+                safeSetChecked('admin_fillerLunch', existingFood.fillerLunch || false);
+                safeSetChecked('admin_fillerDinner', existingFood.fillerDinner || false);
+                safeSetChecked('admin_reversedSeason', existingFood.isReversedSeason || false);
+            } else {
+                // Yeni yemek - varsayılan değerler
+                console.log('🆕 Yeni yemek ekleniyor (food_list.json\'da yok)');
+                
+                // Diğer alanları temizle/varsayılan yap
+                safeSetValue('admin_db_ekle_tags', '');
+                safeSetValue('admin_db_ekle_compat', '');
+                safeSetValue('admin_db_ekle_incompat', '');
+                safeSetValue('admin_db_ekle_notes', '');
+                
+                // Checkboxları temizle
+                safeSetChecked('admin_mealType_breakfast', false);
+                safeSetChecked('admin_mealType_lunch', false);
+                safeSetChecked('admin_mealType_dinner', false);
+                safeSetChecked('admin_dietType_ketojenik', false);
+                safeSetChecked('admin_dietType_akdeniz', false);
+                safeSetChecked('admin_dietType_vegan', false);
+                safeSetChecked('admin_dietType_glutensiz', false);
+                safeSetChecked('admin_keto', false);
+                safeSetChecked('admin_lowcarb', false);
+                safeSetChecked('admin_portionFixed', false);
+                safeSetChecked('admin_fillerLunch', false);
+                safeSetChecked('admin_fillerDinner', false);
+                safeSetChecked('admin_reversedSeason', false);
+            }
             
             // VERITABANINA EKLE TAB'INI AKTİF YAP
             switchAdminTab('db-ekle');
