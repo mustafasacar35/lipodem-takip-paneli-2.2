@@ -5633,7 +5633,7 @@
             renderWeekContent();
             
             // 💾 Supabase'e kaydet (yemek alternatifleri kalıcı olsun)
-            savePatientToSupabase().then(success => {
+            savePatientData().then(success => {
                 if (success) {
                     console.log('💾 Yemek değişikliği Supabase\'e kaydedildi');
                 } else {
