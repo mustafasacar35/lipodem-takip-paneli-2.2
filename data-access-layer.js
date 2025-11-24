@@ -296,9 +296,22 @@ class DataAccessLayer {
             // 1) Primary dene
             let { data, error } = await tryFetch(primaryColumn, patientId);
             if (!error && data) {
-                // Eğer patient_data JSONB'de tüm veri varsa, onu merge et
-                if (data.patient_data && typeof data.patient_data === 'object') {
-                    const merged = { ...data.patient_data, ...data };
+                // JSONB kolonundan verileri merge et (data.data tercih edilir)
+                const jsonbData = data.data || data.patient_data;
+                if (jsonbData && typeof jsonbData === 'object') {
+                    // data.patient_data kolonunu merge'den ÖNCE sil, çünkü eski/yanlış veri olabilir
+                    const { patient_data, ...cleanData } = data;
+                    
+                    const merged = {
+                        ...cleanData,
+                        patient_data: {
+                            personalInfo: jsonbData.personalInfo || {},
+                            weeks: jsonbData.weeks || [],
+                            isAdmin: jsonbData.isAdmin || false,
+                            notes: jsonbData.notes || '',
+                            ...jsonbData
+                        }
+                    };
                     // Snake_case kolonları camelCase'e normalize et
                     if (merged.max_devices !== undefined) merged.maxDevices = merged.max_devices;
                     if (merged.session_days !== undefined) merged.sessionDays = merged.session_days;
@@ -311,8 +324,21 @@ class DataAccessLayer {
             // 2) Eğer bulunamadıysa secondary ile dene
             ({ data, error } = await tryFetch(secondaryColumn, patientId));
             if (!error && data) {
-                if (data.patient_data && typeof data.patient_data === 'object') {
-                    const merged = { ...data.patient_data, ...data };
+                const jsonbData = data.data || data.patient_data;
+                if (jsonbData && typeof jsonbData === 'object') {
+                    // data.patient_data kolonunu merge'den ÖNCE sil
+                    const { patient_data, ...cleanData } = data;
+                    
+                    const merged = {
+                        ...cleanData,
+                        patient_data: {
+                            personalInfo: jsonbData.personalInfo || {},
+                            weeks: jsonbData.weeks || [],
+                            isAdmin: jsonbData.isAdmin || false,
+                            notes: jsonbData.notes || '',
+                            ...jsonbData
+                        }
+                    };
                     // Snake_case kolonları camelCase'e normalize et
                     if (merged.max_devices !== undefined) merged.maxDevices = merged.max_devices;
                     if (merged.session_days !== undefined) merged.sessionDays = merged.session_days;
