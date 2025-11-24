@@ -39,7 +39,7 @@ export default async function handler(req, res) {
         // GitHub API bilgileri
         const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
         const GITHUB_OWNER = 'mustafasacar35';
-        const GITHUB_REPO = 'lipodem-takip-paneli';
+        const GITHUB_REPO = 'lipodem-takip-paneli-2.2';
         const GITHUB_BRANCH = 'main';
         const FILE_PATH = 'data/alternative_blacklist.json';
 

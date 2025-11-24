@@ -8,7 +8,7 @@ const IS_LOCAL_DEV = window.location.hostname === 'localhost' || window.location
 
 const PatientAuth = {
     REPO_OWNER: 'mustafasacar35',
-    REPO_NAME: 'lipodem-takip-paneli',
+    REPO_NAME: 'lipodem-takip-paneli-2.2',
     PATIENTS_INDEX_PATH: 'hastalar/index.json',
     SESSION_STORAGE_KEY: 'patient_session',
     

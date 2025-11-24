@@ -55,7 +55,7 @@ var GITHUB_CONFIG = {
     // Production - KULLANMA
     production: {
         owner: 'mustafasacar35',
-        repo: 'lipodem-takip-paneli',
+        repo: 'lipodem-takip-paneli-2.2',
         branch: 'main',
         token: '',
         enabled: false // ❌ GitHub KAPALI

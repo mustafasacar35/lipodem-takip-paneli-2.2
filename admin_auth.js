@@ -4,7 +4,7 @@
   const SESSION_KEY = 'admin_session_v1';
   const DEFAULT_SESSION_HOURS = 8;
   const OWNER = 'mustafasacar35';
-  const REPO = 'lipodem-takip-paneli';
+  const REPO = 'lipodem-takip-paneli-2.2';
   const BRANCH = 'main';
   // Legacy JSON path (kept as last-resort). Primary source is script-injected window.GH_ADMINS via settings/admins.js
   const ADMIN_LIST_JSON = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/settings/admins.json`;

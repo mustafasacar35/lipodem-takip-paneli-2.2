@@ -408,7 +408,7 @@ const DeviceManager = {
             // 🔧 LOCAL DEV veya Production: Hasta JSON'ını çek
             const url = IS_LOCAL_DEV 
                 ? `/hastalar/${patientId}.json?t=${Date.now()}`
-                : `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/hastalar/${patientId}.json`;
+                : `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli-2.2/main/hastalar/${patientId}.json`;
             
             const response = await fetch(url);
 
@@ -445,3 +445,4 @@ const DeviceManager = {
 
 // Global erişim için
 window.DeviceManager = DeviceManager;
+

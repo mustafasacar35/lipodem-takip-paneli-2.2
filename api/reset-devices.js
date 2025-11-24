@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
         });
 
         const owner = 'mustafasacar35';
-        const repo = 'lipodem-takip-paneli';
+        const repo = 'lipodem-takip-paneli-2.2';
         const path = `hastalar/${patientId}.json`;
 
         // 1. Mevcut dosyayı oku

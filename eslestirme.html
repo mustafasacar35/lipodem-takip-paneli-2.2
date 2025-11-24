@@ -1794,7 +1794,7 @@
                 html += '<div class="preview-section"><h4>🎴 Eşleşen Kartlar</h4><div class="match-cards">';
                 
                 result.matched.forEach(kartAdi => {
-                    const imageUrl = `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/${kartAdi}`;
+                    const imageUrl = `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli-2.2/main/tarifler/${kartAdi}`;
                     const displayName = kartAdi.replace(/\.(jpg|jpeg|png)$/i, '');
                     
                     html += `
@@ -1907,7 +1907,7 @@
                 tarifKartlari = [...uniqueTarifler].map(name => ({
                     name: name,
                     type: 'file',
-                    download_url: `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/${name}`
+                    download_url: `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli-2.2/main/tarifler/${name}`
                 }));
                 
                 console.log('✅ Fallback tarif kartları yüklendi:', tarifKartlari.length, 'kart (manuel eşleştirmelerden)');
@@ -2546,7 +2546,7 @@
             grid.innerHTML = displayList.map((tarif) => {
                 const tarifNameRaw = tarif.name || tarif.file || '';
                 const imageUrl = tarif.download_url || 
-                                `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/${tarifNameRaw}`;
+                                `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli-2.2/main/tarifler/${tarifNameRaw}`;
                 const tarifName = tarifNameRaw.replace(/\.(jpg|jpeg|png)$/i, '');
                 
                 // Yemek verisini bul (makrolar için) - daha esnek eşleştirme
@@ -2794,7 +2794,7 @@
             grid.innerHTML = displayList.map((tarif) => {
                 const tarifNameRaw = tarif.name || tarif.file || '';
                 const imageUrl = tarif.download_url || 
-                                `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/${tarifNameRaw}`;
+                                `https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli-2.2/main/tarifler/${tarifNameRaw}`;
                 const tarifName = tarifNameRaw.replace(/\.(jpg|jpeg|png)$/i, '');
                 
                 // Yemek verisini bul (makrolar için) - daha esnek eşleştirme
@@ -4824,3 +4824,4 @@
 
 </body>
 </html>
+

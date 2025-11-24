@@ -2042,7 +2042,7 @@ class DataAccessLayer {
             if (!client) {
                 // Supabase yoksa GitHub'dan oku
                 console.warn('⚠️ Supabase not available, loading from GitHub...');
-                const response = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/list.json');
+                const response = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli-2.2/main/tarifler/list.json');
                 if (!response.ok) throw new Error('Failed to load tarifler/list.json');
                 return await response.json();
             }
@@ -2057,14 +2057,14 @@ class DataAccessLayer {
                 console.error('❌ Supabase recipe_cards error:', error);
                 // Fallback to GitHub
                 console.warn('⚠️ Falling back to GitHub tarifler/list.json...');
-                const response = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/list.json');
+                const response = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli-2.2/main/tarifler/list.json');
                 if (!response.ok) throw new Error('Failed to load tarifler/list.json');
                 return await response.json();
             }
 
             if (!data || !data.value) {
                 console.warn('⚠️ Recipe cards bulunamadı, GitHub kullanılıyor...');
-                const response = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/list.json');
+                const response = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli-2.2/main/tarifler/list.json');
                 if (!response.ok) throw new Error('Failed to load tarifler/list.json');
                 return await response.json();
             }
@@ -2076,7 +2076,7 @@ class DataAccessLayer {
             console.error('❌ getRecipeCards error:', error);
             // Final fallback
             try {
-                const response = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/tarifler/list.json');
+                const response = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli-2.2/main/tarifler/list.json');
                 if (!response.ok) throw new Error('Failed to load tarifler/list.json');
                 return await response.json();
             } catch (fallbackError) {
@@ -2113,7 +2113,7 @@ class DataAccessLayer {
             console.error('❌ getFoodDatabaseProhibitions error:', error);
             // Fallback: GitHub'dan yükle
             try {
-                const response = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli/main/data/yemek_veritabani_yasaklar.json');
+                const response = await fetch('https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli-2.2/main/data/yemek_veritabani_yasaklar.json');
                 if (!response.ok) throw new Error('Failed to load yemek_veritabani_yasaklar.json');
                 const data = await response.json();
                 console.warn('⚠️ Veritabanı yasakları GitHub fallback\'dan yüklendi');
@@ -2356,6 +2356,7 @@ class DataAccessLayer {
 window.DAL = new DataAccessLayer();
 
 console.log('✅ DataAccessLayer loaded. Use window.DAL to access data.');
+
 
 
 
