@@ -6905,7 +6905,23 @@
                     localStorage.setItem(cachedDataKey, JSON.stringify(patientData));
                     console.log('💾 Hasta verileri localStorage\'a kaydedildi');
                 } catch (quotaError) {
-                    console.warn('⚠️ localStorage QuotaExceeded - sadece GitHub\'a kaydediliyor');
+                    console.warn('⚠️ localStorage QuotaExceeded - sadece Supabase\'e kaydediliyor');
+                }
+                
+                // 🆕 Supabase'e kaydet (ÖNCE SUPABASE!)
+                if (window.DAL && typeof window.DAL.savePatient === 'function') {
+                    try {
+                        const supabaseSuccess = await window.DAL.savePatient(patientData);
+                        if (supabaseSuccess) {
+                            console.log('✅ Hasta verileri Supabase\'e kaydedildi');
+                        } else {
+                            console.error('❌ Supabase\'e kaydetme başarısız');
+                        }
+                    } catch (supabaseError) {
+                        console.error('❌ Supabase kayıt hatası:', supabaseError);
+                    }
+                } else {
+                    console.warn('⚠️ DAL.savePatient bulunamadı, sadece GitHub\'a kaydediliyor');
                 }
                 
                 // GitHub'a kaydet (API üzerinden)
