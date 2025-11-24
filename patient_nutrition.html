@@ -13880,9 +13880,13 @@
                         
                         if (existingIndex !== -1) {
                             // GÜNCELLEME
+                            console.log('🔍 DEBUG - GÜNCELLEME ÖNCESİ:', cat.items[existingIndex]);
+                            console.log('🔍 DEBUG - YENİ VERİ (yemekObj):', yemekObj);
+                            console.log('🔍 DEBUG - yemekObj.dietTypes:', yemekObj.dietTypes);
                             cat.items[existingIndex] = yemekObj;
                             foodUpdated = true;
                             console.log('✏️ Mevcut yemek güncellendi:', yemekObj.name);
+                            console.log('🔍 DEBUG - GÜNCELLEME SONRASI:', cat.items[existingIndex]);
                         } else {
                             // YENİ EKLEME
                             cat.items.push(yemekObj);
@@ -13904,10 +13908,37 @@
                 // 3. Metadata güncelle
                 foodList.lastUpdated = new Date().toISOString();
                 
+                // 🔍 DEBUG - Supabase'e gönderilecek veriyi kontrol et
+                console.log('🔍 DEBUG - foodList.categories sayısı:', foodList.categories.length);
+                const targetCategory = foodList.categories.find(c => c.name === yemekObj.category);
+                if (targetCategory) {
+                    const targetFood = targetCategory.items.find(item => item.name === yemekObj.name);
+                    console.log('🔍 DEBUG - Supabase\'e GÖNDERİLECEK yemek:', targetFood);
+                    console.log('🔍 DEBUG - dietTypes GÖNDERİLECEK:', targetFood?.dietTypes);
+                }
+                
                 // 4. Supabase'e kaydet
                 console.log('💾 Supabase\'e kaydediliyor...');
                 await window.DAL.updateFoodList(foodList);
                 console.log('✅ Supabase\'e kaydedildi');
+                
+                // 🔍 DEBUG - Kaydedildikten SONRA Supabase'den tekrar çek
+                console.log('🔍 DEBUG - Kaydedildikten SONRA Supabase\'den kontrol ediliyor...');
+                const verificationList = await window.DAL.getFoodList();
+                const verifyCategory = verificationList.categories.find(c => c.name === yemekObj.category);
+                if (verifyCategory) {
+                    const verifyFood = verifyCategory.items.find(item => item.name === yemekObj.name);
+                    console.log('🔍 DEBUG - Supabase\'den OKUNAN yemek:', verifyFood);
+                    console.log('🔍 DEBUG - dietTypes OKUNAN:', verifyFood?.dietTypes);
+                    
+                    if (JSON.stringify(verifyFood?.dietTypes) !== JSON.stringify(yemekObj.dietTypes)) {
+                        console.error('❌❌❌ UYUMSUZLUK! Gönderilen ve okunan dietTypes farklı!');
+                        console.error('Gönderilen:', yemekObj.dietTypes);
+                        console.error('Okunan:', verifyFood?.dietTypes);
+                    } else {
+                        console.log('✅✅✅ DOĞRULAMA BAŞARILI! dietTypes eşleşiyor.');
+                    }
+                }
                 
                 // ✅ Başarı mesajı (toast - daha az invasive)
                 showToast(`✅ ${foodUpdated ? 'Yemek güncellendi' : 'Yeni yemek eklendi'}: ${yemekObj.name}`, 'success');

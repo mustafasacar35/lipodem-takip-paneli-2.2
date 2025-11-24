@@ -2108,20 +2108,50 @@ class DataAccessLayer {
         try {
             await this.initSupabase();
             
-            const { error } = await this.supabaseClient
+            console.log('🔍 [DAL] updateFoodList - foodListData categories sayısı:', foodListData?.categories?.length);
+            console.log('🔍 [DAL] updateFoodList - foodListData sample:', {
+                categoriesCount: foodListData?.categories?.length,
+                lastUpdated: foodListData?.lastUpdated,
+                firstCategory: foodListData?.categories?.[0]?.name,
+                firstCategoryItemsCount: foodListData?.categories?.[0]?.items?.length
+            });
+            
+            const upsertData = {
+                setting_key: 'food_list',
+                value: foodListData,
+                updated_at: new Date().toISOString()
+            };
+            
+            console.log('🔍 [DAL] Supabase UPSERT çağrılıyor...');
+            console.log('🔍 [DAL] upsertData.value type:', typeof upsertData.value);
+            console.log('🔍 [DAL] upsertData.value.categories:', upsertData.value?.categories?.length);
+            
+            const { data, error } = await this.supabaseClient
                 .from('app_settings')
-                .upsert({
-                    setting_key: 'food_list',
-                    value: foodListData,
-                    updated_at: new Date().toISOString()
-                }, {
+                .upsert(upsertData, {
                     onConflict: 'setting_key'
-                });
+                })
+                .select();  // ← EKLEME: Upsert sonucunu görmek için
+            
+            console.log('🔍 [DAL] Supabase UPSERT yanıtı - data:', data);
+            console.log('🔍 [DAL] Supabase UPSERT yanıtı - error:', error);
 
-            if (error) throw error;
+            if (error) {
+                console.error('❌ [DAL] Supabase UPSERT HATASI:', error);
+                throw error;
+            }
+            
             console.log('✅ Food list updated in Supabase');
+            
+            // 🔍 DOĞRULAMA: Hemen geri oku ve kontrol et
+            console.log('🔍 [DAL] DOĞRULAMA: Supabase\'den tekrar okuma...');
+            const verification = await this.getFoodList();
+            console.log('🔍 [DAL] DOĞRULAMA: Okunan categories sayısı:', verification?.categories?.length);
+            console.log('🔍 [DAL] DOĞRULAMA: Okunan lastUpdated:', verification?.lastUpdated);
+            
         } catch (error) {
             console.error('❌ updateFoodList error:', error);
+            console.error('❌ Error stack:', error.stack);
             throw error;
         }
     }
