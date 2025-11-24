@@ -1903,7 +1903,6 @@
                     
                     // Sonra güncellenenleri üzerine yaz
                     id: patientId,
-                    patient_id: patientId,  // Ensure both id and patient_id are set
                     username: username,
                     passwordHash: passwordHash,
                     sessionDays: sessionDays,
@@ -1912,9 +1911,6 @@
                     status: status,
                     isAdmin: document.getElementById('patientIsAdmin').checked,
                     role: document.getElementById('patientIsAdmin').checked ? 'admin' : 'patient',
-                    // 🔥 CRITICAL: Top-level name/surname for Supabase columns (override old values)
-                    name: name,
-                    surname: surname,
                     personalInfo: {
                         name: name,
                         surname: surname,
@@ -2342,5 +2338,4 @@
     </script>
 </body>
 </html>
-
 

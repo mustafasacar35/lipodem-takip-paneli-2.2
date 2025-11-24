@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ï»¿<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
@@ -7,15 +7,15 @@
     <!-- PWA ve Mobil Uygulama Meta Etiketleri -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Yönetici Ayarları">
-    <meta name="application-name" content="Yönetici Ayarları">
+    <meta name="apple-mobile-web-app-title" content="YÃ¶netici AyarlarÄ±">
+    <meta name="application-name" content="YÃ¶netici AyarlarÄ±">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#667eea">
     <link rel="manifest" href="manifest-admin-settings.json">
     <link rel="apple-touch-icon" href="/logo2.png">
     <!-- / PWA ve Mobil Uygulama Meta Etiketleri -->
 
-    <title>Yönetici Ayarları</title>
+    <title>YÃ¶netici AyarlarÄ±</title>
     <style>
         *, *::before, *::after {
             box-sizing: border-box;
@@ -211,13 +211,13 @@
         .actions-right {
             display: flex;
             gap: 12px;
-            flex-wrap: nowrap; /* Butonları asla alt satıra geçirme */
+            flex-wrap: nowrap; /* ButonlarÄ± asla alt satÄ±ra geÃ§irme */
         }
 
         .actions-right button {
-            white-space: nowrap; /* Buton metnini kırma */
-            flex-shrink: 1; /* Gerekirse butonları küçült */
-            min-width: 0; /* Butonların minimum genişliğini kaldır */
+            white-space: nowrap; /* Buton metnini kÄ±rma */
+            flex-shrink: 1; /* Gerekirse butonlarÄ± kÃ¼Ã§Ã¼lt */
+            min-width: 0; /* ButonlarÄ±n minimum geniÅŸliÄŸini kaldÄ±r */
         }
 
         button {
@@ -431,156 +431,113 @@
 
             .actions-right {
                 width: 100%;
-                justify-content: flex-end; /* Butonları sağa hizala */
-                gap: 8px; /* Mobilde daha küçük gap */
+                justify-content: flex-end; /* ButonlarÄ± saÄŸa hizala */
+                gap: 8px; /* Mobilde daha kÃ¼Ã§Ã¼k gap */
             }
 
             .actions-right button {
-                font-size: 13px; /* Mobilde biraz daha küçük font */
+                font-size: 13px; /* Mobilde biraz daha kÃ¼Ã§Ã¼k font */
                 padding: 10px 14px; /* Mobilde daha kompakt padding */
             }
         }
     </style>
-    <!-- Admins config removed - using Supabase only -->
+    <!-- Admins config: local fallback first, then remote authoritative override -->
+    <script src="settings/admins.js"></script>
+    <script>
+        // Remote admins.js with hard cache-busting, loaded synchronously to preserve order
+        document.write('<script src="https://raw.githubusercontent.com/mustafasacar35/lipodem-takip-paneli-2.2/main/settings/admins.js?t=' + Date.now() + '"><\\/scr' + 'ipt>');
+    </script>
     
     <!-- Supabase & Data Access Layer -->
-    <!-- 1. Load Supabase Library (CDN) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- 2. Initialize Supabase Client (Robust Fallback) -->
+    <!-- Local Supabase library -->
+    <script src="supabase.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script>
-        (function() {
-            const supabaseUrl = 'https://qvpeqxzaprgesgrgzmuo.supabase.co';
-            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2cGVxeHphcHJnZXNncmd6bXVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NjAzNjYsImV4cCI6MjA3OTAzNjM2Nn0.4Mo-9pgAk9vBHT48yVunuijSzqQX6cX07fCfDF48hLk';
+        // Fallback: Create supabase namespace if CDN failed
+        if (typeof supabase === 'undefined' && typeof window.supabase === 'undefined') {
+            console.warn('âš ï¸ Supabase CDN failed, creating fallback namespace');
             
-            console.log('[Init] Checking Supabase Library...');
+            // Create a chainable query builder mock
+            function createMockQuery() {
+                const mockQuery = {
+                    select: function() { return mockQuery; },
+                    insert: function() { return mockQuery; },
+                    update: function() { return mockQuery; },
+                    delete: function() { return mockQuery; },
+                    upsert: function() { return mockQuery; },
+                    eq: function() { return mockQuery; },
+                    neq: function() { return mockQuery; },
+                    gt: function() { return mockQuery; },
+                    gte: function() { return mockQuery; },
+                    lt: function() { return mockQuery; },
+                    lte: function() { return mockQuery; },
+                    like: function() { return mockQuery; },
+                    ilike: function() { return mockQuery; },
+                    is: function() { return mockQuery; },
+                    in: function() { return mockQuery; },
+                    contains: function() { return mockQuery; },
+                    containedBy: function() { return mockQuery; },
+                    range: function() { return mockQuery; },
+                    match: function() { return mockQuery; },
+                    not: function() { return mockQuery; },
+                    or: function() { return mockQuery; },
+                    filter: function() { return mockQuery; },
+                    order: function() { return mockQuery; },
+                    limit: function() { return mockQuery; },
+                    offset: function() { return mockQuery; },
+                    single: function() { 
+                        return Promise.resolve({ 
+                            data: null, 
+                            error: { message: 'Supabase library not loaded', code: 'LIBRARY_NOT_LOADED' }
+                        }); 
+                    },
+                    maybeSingle: function() { 
+                        return Promise.resolve({ 
+                            data: null, 
+                            error: { message: 'Supabase library not loaded', code: 'LIBRARY_NOT_LOADED' }
+                        }); 
+                    },
+                    then: function(resolve) {
+                        // Make it thenable for await
+                        return Promise.resolve({ 
+                            data: null, 
+                            error: { message: 'Supabase library not loaded', code: 'LIBRARY_NOT_LOADED' }
+                        }).then(resolve);
+                    }
+                };
+                return mockQuery;
+            }
             
-            // Fallback Shim if CDN failed
-            if (!window.supabase || !window.supabase.createClient) {
-                console.warn('[Init] Supabase CDN not loaded. Using FULL Shim.');
-                
-                class SupabaseShim {
-                    constructor(url, key) {
-                        this.url = url;
-                        this.key = key;
-                        this.headers = { 'apikey': key, 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
-                    }
-                    from(table) { return new QueryBuilder(this, table); }
-                }
-
-                class QueryBuilder {
-                    constructor(client, table) {
-                        this.client = client;
-                        this.table = table;
-                        this.queryParams = new URLSearchParams();
-                    }
-                    select(cols = '*') {
-                        this.queryParams.set('select', cols);
-                        this._selected = true;
-                        return this;
-                    }
-                    eq(col, val) { this.queryParams.append(col, `eq.${val}`); return this; }
-                    order(col, opts) {
-                        this.queryParams.append('order', `${col}.${opts?.ascending ? 'asc' : 'desc'}`);
-                        return this;
-                    }
+            // Create fallback namespace
+            window.supabase = {
+                createClient: function(url, key) {
+                    console.error('âŒ Supabase library not loaded. Cannot create client.');
+                    console.log('ğŸ”§ Mock client created - operations will fail gracefully');
                     
-                    async then(resolve, reject) {
-                        try {
-                            let res;
-                            let data;
-                            // If we have a pending upsert, perform POST
-                            if (this._pendingType === 'upsert' && this._pendingUpsert) {
-                                const { data: upData, opts } = this._pendingUpsert;
-                                const headers = { ...this.client.headers, 'Prefer': 'return=representation' };
-                                if (opts?.onConflict) headers['Prefer'] += `,resolution=merge-duplicates`;
-                                res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, {
-                                    method: 'POST',
-                                    headers,
-                                    body: JSON.stringify(upData)
-                                });
-                                data = await res.json();
-                            } else if (this._pendingType === 'update' && this._pendingUpdate) {
-                                // Perform PATCH (update)
-                                res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, {
-                                    method: 'PATCH',
-                                    headers: { ...this.client.headers, 'Prefer': 'return=representation' },
-                                    body: JSON.stringify(this._pendingUpdate)
-                                });
-                                data = await res.json();
-                            } else if (this._pendingType === 'insert' && this._pendingInsert) {
-                                // Perform POST (insert)
-                                res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, {
-                                    method: 'POST',
-                                    headers: { ...this.client.headers, 'Prefer': 'return=representation' },
-                                    body: JSON.stringify(this._pendingInsert)
-                                });
-                                data = await res.json();
-                            } else if (this._pendingType === 'delete') {
-                                // Perform DELETE
-                                res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, {
-                                    method: 'DELETE',
-                                    headers: { ...this.client.headers, 'Prefer': 'return=representation' }
-                                });
-                                data = res.status === 204 ? null : await res.json();
-                            } else {
-                                // Default: SELECT
-                                res = await fetch(`${this.client.url}/rest/v1/${this.table}?${this.queryParams}`, {
-                                    headers: this.client.headers
-                                });
-                                data = await res.json();
+                    return {
+                        from: function(table) {
+                            console.warn(`âš ï¸ Mock Supabase query on table: ${table}`);
+                            return createMockQuery();
+                        },
+                        auth: {
+                            signIn: function() { return Promise.resolve({ data: null, error: new Error('Supabase not loaded') }); },
+                            signOut: function() { return Promise.resolve({ error: null }); },
+                            getSession: function() { return Promise.resolve({ data: { session: null }, error: null }); }
+                        },
+                        storage: {
+                            from: function() {
+                                return {
+                                    upload: function() { return Promise.resolve({ data: null, error: new Error('Supabase not loaded') }); },
+                                    download: function() { return Promise.resolve({ data: null, error: new Error('Supabase not loaded') }); }
+                                };
                             }
-                            
-                            if (res.ok) {
-                                resolve({ data, error: null });
-                            } else {
-                                resolve({ data: null, error: data });
-                            }
-                        } catch (error) {
-                            reject({ data: null, error });
                         }
-                    }
-                    
-                    upsert(data, opts) {
-                        this._pendingType = 'upsert';
-                        this._pendingUpsert = { data, opts };
-                        return this;
-                    }
-                    
-                    update(data) {
-                        this._pendingType = 'update';
-                        this._pendingUpdate = data;
-                        return this;
-                    }
-                    
-                    insert(data) {
-                        this._pendingType = 'insert';
-                        this._pendingInsert = data;
-                        return this;
-                    }
-                    
-                    delete() {
-                        this._pendingType = 'delete';
-                        return this;
-                    }
+                    };
                 }
-
-                window.supabase = { createClient: (url, key) => new SupabaseShim(url, key) };
-                console.log('[Shim] Created SupabaseShim with CRUD methods');
-            } else {
-                console.log('[Init] ? Supabase library loaded from CDN');
-            }
-            
-            // Create global Supabase client
-            try {
-                window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-                // DAL expects window.supabase to be the client instance
-                window.supabase = window.supabaseClient;
-                console.log('[Init] ? Global supabaseClient created and assigned to window.supabase');
-            } catch (error) {
-                console.error('[Init] ? Failed to create Supabase client:', error);
-            }
-        })();
+            };
+        } else {
+            console.log('âœ… Supabase library loaded successfully');
+        }
     </script>
     <script src="config.js"></script>
     <script src="data-access-layer.js"></script>
@@ -609,31 +566,31 @@
                         throw new Error('Web Crypto API not available');
                     },
                     async loadPatientIndex() {
-                        // ? SUPABASE: DAL üzerinden hasta listesi çek
-                        console.log('?? [PatientAuth] Supabase\'den hasta listesi çekiliyor...');
+                        // âœ… SUPABASE: DAL Ã¼zerinden hasta listesi Ã§ek
+                        console.log('ğŸ”„ [PatientAuth] Supabase\'den hasta listesi Ã§ekiliyor...');
                         const patients = await window.DAL.getPatientList();
                         return { patients: patients || [] };
                     },
                     async loadPatientDetails(patientId) {
-                        // ? SUPABASE: DAL üzerinden hasta detayı çek
-                        console.log('?? [PatientAuth] Supabase\'den hasta detayı çekiliyor:', patientId);
+                        // âœ… SUPABASE: DAL Ã¼zerinden hasta detayÄ± Ã§ek
+                        console.log('ğŸ”„ [PatientAuth] Supabase\'den hasta detayÄ± Ã§ekiliyor:', patientId);
                         const patient = await window.DAL.getPatient(patientId);
                         if (!patient) throw new Error('Patient details not found');
                         return patient;
                     },
                     async login(username, password, rememberMe = false) {
                         try {
-                            console.log('?? [PatientAuth] Supabase login başlıyor:', username);
+                            console.log('ğŸ” [PatientAuth] Supabase login baÅŸlÄ±yor:', username);
                             const index = await this.loadPatientIndex();
                             const norm = (v) => (v || '').toString().trim().toLowerCase();
                             const patient = index.patients.find(p => norm(p.username) === norm(username));
                             if (!patient) {
-                                console.warn('? [PatientAuth] Kullanıcı bulunamadı:', username);
-                                return { success: false, error: 'Kullanıcı adı veya şifre hatalı' };
+                                console.warn('âŒ [PatientAuth] KullanÄ±cÄ± bulunamadÄ±:', username);
+                                return { success: false, error: 'KullanÄ±cÄ± adÄ± veya ÅŸifre hatalÄ±' };
                             }
                             if (patient.status === 'archived') {
-                                console.warn('?? [PatientAuth] Arşivlenmiş hesap:', username);
-                                return { success: false, error: 'Bu hesap arşivlenmiştir' };
+                                console.warn('âš ï¸ [PatientAuth] ArÅŸivlenmiÅŸ hesap:', username);
+                                return { success: false, error: 'Bu hesap arÅŸivlenmiÅŸtir' };
                             }
                             
                             const inputHash = await this.hashPassword(password);
@@ -646,19 +603,19 @@
                                     effectiveHash = detailsHash;
                                 }
                             } catch (e) {
-                                console.warn('[PatientAuth] Supabase\'den detay alınamadı, index hash kullanılıyor');
+                                console.warn('[PatientAuth] Supabase\'den detay alÄ±namadÄ±, index hash kullanÄ±lÄ±yor');
                             }
                             
                             if (inputHash !== effectiveHash) {
-                                console.warn('? [PatientAuth] Şifre hatalı');
-                                return { success: false, error: 'Kullanıcı adı veya şifre hatalı' };
+                                console.warn('âŒ [PatientAuth] Åifre hatalÄ±');
+                                return { success: false, error: 'KullanÄ±cÄ± adÄ± veya ÅŸifre hatalÄ±' };
                             }
                             
-                            console.log('? [PatientAuth] Supabase login başarılı:', username);
+                            console.log('âœ… [PatientAuth] Supabase login baÅŸarÄ±lÄ±:', username);
                             return { success: true, patient: { username: patient.username, patientId: patient.id } };
                         } catch (error) {
-                            console.error('? [PatientAuth] Supabase login hatası:', error);
-                            return { success: false, error: 'Giriş sırasında bir hata oluştu' };
+                            console.error('âŒ [PatientAuth] Supabase login hatasÄ±:', error);
+                            return { success: false, error: 'GiriÅŸ sÄ±rasÄ±nda bir hata oluÅŸtu' };
                         }
                     }
                 };
@@ -678,7 +635,7 @@
                 if (!header || document.getElementById('adminLogoutBtn')) return;
                 const btn = document.createElement('button');
                 btn.id = 'adminLogoutBtn';
-                btn.textContent = '?? Çıkış';
+                btn.textContent = 'ğŸšª Ã‡Ä±kÄ±ÅŸ';
                 btn.style.cssText = 'margin-left:auto; align-self:flex-end; padding:8px 12px; border:none; border-radius:9px; background:linear-gradient(135deg,#ef4444 0%, #dc2626 100%); color:#fff; font-weight:700; cursor:pointer;';
                 btn.onclick = () => { if (window.AdminAuth) { AdminAuth.clearSession(); location.reload(); } };
                 header.appendChild(btn);
@@ -690,14 +647,32 @@
             if (typeof registerInputHandlers === 'function') registerInputHandlers();
             if (typeof attachActionHandlers === 'function') attachActionHandlers();
             if (typeof fetchSuggestions === 'function') fetchSuggestions();
-            if (typeof loadSettings === 'function') loadSettings();
+            if (typeof loadSettingsFromGitHub === 'function') loadSettingsFromGitHub();
             // Admins UI
             if (typeof loadAdminsRuntime === 'function') loadAdminsRuntime();
             if (typeof renderAdminsList === 'function') renderAdminsList();
             if (typeof renderPatientAdmins === 'function') renderPatientAdmins();
             if (typeof attachAdminsUIHandlers === 'function') attachAdminsUIHandlers();
-            // GitHub admin functions removed - using Supabase only
+            if (typeof fetchAdminsSha === 'function') fetchAdminsSha();
             if (typeof renderActiveAdmin === 'function') renderActiveAdmin();
+            // If only local fallback is present (e.g., only 'admin'), try to reload remote admins.js to override
+            try {
+                if (typeof window.ghAdmins !== 'undefined' && (!window.ghAdmins || !Array.isArray(window.ghAdmins.admins) || window.ghAdmins.admins.length <= 1)) {
+                    if (typeof reloadRemoteAdminsConfig === 'function') reloadRemoteAdminsConfig();
+                }
+            } catch(_) { /* noop */ }
+            // Additionally, fetch and parse raw admins.js as authoritative source and apply it
+            if (typeof fetchRemoteAdminsObject === 'function') {
+                fetchRemoteAdminsObject().then(obj => {
+                    if (obj && Array.isArray(obj.admins)){
+                        window.ghAdmins = obj;
+                        if (typeof ensureGhAdminsShape === 'function') ensureGhAdminsShape();
+                        if (typeof renderAdminsList === 'function') renderAdminsList();
+                        if (typeof renderPatientAdmins === 'function') renderPatientAdmins();
+                        if (typeof showStatus === 'function') showStatus('Uzaktan admins.js iÃ§eriÄŸi uygulandÄ±.', 'info');
+                    }
+                }).catch(()=>{});
+            }
         }
         window.init = init;
         
@@ -710,25 +685,25 @@
     <div class="settings-wrapper">
         <header class="settings-header">
             <div>
-                <h1>Yönetici Ayarları</h1>
-                <p>Bu panelden sistem ayarlarını düzenleyebilirsiniz. Tüm ayarlar Supabase veritabanına kaydedilir.</p>
+                <h1>YÃ¶netici AyarlarÄ±</h1>
+                <p>Bu panelden sistem ayarlarÄ±nÄ± dÃ¼zenleyebilirsiniz. TÃ¼m ayarlar Supabase veritabanÄ±na kaydedilir.</p>
             </div>
             
-            <!-- Admin Navigasyon Butonları -->
+            <!-- Admin Navigasyon ButonlarÄ± -->
             <div class="admin-nav-buttons">
                 <a href="admin_settings.html" class="admin-nav-btn active">
-                    ?? Ayarlar
+                    âš™ï¸ Ayarlar
                 </a>
                 <a href="admin_patients.html" class="admin-nav-btn">
-                    ?? Hasta Listesi
+                    ğŸ‘¥ Hasta Listesi
                 </a>
                 <a href="admin_chat.html" class="admin-nav-btn">
-                    ?? Sohbet Yönetimi
+                    ğŸ’¬ Sohbet YÃ¶netimi
                 </a>
             </div>
             
             <div class="info-banner">
-                Tüm ayarlar <strong>Supabase veritabanına</strong> kaydedilir ve anında aktif olur. Değişiklikler tüm kullanıcılar için geçerli olacaktır.
+                TÃ¼m ayarlar <strong>Supabase veritabanÄ±na</strong> kaydedilir ve anÄ±nda aktif olur. DeÄŸiÅŸiklikler tÃ¼m kullanÄ±cÄ±lar iÃ§in geÃ§erli olacaktÄ±r.
             </div>
         </header>
 
@@ -736,51 +711,51 @@
             <section class="settings-section">
                 <h2>Aktif Admin</h2>
                 <div class="settings-row">
-                    <span id="activeAdminBadge" style="display:inline-block;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#4338ca;font-weight:700;font-size:13px;">—</span>
-                    <span class="suggestion-hint">Bu oturumla işlem yapıyorsunuz.</span>
+                    <span id="activeAdminBadge" style="display:inline-block;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#4338ca;font-weight:700;font-size:13px;">â€”</span>
+                    <span class="suggestion-hint">Bu oturumla iÅŸlem yapÄ±yorsunuz.</span>
                 </div>
                 <div class="settings-row">
-                    <button type="button" class="btn-secondary" id="forceReloginBtn">Yeniden Giriş İste</button>
+                    <button type="button" class="btn-secondary" id="forceReloginBtn">Yeniden GiriÅŸ Ä°ste</button>
                 </div>
             </section>
             <section class="settings-section">
                 <h2>Genel</h2>
                 <div class="settings-row">
-                    <label for="defaultAlternativeCountInput">Varsayılan alternatif sayısı</label>
+                    <label for="defaultAlternativeCountInput">VarsayÄ±lan alternatif sayÄ±sÄ±</label>
                     <input type="number" id="defaultAlternativeCountInput" min="1" max="10">
                 </div>
                 <div class="settings-row checkbox-row">
                     <label for="enableTagFilterInput">
-                        <input type="checkbox" id="enableTagFilterInput"> Tag filtrelemesini aktifleştir
+                        <input type="checkbox" id="enableTagFilterInput"> Tag filtrelemesini aktifleÅŸtir
                     </label>
                 </div>
                 <div class="settings-row">
                     <label for="calorieToleranceInput">
-                        Kalori toleransı (%)
-                        <span style="color: #666; font-size: 12px; display: block;">Şablon filtrelemede ±% sapma oranı (örn: 5 = ±%5)</span>
+                        Kalori toleransÄ± (%)
+                        <span style="color: #666; font-size: 12px; display: block;">Åablon filtrelemede Â±% sapma oranÄ± (Ã¶rn: 5 = Â±%5)</span>
                     </label>
                     <input type="number" id="calorieToleranceInput" min="0" max="50" step="1" value="5">
                 </div>
                 <div class="settings-row">
                     <label for="templateReuseWeeksInput">
-                        Şablon tekrar kullanım süresi (hafta)
-                        <span style="color: #666; font-size: 12px; display: block;">Bir şablon kaç hafta sonra tekrar kullanılabilir (örn: 4 = 4 hafta sonra)</span>
+                        Åablon tekrar kullanÄ±m sÃ¼resi (hafta)
+                        <span style="color: #666; font-size: 12px; display: block;">Bir ÅŸablon kaÃ§ hafta sonra tekrar kullanÄ±labilir (Ã¶rn: 4 = 4 hafta sonra)</span>
                     </label>
                     <input type="number" id="templateReuseWeeksInput" min="1" max="12" step="1" value="4">
                 </div>
             </section>
 
-            <!-- Diyet Formülleri Bölümü -->
+            <!-- Diyet FormÃ¼lleri BÃ¶lÃ¼mÃ¼ -->
             <section class="settings-section">
-                <h2>?? Diyet Formülleri ve Makro Hesaplama</h2>
+                <h2>ğŸ¥— Diyet FormÃ¼lleri ve Makro Hesaplama</h2>
                 
                 <div style="margin-bottom: 20px; padding: 12px; background: #e0e7ff; border-radius: 8px;">
-                    <strong>?? Formül Yapısı:</strong><br>
-                    • Karbonhidrat = Kilo × Çarpan (gram)<br>
-                    • Protein = Kilo × Çarpan (gram)<br>
-                    • Yağ = Kilo × Çarpan (gram)<br>
-                    • Kalori = (Karb×4) + (Protein×4) + (Yağ×9)<br>
-                    • Final Kalori = Kalori × Aktivite Çarpanı
+                    <strong>ğŸ“Œ FormÃ¼l YapÄ±sÄ±:</strong><br>
+                    â€¢ Karbonhidrat = Kilo Ã— Ã‡arpan (gram)<br>
+                    â€¢ Protein = Kilo Ã— Ã‡arpan (gram)<br>
+                    â€¢ YaÄŸ = Kilo Ã— Ã‡arpan (gram)<br>
+                    â€¢ Kalori = (KarbÃ—4) + (ProteinÃ—4) + (YaÄŸÃ—9)<br>
+                    â€¢ Final Kalori = Kalori Ã— Aktivite Ã‡arpanÄ±
                 </div>
 
                 <!-- Ketojenik Diyet -->
@@ -788,15 +763,15 @@
                     <h3 style="margin: 0 0 12px 0; color: #15803d;">Ketojenik Diyet</h3>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;">
                         <div class="settings-row">
-                            <label>Karbonhidrat Çarpanı</label>
+                            <label>Karbonhidrat Ã‡arpanÄ±</label>
                             <input type="number" id="ketoCarb" step="0.1" min="0" value="0.3">
                         </div>
                         <div class="settings-row">
-                            <label>Protein Çarpanı</label>
+                            <label>Protein Ã‡arpanÄ±</label>
                             <input type="number" id="ketoProtein" step="0.1" min="0" value="0.8">
                         </div>
                         <div class="settings-row">
-                            <label>Yağ Çarpanı</label>
+                            <label>YaÄŸ Ã‡arpanÄ±</label>
                             <input type="number" id="ketoFat" step="0.1" min="0" value="1.2">
                         </div>
                     </div>
@@ -807,15 +782,15 @@
                     <h3 style="margin: 0 0 12px 0; color: #1e40af;">Lowcarb Diyet</h3>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;">
                         <div class="settings-row">
-                            <label>Karbonhidrat Çarpanı</label>
+                            <label>Karbonhidrat Ã‡arpanÄ±</label>
                             <input type="number" id="lowcarbCarb" step="0.1" min="0" value="0.6">
                         </div>
                         <div class="settings-row">
-                            <label>Protein Çarpanı</label>
+                            <label>Protein Ã‡arpanÄ±</label>
                             <input type="number" id="lowcarbProtein" step="0.1" min="0" value="0.8">
                         </div>
                         <div class="settings-row">
-                            <label>Yağ Çarpanı</label>
+                            <label>YaÄŸ Ã‡arpanÄ±</label>
                             <input type="number" id="lowcarbFat" step="0.1" min="0" value="1.0">
                         </div>
                     </div>
@@ -826,23 +801,23 @@
                     <h3 style="margin: 0 0 12px 0; color: #0f766e;">Akdeniz Diyeti</h3>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;">
                         <div class="settings-row">
-                            <label>Karbonhidrat Çarpanı</label>
+                            <label>Karbonhidrat Ã‡arpanÄ±</label>
                             <input type="number" id="akdenizCarb" step="0.1" min="0" value="0.6">
                         </div>
                         <div class="settings-row">
-                            <label>Protein Çarpanı</label>
+                            <label>Protein Ã‡arpanÄ±</label>
                             <input type="number" id="akdenizProtein" step="0.1" min="0" value="0.8">
                         </div>
                         <div class="settings-row">
-                            <label>Yağ Çarpanı</label>
+                            <label>YaÄŸ Ã‡arpanÄ±</label>
                             <input type="number" id="akdenizFat" step="0.1" min="0" value="1.0">
                         </div>
                     </div>
                 </div>
 
-                <!-- Aktivite Çarpanları -->
+                <!-- Aktivite Ã‡arpanlarÄ± -->
                 <div style="border: 2px solid #f59e0b; border-radius: 12px; padding: 16px;">
-                    <h3 style="margin: 0 0 12px 0; color: #92400e;">Aktivite Seviyesi Çarpanları</h3>
+                    <h3 style="margin: 0 0 12px 0; color: #92400e;">Aktivite Seviyesi Ã‡arpanlarÄ±</h3>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
                         <div class="settings-row">
                             <label>1 - Hareketsiz</label>
@@ -857,11 +832,11 @@
                             <input type="number" id="activity3" step="0.1" min="0" max="2" value="1.0">
                         </div>
                         <div class="settings-row">
-                            <label>4 - Çok Aktif</label>
+                            <label>4 - Ã‡ok Aktif</label>
                             <input type="number" id="activity4" step="0.1" min="0" max="2" value="1.1">
                         </div>
                         <div class="settings-row">
-                            <label>5 - Süper Aktif</label>
+                            <label>5 - SÃ¼per Aktif</label>
                             <input type="number" id="activity5" step="0.1" min="0" max="2" value="1.2">
                         </div>
                     </div>
@@ -869,45 +844,45 @@
             </section>
 
             <section class="settings-section">
-                <h2>Tag İstisnaları</h2>
+                <h2>Tag Ä°stisnalarÄ±</h2>
                 <div class="settings-row">
-                    <label for="tagExclusionInput">Yeni istisna tagı ekle</label>
-                    <input type="text" id="tagExclusionInput" placeholder="Örn: mevsim" autocomplete="off">
-                    <span class="suggestion-hint">Enter veya odak dışında bırakmak listedeki yeni tag'ı ekler.</span>
+                    <label for="tagExclusionInput">Yeni istisna tagÄ± ekle</label>
+                    <input type="text" id="tagExclusionInput" placeholder="Ã–rn: mevsim" autocomplete="off">
+                    <span class="suggestion-hint">Enter veya odak dÄ±ÅŸÄ±nda bÄ±rakmak listedeki yeni tag'Ä± ekler.</span>
                 </div>
                 <div class="settings-chip-list" id="tagExclusionList"></div>
             </section>
 
             <section class="settings-section">
-                <h2>Yöneticiler (admins.js)</h2>
+                <h2>YÃ¶neticiler (admins.js)</h2>
                 <div class="settings-row">
                     <div id="adminsList"></div>
                 </div>
                 <div class="settings-row">
                     <details>
-                        <summary>Yeni / Düzenle</summary>
+                        <summary>Yeni / DÃ¼zenle</summary>
                         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:10px;">
                             <div>
-                                <label>Kullanıcı Adı</label>
+                                <label>KullanÄ±cÄ± AdÄ±</label>
                                 <input type="text" id="adminEditUsername" placeholder="admin"/>
                             </div>
                             <div>
-                                <label>Yeni Şifre (opsiyonel)</label>
-                                <input type="password" id="adminEditPassword" placeholder="Yeni şifre (boşsa değişmez)"/>
+                                <label>Yeni Åifre (opsiyonel)</label>
+                                <input type="password" id="adminEditPassword" placeholder="Yeni ÅŸifre (boÅŸsa deÄŸiÅŸmez)"/>
                             </div>
                             <div>
                                 <label>Roller</label>
-                                <input type="text" id="adminEditRoles" placeholder="virgülle: admin,editor"/>
+                                <input type="text" id="adminEditRoles" placeholder="virgÃ¼lle: admin,editor"/>
                             </div>
                         </div>
                         <div style="margin-top:10px;display:flex;gap:8px;">
-                            <button type="button" class="btn-primary" id="adminSaveBtn">Kaydet / Güncelle</button>
+                            <button type="button" class="btn-primary" id="adminSaveBtn">Kaydet / GÃ¼ncelle</button>
                             <button type="button" class="btn-secondary" id="adminClearBtn">Temizle</button>
                         </div>
                     </details>
                 </div>
                 <div class="settings-row">
-                    <label>Hasta bazlı admin yetkisi (patientAdmins)</label>
+                    <label>Hasta bazlÄ± admin yetkisi (patientAdmins)</label>
                     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
                         <input type="text" id="patientAdminInput" placeholder="hastaKullaniciAdi" style="max-width:260px;"/>
                         <button type="button" class="btn-secondary" id="patientAdminAddBtn">Ekle</button>
@@ -915,28 +890,28 @@
                     <div class="settings-chip-list" id="patientAdminsList"></div>
                 </div>
                 <div class="settings-row">
-                    <button type="button" class="btn-primary" id="saveAdminsFileBtn">Admins Dosyasını Kaydet</button>
+                    <button type="button" class="btn-primary" id="saveAdminsFileBtn">Admins DosyasÄ±nÄ± Kaydet</button>
                 </div>
             </section>
 
             <section class="settings-section">
                 <h2>Muaf Rol ve Kategoriler</h2>
                 <div class="settings-row">
-                    <label for="roleExclusionInput">Rol istisnası ekle</label>
-                    <input type="text" id="roleExclusionInput" placeholder="Örn: Diyetisyen" list="rolesDatalist" autocomplete="off">
+                    <label for="roleExclusionInput">Rol istisnasÄ± ekle</label>
+                    <input type="text" id="roleExclusionInput" placeholder="Ã–rn: Diyetisyen" list="rolesDatalist" autocomplete="off">
                     <datalist id="rolesDatalist"></datalist>
                 </div>
                 <div class="settings-chip-list" id="roleExclusionList"></div>
 
                 <div class="settings-row">
-                    <label for="categoryExclusionInput">Kategori istisnası ekle</label>
-                    <input type="text" id="categoryExclusionInput" placeholder="Örn: Atıştırmalık" list="categoriesDatalist" autocomplete="off">
+                    <label for="categoryExclusionInput">Kategori istisnasÄ± ekle</label>
+                    <input type="text" id="categoryExclusionInput" placeholder="Ã–rn: AtÄ±ÅŸtÄ±rmalÄ±k" list="categoriesDatalist" autocomplete="off">
                     <datalist id="categoriesDatalist"></datalist>
                 </div>
                 <div class="settings-chip-list" id="categoryExclusionList"></div>
 
                 <details id="suggestionsPanel" hidden>
-                    <summary>?? Önerilen rol/kategori listesi</summary>
+                    <summary>âš™ï¸ Ã–nerilen rol/kategori listesi</summary>
                     <div class="suggestions-grid" id="roleSuggestions"></div>
                     <div class="suggestions-grid" id="categorySuggestions"></div>
                 </details>
@@ -946,66 +921,66 @@
                 <h2>Rotasyon</h2>
                 <div class="settings-row checkbox-row">
                     <label for="rotationEnabledInput">
-                        <input type="checkbox" id="rotationEnabledInput"> Rotasyonu aktifleştir
+                        <input type="checkbox" id="rotationEnabledInput"> Rotasyonu aktifleÅŸtir
                     </label>
                 </div>
                 <div class="settings-row">
-                    <label for="rotationChunkSizeInput">Günlük alternatif sayısı</label>
+                    <label for="rotationChunkSizeInput">GÃ¼nlÃ¼k alternatif sayÄ±sÄ±</label>
                     <input type="number" id="rotationChunkSizeInput" min="1" max="10">
                 </div>
                 <div class="settings-row">
-                    <label for="rotationResetDayInput">Rotasyon sıfırlama günü (0 = Pazartesi)</label>
-                    <input type="number" id="rotationResetDayInput" min="0" max="6" placeholder="Boş bırakılırsa ISO haftası baz alınır">
+                    <label for="rotationResetDayInput">Rotasyon sÄ±fÄ±rlama gÃ¼nÃ¼ (0 = Pazartesi)</label>
+                    <input type="number" id="rotationResetDayInput" min="0" max="6" placeholder="BoÅŸ bÄ±rakÄ±lÄ±rsa ISO haftasÄ± baz alÄ±nÄ±r">
                 </div>
             </section>
 
             <section class="settings-section">
-                <h2>?? Filtreleme Kriterleri</h2>
+                <h2>ğŸ” Filtreleme Kriterleri</h2>
                 <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">
-                    Kullanıcı panelinde hangi filtreleme kriterlerinin gösterileceğini ve zorunlu/opsiyonel olduğunu ayarlayın.
+                    KullanÄ±cÄ± panelinde hangi filtreleme kriterlerinin gÃ¶sterileceÄŸini ve zorunlu/opsiyonel olduÄŸunu ayarlayÄ±n.
                 </p>
                 
                 <div class="criteria-grid">
-                    <!-- Role (Yemek Türü) -->
+                    <!-- Role (Yemek TÃ¼rÃ¼) -->
                     <div class="criteria-item">
                         <div class="criteria-header">
                             <label class="criteria-checkbox">
                                 <input type="checkbox" id="criteriaRoleVisible" checked>
-                                <span class="criteria-label">????? Yemek Türü (Role)</span>
+                                <span class="criteria-label">ğŸ‘¨â€ğŸ³ Yemek TÃ¼rÃ¼ (Role)</span>
                             </label>
                         </div>
                         <div class="criteria-body">
-                            <label for="criteriaRoleMode" style="font-size: 12px; color: #64748b;">Kullanıcı için:</label>
+                            <label for="criteriaRoleMode" style="font-size: 12px; color: #64748b;">KullanÄ±cÄ± iÃ§in:</label>
                             <select id="criteriaRoleMode" class="criteria-select">
-                                <option value="optional" selected>Opsiyonel (Kullanıcı açıp kapayabilir)</option>
+                                <option value="optional" selected>Opsiyonel (KullanÄ±cÄ± aÃ§Ä±p kapayabilir)</option>
                                 <option value="required">Zorunlu (Her zaman aktif)</option>
                             </select>
-                            <label for="criteriaRoleDefault" style="font-size: 12px; color: #64748b; margin-top: 6px;">Sayfa açıldığında:</label>
+                            <label for="criteriaRoleDefault" style="font-size: 12px; color: #64748b; margin-top: 6px;">Sayfa aÃ§Ä±ldÄ±ÄŸÄ±nda:</label>
                             <select id="criteriaRoleDefault" class="criteria-select">
-                                <option value="active" selected>Aktif (Filtre açık)</option>
-                                <option value="inactive">Pasif (Filtre kapalı)</option>
+                                <option value="active" selected>Aktif (Filtre aÃ§Ä±k)</option>
+                                <option value="inactive">Pasif (Filtre kapalÄ±)</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- Diet Type (Diyet Türü) -->
+                    <!-- Diet Type (Diyet TÃ¼rÃ¼) -->
                     <div class="criteria-item">
                         <div class="criteria-header">
                             <label class="criteria-checkbox">
                                 <input type="checkbox" id="criteriaDietTypeVisible" checked>
-                                <span class="criteria-label">?? Diyet Türü</span>
+                                <span class="criteria-label">ğŸ¥— Diyet TÃ¼rÃ¼</span>
                             </label>
                         </div>
                         <div class="criteria-body">
-                            <label for="criteriaDietTypeMode" style="font-size: 12px; color: #64748b;">Kullanıcı için:</label>
+                            <label for="criteriaDietTypeMode" style="font-size: 12px; color: #64748b;">KullanÄ±cÄ± iÃ§in:</label>
                             <select id="criteriaDietTypeMode" class="criteria-select">
-                                <option value="optional" selected>Opsiyonel (Kullanıcı açıp kapayabilir)</option>
+                                <option value="optional" selected>Opsiyonel (KullanÄ±cÄ± aÃ§Ä±p kapayabilir)</option>
                                 <option value="required">Zorunlu (Her zaman aktif)</option>
                             </select>
-                            <label for="criteriaDietTypeDefault" style="font-size: 12px; color: #64748b; margin-top: 6px;">Sayfa açıldığında:</label>
+                            <label for="criteriaDietTypeDefault" style="font-size: 12px; color: #64748b; margin-top: 6px;">Sayfa aÃ§Ä±ldÄ±ÄŸÄ±nda:</label>
                             <select id="criteriaDietTypeDefault" class="criteria-select">
-                                <option value="active">Aktif (Filtre açık)</option>
-                                <option value="inactive" selected>Pasif (Filtre kapalı)</option>
+                                <option value="active">Aktif (Filtre aÃ§Ä±k)</option>
+                                <option value="inactive" selected>Pasif (Filtre kapalÄ±)</option>
                             </select>
                         </div>
                     </div>
@@ -1015,19 +990,19 @@
                         <div class="criteria-header">
                             <label class="criteria-checkbox">
                                 <input type="checkbox" id="criteriaCategoryVisible">
-                                <span class="criteria-label">?? Kategori</span>
+                                <span class="criteria-label">ğŸ“‚ Kategori</span>
                             </label>
                         </div>
                         <div class="criteria-body">
-                            <label for="criteriaCategoryMode" style="font-size: 12px; color: #64748b;">Kullanıcı için:</label>
+                            <label for="criteriaCategoryMode" style="font-size: 12px; color: #64748b;">KullanÄ±cÄ± iÃ§in:</label>
                             <select id="criteriaCategoryMode" class="criteria-select">
-                                <option value="optional" selected>Opsiyonel (Kullanıcı açıp kapayabilir)</option>
+                                <option value="optional" selected>Opsiyonel (KullanÄ±cÄ± aÃ§Ä±p kapayabilir)</option>
                                 <option value="required">Zorunlu (Her zaman aktif)</option>
                             </select>
-                            <label for="criteriaCategoryDefault" style="font-size: 12px; color: #64748b; margin-top: 6px;">Sayfa açıldığında:</label>
+                            <label for="criteriaCategoryDefault" style="font-size: 12px; color: #64748b; margin-top: 6px;">Sayfa aÃ§Ä±ldÄ±ÄŸÄ±nda:</label>
                             <select id="criteriaCategoryDefault" class="criteria-select">
-                                <option value="active">Aktif (Filtre açık)</option>
-                                <option value="inactive" selected>Pasif (Filtre kapalı)</option>
+                                <option value="active">Aktif (Filtre aÃ§Ä±k)</option>
+                                <option value="inactive" selected>Pasif (Filtre kapalÄ±)</option>
                             </select>
                         </div>
                     </div>
@@ -1037,62 +1012,62 @@
                         <div class="criteria-header">
                             <label class="criteria-checkbox">
                                 <input type="checkbox" id="criteriaSeasonVisible">
-                                <span class="criteria-label">??? Sezon</span>
+                                <span class="criteria-label">ğŸŒ¤ï¸ Sezon</span>
                             </label>
                         </div>
                         <div class="criteria-body">
-                            <label for="criteriaSeasonMode" style="font-size: 12px; color: #64748b;">Kullanıcı için:</label>
+                            <label for="criteriaSeasonMode" style="font-size: 12px; color: #64748b;">KullanÄ±cÄ± iÃ§in:</label>
                             <select id="criteriaSeasonMode" class="criteria-select">
-                                <option value="optional" selected>Opsiyonel (Kullanıcı açıp kapayabilir)</option>
+                                <option value="optional" selected>Opsiyonel (KullanÄ±cÄ± aÃ§Ä±p kapayabilir)</option>
                                 <option value="required">Zorunlu (Her zaman aktif)</option>
                             </select>
-                            <label for="criteriaSeasonDefault" style="font-size: 12px; color: #64748b; margin-top: 6px;">Sayfa açıldığında:</label>
+                            <label for="criteriaSeasonDefault" style="font-size: 12px; color: #64748b; margin-top: 6px;">Sayfa aÃ§Ä±ldÄ±ÄŸÄ±nda:</label>
                             <select id="criteriaSeasonDefault" class="criteria-select">
-                                <option value="active">Aktif (Filtre açık)</option>
-                                <option value="inactive" selected>Pasif (Filtre kapalı)</option>
+                                <option value="active">Aktif (Filtre aÃ§Ä±k)</option>
+                                <option value="inactive" selected>Pasif (Filtre kapalÄ±)</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- MealType (Öğün) -->
+                    <!-- MealType (Ã–ÄŸÃ¼n) -->
                     <div class="criteria-item">
                         <div class="criteria-header">
                             <label class="criteria-checkbox">
                                 <input type="checkbox" id="criteriaMealTypeVisible">
-                                <span class="criteria-label">??? Öğün</span>
+                                <span class="criteria-label">ğŸ½ï¸ Ã–ÄŸÃ¼n</span>
                             </label>
                         </div>
                         <div class="criteria-body">
-                            <label for="criteriaMealTypeMode" style="font-size: 12px; color: #64748b;">Kullanıcı için:</label>
+                            <label for="criteriaMealTypeMode" style="font-size: 12px; color: #64748b;">KullanÄ±cÄ± iÃ§in:</label>
                             <select id="criteriaMealTypeMode" class="criteria-select">
-                                <option value="optional" selected>Opsiyonel (Kullanıcı açıp kapayabilir)</option>
+                                <option value="optional" selected>Opsiyonel (KullanÄ±cÄ± aÃ§Ä±p kapayabilir)</option>
                                 <option value="required">Zorunlu (Her zaman aktif)</option>
                             </select>
-                            <label for="criteriaMealTypeDefault" style="font-size: 12px; color: #64748b; margin-top: 6px;">Sayfa açıldığında:</label>
+                            <label for="criteriaMealTypeDefault" style="font-size: 12px; color: #64748b; margin-top: 6px;">Sayfa aÃ§Ä±ldÄ±ÄŸÄ±nda:</label>
                             <select id="criteriaMealTypeDefault" class="criteria-select">
-                                <option value="active">Aktif (Filtre açık)</option>
-                                <option value="inactive" selected>Pasif (Filtre kapalı)</option>
+                                <option value="active">Aktif (Filtre aÃ§Ä±k)</option>
+                                <option value="inactive" selected>Pasif (Filtre kapalÄ±)</option>
                             </select>
                         </div>
                     </div>
                 </div>
                 
                 <div class="info-hint" style="margin-top: 16px; padding: 12px; background: rgba(59, 130, 246, 0.08); border-radius: 8px; font-size: 12px; color: #3b82f6;">
-                    <strong>?? İpucu:</strong> 
+                    <strong>ğŸ’¡ Ä°pucu:</strong> 
                     <ul style="margin: 8px 0 0 0; padding-left: 20px;">
-                        <li><strong>Opsiyonel:</strong> Kullanıcı panelinde rozet gösterilir, kullanıcı tıklayarak aktif/pasif edebilir.</li>
-                        <li><strong>Zorunlu:</strong> Filtreleme her zaman aktiftir, kullanıcı değiştiremez (rozet gizlidir).</li>
-                        <li><strong>Sayfa açıldığında:</strong> İlk açılışta filtrenin aktif mi pasif mi olacağını belirler (sadece opsiyoneller için geçerli).</li>
-                        <li>Checkbox işaretsizse kriter tamamen gizlenir ve kullanılmaz.</li>
+                        <li><strong>Opsiyonel:</strong> KullanÄ±cÄ± panelinde rozet gÃ¶sterilir, kullanÄ±cÄ± tÄ±klayarak aktif/pasif edebilir.</li>
+                        <li><strong>Zorunlu:</strong> Filtreleme her zaman aktiftir, kullanÄ±cÄ± deÄŸiÅŸtiremez (rozet gizlidir).</li>
+                        <li><strong>Sayfa aÃ§Ä±ldÄ±ÄŸÄ±nda:</strong> Ä°lk aÃ§Ä±lÄ±ÅŸta filtrenin aktif mi pasif mi olacaÄŸÄ±nÄ± belirler (sadece opsiyoneller iÃ§in geÃ§erli).</li>
+                        <li>Checkbox iÅŸaretsizse kriter tamamen gizlenir ve kullanÄ±lmaz.</li>
                     </ul>
                 </div>
             </section>
 
             <section class="settings-section">
-                <h2>?? Benzerlik Skoru Kriterleri</h2>
+                <h2>ğŸ“Š Benzerlik Skoru Kriterleri</h2>
                 <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">
-                    Alternatif yemek benzerliği hesaplanırken hangi makroların dikkate alınacağını belirleyin. 
-                    Seçili kriterler kullanılarak benzerlik skoru hesaplanır.
+                    Alternatif yemek benzerliÄŸi hesaplanÄ±rken hangi makrolarÄ±n dikkate alÄ±nacaÄŸÄ±nÄ± belirleyin. 
+                    SeÃ§ili kriterler kullanÄ±larak benzerlik skoru hesaplanÄ±r.
                 </p>
                 
                 <div class="criteria-grid">
@@ -1100,7 +1075,7 @@
                     <div class="criteria-item">
                         <label class="criteria-checkbox">
                             <input type="checkbox" id="scoreCriteriaCalories">
-                            <span class="criteria-label">?? Kalori</span>
+                            <span class="criteria-label">ğŸ”¥ Kalori</span>
                         </label>
                     </div>
 
@@ -1108,7 +1083,7 @@
                     <div class="criteria-item">
                         <label class="criteria-checkbox">
                             <input type="checkbox" id="scoreCriteriaProtein" checked>
-                            <span class="criteria-label">?? Protein</span>
+                            <span class="criteria-label">ğŸ¥© Protein</span>
                         </label>
                     </div>
 
@@ -1116,25 +1091,25 @@
                     <div class="criteria-item">
                         <label class="criteria-checkbox">
                             <input type="checkbox" id="scoreCriteriaCarbs">
-                            <span class="criteria-label">?? Karbonhidrat</span>
+                            <span class="criteria-label">ğŸ Karbonhidrat</span>
                         </label>
                     </div>
 
-                    <!-- Yağ -->
+                    <!-- YaÄŸ -->
                     <div class="criteria-item">
                         <label class="criteria-checkbox">
                             <input type="checkbox" id="scoreCriteriaFat" checked>
-                            <span class="criteria-label">?? Yağ</span>
+                            <span class="criteria-label">ğŸ§ˆ YaÄŸ</span>
                         </label>
                     </div>
                 </div>
             </section>
 
             <section class="settings-section">
-                <h2>?? Benzerlik Hesaplama Modu</h2>
+                <h2>ğŸ§® Benzerlik Hesaplama Modu</h2>
                 <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">
-                    Alternatif yemek benzerliği nasıl hesaplansın? Basit mod sadece kalori ağırlığına bakar, 
-                    Gelişmiş mod hem kalori hem de oransal farkı dikkate alır.
+                    Alternatif yemek benzerliÄŸi nasÄ±l hesaplansÄ±n? Basit mod sadece kalori aÄŸÄ±rlÄ±ÄŸÄ±na bakar, 
+                    GeliÅŸmiÅŸ mod hem kalori hem de oransal farkÄ± dikkate alÄ±r.
                 </p>
                 
                 <div style="display: flex; gap: 16px; margin-bottom: 20px;">
@@ -1143,67 +1118,67 @@
                         <input type="radio" name="scoringMode" value="simple" id="scoringModeSimple" 
                                style="margin-right: 8px;" checked>
                         <div style="padding: 16px; border: 2px solid #e2e8f0; border-radius: 10px; transition: all 0.2s;">
-                            <h3 style="margin: 0 0 8px 0; font-size: 15px; color: #1e293b;">?? Basit Mod</h3>
+                            <h3 style="margin: 0 0 8px 0; font-size: 15px; color: #1e293b;">ğŸ“Š Basit Mod</h3>
                             <p style="font-size: 12px; color: #64748b; margin: 0;">
-                                Makro farkları kalori eşdeğeriyle hesaplanır.<br>
-                                <strong>Protein/Karb:</strong> ×4 kcal/g<br>
-                                <strong>Yağ:</strong> ×9 kcal/g
+                                Makro farklarÄ± kalori eÅŸdeÄŸeriyle hesaplanÄ±r.<br>
+                                <strong>Protein/Karb:</strong> Ã—4 kcal/g<br>
+                                <strong>YaÄŸ:</strong> Ã—9 kcal/g
                             </p>
                         </div>
                     </label>
                     
-                    <!-- Gelişmiş Mod -->
+                    <!-- GeliÅŸmiÅŸ Mod -->
                     <label style="flex: 1; cursor: pointer;">
                         <input type="radio" name="scoringMode" value="advanced" id="scoringModeAdvanced" 
                                style="margin-right: 8px;">
                         <div style="padding: 16px; border: 2px solid #e2e8f0; border-radius: 10px; transition: all 0.2s;">
-                            <h3 style="margin: 0 0 8px 0; font-size: 15px; color: #1e293b;">?? Gelişmiş Mod</h3>
+                            <h3 style="margin: 0 0 8px 0; font-size: 15px; color: #1e293b;">ğŸ¯ GeliÅŸmiÅŸ Mod</h3>
                             <p style="font-size: 12px; color: #64748b; margin: 0;">
-                                Hem kalori hem oran bazlı hesaplama.<br>
-                                <strong>Örnek:</strong> 20g'dan 3g ? 40g'dan 3g<br>
+                                Hem kalori hem oran bazlÄ± hesaplama.<br>
+                                <strong>Ã–rnek:</strong> 20g'dan 3g â‰  40g'dan 3g<br>
                                 <strong>Daha hassas</strong> skorlama
                             </p>
                         </div>
                     </label>
                 </div>
                 
-                <!-- Sensitivity Slider (sadece Gelişmiş Mod için) -->
+                <!-- Sensitivity Slider (sadece GeliÅŸmiÅŸ Mod iÃ§in) -->
                 <div id="sensitivityContainer" style="display: none; margin-top: 20px; padding: 16px; background: rgba(99, 102, 241, 0.05); border-radius: 10px; border: 1px solid rgba(99, 102, 241, 0.2);">
                     <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #4338ca;">
-                        ??? Hassasiyet Ayarı (Gelişmiş Mod)
+                        ğŸšï¸ Hassasiyet AyarÄ± (GeliÅŸmiÅŸ Mod)
                     </label>
                     <p style="font-size: 12px; color: #64748b; margin: 0 0 12px 0;">
-                        Skorlama ne kadar hassas olsun? Düşük değer = daha sert puanlama, Yüksek değer = daha yumuşak puanlama.
+                        Skorlama ne kadar hassas olsun? DÃ¼ÅŸÃ¼k deÄŸer = daha sert puanlama, YÃ¼ksek deÄŸer = daha yumuÅŸak puanlama.
                     </p>
                     <div style="display: flex; align-items: center; gap: 16px;">
                         <span style="font-size: 12px; color: #64748b; min-width: 80px;">Sert (5)</span>
                         <input type="range" id="sensitivityDivider" min="5" max="20" step="1" value="10" 
                                style="flex: 1; height: 6px; border-radius: 5px; outline: none; 
                                       background: linear-gradient(to right, #ef4444, #f59e0b, #10b981);">
-                        <span style="font-size: 12px; color: #64748b; min-width: 80px;">Yumuşak (20)</span>
+                        <span style="font-size: 12px; color: #64748b; min-width: 80px;">YumuÅŸak (20)</span>
                     </div>
                     <div style="margin-top: 12px; text-align: center;">
                         <span style="font-size: 14px; font-weight: 600; color: #4338ca;">
-                            Mevcut Değer: <span id="sensitivityValue">10</span>
+                            Mevcut DeÄŸer: <span id="sensitivityValue">10</span>
                         </span>
                     </div>
                     <div style="margin-top: 12px; padding: 10px; background: white; border-radius: 6px; font-size: 11px; color: #475569;">
-                        <strong>Örnek Etki (Protein 20g › 17g, %15 fark):</strong><br>
-                        Değer 5: Skor ~88% | Değer 10: Skor ~94% | Değer 20: Skor ~97%
+                        <strong>Ã–rnek Etki (Protein 20g â†’ 17g, %15 fark):</strong><br>
+                        DeÄŸer 5: Skor ~88% | DeÄŸer 10: Skor ~94% | DeÄŸer 20: Skor ~97%
                     </div>
                 </div>
                 
                 <div class="info-hint" style="margin-top: 16px; padding: 12px; background: rgba(59, 130, 246, 0.08); border-radius: 8px; font-size: 12px; color: #3b82f6;">
-                    <strong>?? İpucu:</strong><br>
-                    <strong>Basit Mod:</strong> Her makronun kalori değeri baz alınır. Protein ve karb ×4 kcal/g, Yağ ×9 kcal/g ile ağırlıklandırılır.<br>
-                    <strong>Gelişmiş Mod:</strong> Aynı gram farkı bile oransal olarak değerlendirilir. 20g'dan 3g eksik (%15) ile 40g'dan 3g eksik (%7.5) farklı skorlar alır.
+                    <strong>ğŸ’¡ Ä°pucu:</strong><br>
+                    <strong>Basit Mod:</strong> Her makronun kalori deÄŸeri baz alÄ±nÄ±r. Protein ve karb Ã—4 kcal/g, YaÄŸ Ã—9 kcal/g ile aÄŸÄ±rlÄ±klandÄ±rÄ±lÄ±r.<br>
+                    <strong>GeliÅŸmiÅŸ Mod:</strong> AynÄ± gram farkÄ± bile oransal olarak deÄŸerlendirilir. 20g'dan 3g eksik (%15) ile 40g'dan 3g eksik (%7.5) farklÄ± skorlar alÄ±r.
                 </div>
             </section>
 
             <section class="settings-section">
-                <h2>??? Rozet Gösterimi</h2>
+                <h2>ğŸ·ï¸ Rozet GÃ¶sterimi</h2>
                 <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">
-                    Hasta panelindeki yemek satırlarında hangi bilgi rozetlerinin gösterileceğini seçin.
+                    Hasta panelindeki yemek satÄ±rlarÄ±nda hangi bilgi rozetlerinin gÃ¶sterileceÄŸini seÃ§in.
                 </p>
                 
                 <div class="criteria-grid">
@@ -1211,7 +1186,7 @@
                     <div class="criteria-item">
                         <label class="criteria-checkbox">
                             <input type="checkbox" id="badgeRoleVisible" checked>
-                            <span class="criteria-label">????? Rol Rozeti (Ana yemek, Ekmek, vb.)</span>
+                            <span class="criteria-label">ğŸ‘¨â€ğŸ³ Rol Rozeti (Ana yemek, Ekmek, vb.)</span>
                         </label>
                     </div>
 
@@ -1219,7 +1194,7 @@
                     <div class="criteria-item">
                         <label class="criteria-checkbox">
                             <input type="checkbox" id="badgeDietTypeVisible" checked>
-                            <span class="criteria-label">?? Diyet Tipi Rozeti (Keto, Lowcarb)</span>
+                            <span class="criteria-label">ğŸ¥‘ Diyet Tipi Rozeti (Keto, Lowcarb)</span>
                         </label>
                     </div>
 
@@ -1227,7 +1202,7 @@
                     <div class="criteria-item">
                         <label class="criteria-checkbox">
                             <input type="checkbox" id="badgeCategoryVisible">
-                            <span class="criteria-label">?? Kategori Rozeti (ÖĞLEN, AKŞAM, vb.)</span>
+                            <span class="criteria-label">ğŸ“‚ Kategori Rozeti (Ã–ÄLEN, AKÅAM, vb.)</span>
                         </label>
                     </div>
 
@@ -1235,7 +1210,7 @@
                     <div class="criteria-item">
                         <label class="criteria-checkbox">
                             <input type="checkbox" id="badgeSeasonVisible">
-                            <span class="criteria-label">?? Mevsim Rozeti</span>
+                            <span class="criteria-label">ğŸŒ± Mevsim Rozeti</span>
                         </label>
                     </div>
 
@@ -1243,7 +1218,7 @@
                     <div class="criteria-item">
                         <label class="criteria-checkbox">
                             <input type="checkbox" id="badgeMealTypeVisible">
-                            <span class="criteria-label">??? Öğün Tipi Rozeti (Sabah, Öğle, Akşam)</span>
+                            <span class="criteria-label">ğŸ½ï¸ Ã–ÄŸÃ¼n Tipi Rozeti (Sabah, Ã–ÄŸle, AkÅŸam)</span>
                         </label>
                     </div>
 
@@ -1251,68 +1226,81 @@
                     <div class="criteria-item">
                         <label class="criteria-checkbox">
                             <input type="checkbox" id="badgeTagsVisible">
-                            <span class="criteria-label">??? Tag Rozeti (tavuk, yumurta, vb.)</span>
+                            <span class="criteria-label">ğŸ·ï¸ Tag Rozeti (tavuk, yumurta, vb.)</span>
                         </label>
                     </div>
                 </div>
                 
                 <div class="info-hint" style="margin-top: 16px; padding: 12px; background: rgba(59, 130, 246, 0.08); border-radius: 8px; font-size: 12px; color: #3b82f6;">
-                    <strong>?? İpucu:</strong> 
-                    Seçilen rozetler hasta panelindeki yemek satırlarında görünür. Çok fazla rozet ekranı karmaşıklaştırabilir.
+                    <strong>ğŸ’¡ Ä°pucu:</strong> 
+                    SeÃ§ilen rozetler hasta panelindeki yemek satÄ±rlarÄ±nda gÃ¶rÃ¼nÃ¼r. Ã‡ok fazla rozet ekranÄ± karmaÅŸÄ±klaÅŸtÄ±rabilir.
                 </div>
             </section>
             
-            <!-- Özellik Görünürlüğü Ayarları -->
+            <!-- Ã–zellik GÃ¶rÃ¼nÃ¼rlÃ¼ÄŸÃ¼ AyarlarÄ± -->
             <section class="settings-section">
-                <h2 class="section-title">??? Özellik Görünürlüğü</h2>
-                <p class="section-description">Hasta panelindeki buton ve özelliklerin görünürlüğünü yönetin</p>
+                <h2 class="section-title">ğŸ›ï¸ Ã–zellik GÃ¶rÃ¼nÃ¼rlÃ¼ÄŸÃ¼</h2>
+                <p class="section-description">Hasta panelindeki buton ve Ã¶zelliklerin gÃ¶rÃ¼nÃ¼rlÃ¼ÄŸÃ¼nÃ¼ yÃ¶netin</p>
                 
                 <div class="criteria-grid">
                     <!-- PDF Export Butonu -->
                     <div class="criteria-item">
                         <label class="criteria-checkbox">
                             <input type="checkbox" id="pdfExportVisible" checked>
-                            <span class="criteria-label">?? PDF İndir Butonu</span>
+                            <span class="criteria-label">ğŸ“„ PDF Ä°ndir Butonu</span>
                         </label>
                     </div>
                 </div>
                 
                 <div class="info-hint" style="margin-top: 16px; padding: 12px; background: rgba(59, 130, 246, 0.08); border-radius: 8px; font-size: 12px; color: #3b82f6;">
-                    <strong>?? İpucu:</strong> 
-                    PDF butonu haftalık beslenme planını indirmek için kullanılır. Varsayılan olarak açıktır.
+                    <strong>ğŸ’¡ Ä°pucu:</strong> 
+                    PDF butonu haftalÄ±k beslenme planÄ±nÄ± indirmek iÃ§in kullanÄ±lÄ±r. VarsayÄ±lan olarak aÃ§Ä±ktÄ±r.
                 </div>
             </section>
 
             <section class="settings-section">
-                <h2>?? Şablon Yükleme</h2>
+                <h2>ğŸ“‹ Åablon YÃ¼kleme</h2>
                 <div class="settings-row">
-                    <label for="templateFileInput">Gün Şablonları JSON Dosyası (Çoklu seçim yapabilirsiniz)</label>
+                    <label for="templateFileInput">GÃ¼n ÅablonlarÄ± JSON DosyasÄ± (Ã‡oklu seÃ§im yapabilirsiniz)</label>
                     <input type="file" id="templateFileInput" accept=".json" multiple style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; font-size: 13px;">
                 </div>
                 <div class="settings-row">
-                    <button class="btn-primary" id="uploadTemplatesButton" type="button" style="width: fit-content;">?? Şablonları Yükle ve Birleştir</button>
+                    <button class="btn-primary" id="uploadTemplatesButton" type="button" style="width: fit-content;">ğŸ“¥ ÅablonlarÄ± YÃ¼kle ve BirleÅŸtir</button>
                 </div>
                 <div class="settings-row">
                     <p style="font-size: 12px; color: #64748b; margin: 0;">
-                        <strong>Not:</strong> Yüklenen şablonlar mevcut şablonlarla birleştirilecek. Aynı ID'ye sahip şablonlar atlanacak, yeni şablonlar eklenecek. Türkçe karakterler korunacak.
+                        <strong>Not:</strong> YÃ¼klenen ÅŸablonlar mevcut ÅŸablonlarla birleÅŸtirilecek. AynÄ± ID'ye sahip ÅŸablonlar atlanacak, yeni ÅŸablonlar eklenecek. TÃ¼rkÃ§e karakterler korunacak.
                     </p>
                 </div>
             </section>
 
-            <!-- GitHub Token Section - Kaldırıldı, Supabase kullanılıyor -->
+            <!-- GitHub Token Section - ArtÄ±k Supabase kullanÄ±ldÄ±ÄŸÄ± iÃ§in gizlendi -->
+            <section class="settings-section" style="display: none;">
+                <h2>GitHub EriÅŸimi</h2>
+                <div class="settings-row">
+                    <label for="githubTokenInput">KiÅŸisel EriÅŸim Token'Ä±</label>
+                    <input type="password" id="githubTokenInput" placeholder="ghp_...">
+                </div>
+            </section>
         </main>
 
         <footer class="actions-row">
-            <p class="status-text" id="statusText"><strong>Hazır.</strong></p>
+            <p class="status-text" id="statusText"><strong>HazÄ±r.</strong></p>
             <div class="actions-right">
-                <button class="btn-secondary" id="reloadButton" type="button">Ayarları Yükle</button>
+                <!-- Token Temizle butonu gizlendi - Supabase kullanÄ±lÄ±yor -->
+                <button class="btn-secondary" id="clearTokenButton" type="button" style="display: none;">Token Temizle</button>
+                <button class="btn-secondary" id="reloadButton" type="button">AyarlarÄ± YÃ¼kle</button>
                 <button class="btn-primary" id="saveSettingsButton" type="button">Kaydet</button>
             </div>
         </footer>
     </div>
 
     <script>
-        // GitHub constants removed - using Supabase only
+        const REPO_OWNER = 'mustafasacar35';
+    const REPO_NAME = 'lipodem-takip-paneli-2.2';
+        const SETTINGS_PATH = 'settings/config.json';
+        const SETTINGS_BRANCH = 'main';
+        const LOCAL_STORAGE_TOKEN_KEY = 'lipodemSettingsGithubToken';
 
         const defaultSettings = {
             version: 1,
@@ -1398,7 +1386,7 @@
         };
 
         let appSettings = { ...defaultSettings };
-        // settingsSha removed - not needed for Supabase
+        let settingsSha = null;
         let settingsDraft = null;
         let isSaving = false;
         let isLoading = false;
@@ -1414,7 +1402,7 @@
         const categoryExclusionInput = document.getElementById('categoryExclusionInput');
         const rotationEnabledInput = document.getElementById('rotationEnabledInput');
         
-        // Diyet Formülü Input Elementleri
+        // Diyet FormÃ¼lÃ¼ Input Elementleri
         const ketoCarb = document.getElementById('ketoCarb');
         const ketoProtein = document.getElementById('ketoProtein');
         const ketoFat = document.getElementById('ketoFat');
@@ -1431,7 +1419,8 @@
         const activity5 = document.getElementById('activity5');
         const rotationChunkSizeInput = document.getElementById('rotationChunkSizeInput');
         const rotationResetDayInput = document.getElementById('rotationResetDayInput');
-        // GitHub inputs removed - using Supabase only
+        const githubTokenInput = document.getElementById('githubTokenInput');
+        const clearTokenButton = document.getElementById('clearTokenButton');
         const reloadButton = document.getElementById('reloadButton');
         const saveSettingsButton = document.getElementById('saveSettingsButton');
         const tagExclusionList = document.getElementById('tagExclusionList');
@@ -1458,7 +1447,7 @@
     const saveAdminsFileBtn = document.getElementById('saveAdminsFileBtn');
     const forceReloginBtn = document.getElementById('forceReloginBtn');
 
-        // Filtreleme Kriterleri Input Referansları
+        // Filtreleme Kriterleri Input ReferanslarÄ±
         const criteriaRoleVisible = document.getElementById('criteriaRoleVisible');
         const criteriaRoleMode = document.getElementById('criteriaRoleMode');
         const criteriaRoleDefault = document.getElementById('criteriaRoleDefault');
@@ -1475,7 +1464,7 @@
         const criteriaMealTypeMode = document.getElementById('criteriaMealTypeMode');
         const criteriaMealTypeDefault = document.getElementById('criteriaMealTypeDefault');
 
-        // Benzerlik Skoru Kriterleri Input Referansları
+        // Benzerlik Skoru Kriterleri Input ReferanslarÄ±
         const scoreCriteriaCalories = document.getElementById('scoreCriteriaCalories');
         const scoreCriteriaProtein = document.getElementById('scoreCriteriaProtein');
         const scoreCriteriaCarbs = document.getElementById('scoreCriteriaCarbs');
@@ -1495,12 +1484,12 @@
             }
 
             const charMap = {
-                'Ä±': 'ı', 'ä±': 'ı', 'Ã?': 'Ç', 'Ã§': 'ç', 'ã‡': 'Ç', 'ã§': 'ç', 'ÅŸ': 'ş', 'åŸ': 'ş',
-                'Åz': 'Ş', 'åz': 'Ş', 'Ä°': 'İ', 'ä°': 'İ', 'Ã¶': 'ö', 'ã¶': 'ö', 'Ã–': 'Ö', 'ã–': 'Ö',
-                'Ã¼': 'ü', 'ã¼': 'ü', 'Ãœ': 'Ü', 'ãœ': 'Ü', 'ÄŸ': 'ğ', 'äŸ': 'ğ', 'Äz': 'Ğ', 'äz': 'Ğ',
-                'Ã?Â±': 'ı', 'Ã?Â°': 'İ', 'Ã?Â?': 'ğ', 'Ã?Â': 'Ğ', 'Ã?ÂŸ': 'ş', 'Ã?Â': 'Ş', 'Ã?Â§': 'ç',
-                'Ã?Â?': 'Ç', 'Ã?Â¶': 'ö', 'Ã?Â?': 'Ö', 'Ã?Â¼': 'ü', 'Ã?Â?': 'Ü', 'Ã?Â½': 'ı', 'Ã?Â': 'İ',
-                'Ã?Â±': 'ñ', 'Ã?Â?': 'ß', 'Ã?Â¿': 'ÿ', 'Ã?': '', '×': '', 'Â': ' '
+                'Ã„Â±': 'Ä±', 'Ã¤Â±': 'Ä±', 'ÃƒÂ‡': 'Ã‡', 'ÃƒÂ§': 'Ã§', 'Ã£â€¡': 'Ã‡', 'Ã£Â§': 'Ã§', 'Ã…Å¸': 'ÅŸ', 'Ã¥Å¸': 'ÅŸ',
+                'Ã…Å¾': 'Å', 'Ã¥Å¾': 'Å', 'Ã„Â°': 'Ä°', 'Ã¤Â°': 'Ä°', 'ÃƒÂ¶': 'Ã¶', 'Ã£Â¶': 'Ã¶', 'Ãƒâ€“': 'Ã–', 'Ã£â€“': 'Ã–',
+                'ÃƒÂ¼': 'Ã¼', 'Ã£Â¼': 'Ã¼', 'ÃƒÅ“': 'Ãœ', 'Ã£Å“': 'Ãœ', 'Ã„Å¸': 'ÄŸ', 'Ã¤Å¸': 'ÄŸ', 'Ã„Å¾': 'Ä', 'Ã¤Å¾': 'Ä',
+                'ÃƒÂ„Ã‚Â±': 'Ä±', 'ÃƒÂ„Ã‚Â°': 'Ä°', 'ÃƒÂ„Ã‚ÂŸ': 'ÄŸ', 'ÃƒÂ„Ã‚Â': 'Ä', 'ÃƒÂ…Ã‚Å¸': 'ÅŸ', 'ÃƒÂ…Ã‚Â': 'Å', 'ÃƒÂƒÃ‚Â§': 'Ã§',
+                'ÃƒÂƒÃ‚Â‡': 'Ã‡', 'ÃƒÂƒÃ‚Â¶': 'Ã¶', 'ÃƒÂƒÃ‚Â–': 'Ã–', 'ÃƒÂƒÃ‚Â¼': 'Ã¼', 'ÃƒÂƒÃ‚Âœ': 'Ãœ', 'ÃƒÂƒÃ‚Â½': 'Ä±', 'ÃƒÂƒÃ‚Â': 'Ä°',
+                'ÃƒÂƒÃ‚Â±': 'Ã±', 'ÃƒÂƒÃ‚ÂŸ': 'ÃŸ', 'ÃƒÂƒÃ‚Â¿': 'Ã¿', 'ÃƒÂ—': '', 'Ã—': '', 'Ã‚': ' '
             };
 
             let previous;
@@ -1519,13 +1508,13 @@
             const cleaned = fixTurkishChars(str);
             return cleaned
                 .toLowerCase()
-                .replace(/ç/g, 'c')
-                .replace(/ğ/g, 'g')
-                .replace(/ı/g, 'i')
-                .replace(/i·/g, 'i')
-                .replace(/ö/g, 'o')
-                .replace(/ş/g, 's')
-                .replace(/ü/g, 'u')
+                .replace(/Ã§/g, 'c')
+                .replace(/ÄŸ/g, 'g')
+                .replace(/Ä±/g, 'i')
+                .replace(/iÌ‡/g, 'i')
+                .replace(/Ã¶/g, 'o')
+                .replace(/ÅŸ/g, 's')
+                .replace(/Ã¼/g, 'u')
                 .replace(/[^a-z0-9]/g, '');
         }
 
@@ -1565,13 +1554,13 @@
         function renderActiveAdmin(){
             const u = getActiveAdminName();
             const el = document.getElementById('activeAdminBadge');
-            if (el) el.textContent = u ? `Admin: ${u}` : '—';
+            if (el) el.textContent = u ? `Admin: ${u}` : 'â€”';
         }
 
         // ---------- Admins state ----------
-        // ADMINS_PATH removed - using Supabase only
+        const ADMINS_PATH = 'settings/admins.js';
         let ghAdmins = { admins: [], patientAdmins: [] };
-        // adminsSha removed - not needed for Supabase
+        let adminsSha = null;
         let editingAdminIndex = -1; // -1 => create, >=0 => edit
 
         function clone(obj){ return JSON.parse(JSON.stringify(obj || {})); }
@@ -1591,19 +1580,46 @@
             if (!Array.isArray(ghAdmins.patientAdmins)) ghAdmins.patientAdmins = [];
         }
         function loadAdminsRuntime(){
-            // Load from Supabase instead of window.GH_ADMINS
-            loadAdmins().catch(() => {
-                ghAdmins = { admins: [], patientAdmins: [] };
-                ensureGhAdminsShape();
-            });
+            try { ghAdmins = clone(window.GH_ADMINS || { admins: [], patientAdmins: [] }); }
+            catch(_) { ghAdmins = { admins: [], patientAdmins: [] }; }
+            ensureGhAdminsShape();
         }
-        // GitHub admin fetch functions removed - using Supabase only
+        async function fetchAdminsSha(){
+            try{
+                const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${ADMINS_PATH}?ref=${SETTINGS_BRANCH}`;
+                const res = await fetch(url);
+                if (res.ok){ const data = await res.json(); adminsSha = data.sha || null; }
+            } catch(_) { adminsSha = null; }
+        }
+        function parseAdminsFromRawText(text){
+            try{
+                const idx = text.indexOf('window.GH_ADMINS');
+                if (idx === -1) return null;
+                const eq = text.indexOf('=', idx);
+                if (eq === -1) return null;
+                const startObj = text.indexOf('{', eq);
+                const endObj = text.lastIndexOf('}');
+                if (startObj === -1 || endObj === -1 || endObj <= startObj) return null;
+                const jsonStr = text.substring(startObj, endObj + 1);
+                const obj = JSON.parse(jsonStr);
+                if (!obj || !Array.isArray(obj.admins)) return null;
+                return obj;
+            }catch(_){ return null; }
+        }
+        async function fetchRemoteAdminsObject(){
+            try{
+                const res = await fetch(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${SETTINGS_BRANCH}/${ADMINS_PATH}?t=${Date.now()}`, { cache: 'no-store' });
+                if (!res.ok) return null;
+                const txt = await res.text();
+                return parseAdminsFromRawText(txt);
+            }catch(_){ return null; }
+        }
         function renderAdminsList(){
             adminsListDiv.innerHTML = '';
             ensureGhAdminsShape();
             const list = ghAdmins.admins;
             if (!list.length){
-                adminsListDiv.innerHTML = '<span class="empty-hint">Henüz yönetici yok.</span>';
+                adminsListDiv.innerHTML = '<span class="empty-hint">HenÃ¼z yÃ¶netici yok.</span>';
                 return;
             }
             const table = document.createElement('table');
@@ -1612,9 +1628,9 @@
             table.innerHTML = `
                 <thead>
                     <tr>
-                        <th style="text-align:left;padding:6px;">Kullanıcı</th>
+                        <th style="text-align:left;padding:6px;">KullanÄ±cÄ±</th>
                         <th style="text-align:left;padding:6px;">Roller</th>
-                        <th style="text-align:right;padding:6px;">İşlemler</th>
+                        <th style="text-align:right;padding:6px;">Ä°ÅŸlemler</th>
                     </tr>
                 </thead>
                 <tbody></tbody>`;
@@ -1625,7 +1641,7 @@
                     <td style="padding:6px;border-top:1px solid #e5e7eb;">${a.username}</td>
                     <td style="padding:6px;border-top:1px solid #e5e7eb;">${(a.roles||[]).join(', ')}</td>
                     <td style="padding:6px;border-top:1px solid #e5e7eb;text-align:right;">
-                        <button type="button" class="btn-secondary" data-action="edit">Düzenle</button>
+                        <button type="button" class="btn-secondary" data-action="edit">DÃ¼zenle</button>
                         <button type="button" class="btn-secondary" data-action="delete">Sil</button>
                     </td>`;
                 tr.querySelector('[data-action="edit"]').addEventListener('click', ()=>{
@@ -1675,25 +1691,25 @@
                 const buf = await crypto.subtle.digest('SHA-256', enc.encode(val));
                 return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
             }
-            throw new Error('Şifre karması için uygun bir yöntem bulunamadı. Lütfen AdminAuth skripti yüklü olsun.');
+            throw new Error('Åifre karmasÄ± iÃ§in uygun bir yÃ¶ntem bulunamadÄ±. LÃ¼tfen AdminAuth skripti yÃ¼klÃ¼ olsun.');
         }
         function upsertAdminFromForm(){
             ensureGhAdminsShape();
             const username = sanitizeString(adminEditUsername.value);
             const roles = toRolesArray(adminEditRoles.value);
             const newPassword = adminEditPassword.value;
-            if (!username){ showStatus('Kullanıcı adı girin.', 'error'); return; }
+            if (!username){ showStatus('KullanÄ±cÄ± adÄ± girin.', 'error'); return; }
 
             // Duplicate check (case/diacritics insensitive)
             const existingIdx = findAdminIndexByUsername(username);
             if (editingAdminIndex === -1 && existingIdx !== -1){
-                showStatus('Bu kullanıcı zaten mevcut.', 'error');
+                showStatus('Bu kullanÄ±cÄ± zaten mevcut.', 'error');
                 return;
             }
             if (editingAdminIndex >= 0){
                 const otherIdx = existingIdx;
                 if (otherIdx !== -1 && otherIdx !== editingAdminIndex){
-                    showStatus('Bu kullanıcı adı başka bir kayıtta var.', 'error');
+                    showStatus('Bu kullanÄ±cÄ± adÄ± baÅŸka bir kayÄ±tta var.', 'error');
                     return;
                 }
             }
@@ -1702,7 +1718,7 @@
                 if (editingAdminIndex === -1){
                     const admin = { username, roles };
                     if (newPassword){ admin.passwordHash = await computeSha256Hex(newPassword); }
-                    else { showStatus('Yeni admin için şifre girilmeli.', 'error'); return; }
+                    else { showStatus('Yeni admin iÃ§in ÅŸifre girilmeli.', 'error'); return; }
                     ghAdmins.admins.push(admin);
                 } else {
                     const target = ghAdmins.admins[editingAdminIndex];
@@ -1712,21 +1728,31 @@
                 }
                 clearAdminForm();
                 renderAdminsList();
-                showStatus('Admin kaydı hazırlandı (henüz kaydetmediniz).', 'success');
+                showStatus('Admin kaydÄ± hazÄ±rlandÄ± (henÃ¼z kaydetmediniz).', 'success');
             };
-            apply().catch(err=> showStatus(err.message || 'İşlem başarısız.', 'error'));
+            apply().catch(err=> showStatus(err.message || 'Ä°ÅŸlem baÅŸarÄ±sÄ±z.', 'error'));
         }
         function addPatientAdmin(){
             ensureGhAdminsShape();
             const val = sanitizeString(patientAdminInput.value);
             if (!val) return;
             const exists = ghAdmins.patientAdmins.some(v => normalizeText(v) === normalizeText(val));
-            if (!exists){ ghAdmins.patientAdmins.push(val); renderPatientAdmins(); showStatus('Hasta admin eklendi (henüz kaydetmediniz).', 'success'); }
+            if (!exists){ ghAdmins.patientAdmins.push(val); renderPatientAdmins(); showStatus('Hasta admin eklendi (henÃ¼z kaydetmediniz).', 'success'); }
             patientAdminInput.value = '';
         }
-        // reloadRemoteAdminsConfig removed - using Supabase only
-        // ensureAdminsSha removed - not needed for Supabase
-        async function saveAdmins(){
+        function reloadRemoteAdminsConfig(){
+            try{
+                const s = document.createElement('script');
+                s.src = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${SETTINGS_BRANCH}/${ADMINS_PATH}?t=${Date.now()}`;
+                s.onload = ()=>{ try { loadAdminsRuntime(); renderAdminsList(); renderPatientAdmins(); showStatus('Uzaktan admins.js yeniden yÃ¼klendi.', 'info'); } catch(_){} };
+                s.onerror = ()=>{};
+                document.head.appendChild(s);
+            }catch(_){/* noop */}
+        }
+        async function ensureAdminsSha(){
+            if (!adminsSha){ await fetchAdminsSha(); }
+        }
+        async function saveAdminsToGitHub(){
             ensureGhAdminsShape();
             
             try{
@@ -1734,7 +1760,7 @@
                 saveAdminsFileBtn.textContent = 'Kaydediliyor...';
                 showStatus('Adminler Supabase\'e kaydediliyor...', 'info');
                 
-                // ?? Save all admins to Supabase
+                // ğŸ’¾ Save all admins to Supabase
                 let savedAdmins = 0;
                 for (const admin of ghAdmins.admins) {
                     const success = await DAL.saveAdmin({
@@ -1746,17 +1772,17 @@
                     if (success) savedAdmins++;
                 }
                 
-                // ?? Save all patient admins to Supabase
+                // ğŸ’¾ Save all patient admins to Supabase
                 let savedPatientAdmins = 0;
                 for (const patientUsername of ghAdmins.patientAdmins) {
                     const success = await DAL.savePatientAdmin(patientUsername);
                     if (success) savedPatientAdmins++;
                 }
                 
-                showStatus(`? ${savedAdmins} admin ve ${savedPatientAdmins} hasta admin kaydedildi.`, 'success');
+                showStatus(`âœ… ${savedAdmins} admin ve ${savedPatientAdmins} hasta admin kaydedildi.`, 'success');
                 
                 // Reload admin list from Supabase
-                await loadAdmins();
+                await loadAdminsFromSupabase();
                 renderAdminsList();
                 renderPatientAdmins();
                 
@@ -1764,11 +1790,11 @@
                 showStatus(err.message || 'Adminler kaydedilemedi.', 'error');
             } finally {
                 saveAdminsFileBtn.disabled = false;
-                saveAdminsFileBtn.textContent = 'Admins Dosyasını Kaydet';
+                saveAdminsFileBtn.textContent = 'Admins DosyasÄ±nÄ± Kaydet';
             }
         }
         
-        async function loadAdmins(){
+        async function loadAdminsFromSupabase(){
             try {
                 const admins = await DAL.getAdmins();
                 const patientAdmins = await DAL.getPatientAdmins();
@@ -1782,9 +1808,9 @@
                     patientAdmins: patientAdmins
                 };
                 
-                console.log('? Admins loaded from Supabase:', ghAdmins);
+                console.log('âœ… Admins loaded from Supabase:', ghAdmins);
             } catch (error) {
-                console.error('? Failed to load admins from Supabase:', error);
+                console.error('âŒ Failed to load admins from Supabase:', error);
             }
         }
         function attachAdminsUIHandlers(){
@@ -1792,7 +1818,7 @@
             if (adminClearBtn) adminClearBtn.addEventListener('click', clearAdminForm);
             if (patientAdminAddBtn) patientAdminAddBtn.addEventListener('click', addPatientAdmin);
             if (patientAdminInput) patientAdminInput.addEventListener('keydown', (e)=>{ if (e.key==='Enter'){ e.preventDefault(); addPatientAdmin(); } });
-            if (saveAdminsFileBtn) saveAdminsFileBtn.addEventListener('click', saveAdmins);
+            if (saveAdminsFileBtn) saveAdminsFileBtn.addEventListener('click', saveAdminsToGitHub);
             if (forceReloginBtn) forceReloginBtn.addEventListener('click', ()=>{
                 const u = new URL(location.href);
                 u.searchParams.set('relogin','1');
@@ -1805,12 +1831,12 @@
             const disabled = active || isSaving;
             [defaultAlternativeCountInput, enableTagFilterInput, tagExclusionInput,
                 roleExclusionInput, categoryExclusionInput, rotationEnabledInput,
-                rotationChunkSizeInput, rotationResetDayInput,
-                saveSettingsButton, reloadButton]
+                rotationChunkSizeInput, rotationResetDayInput, githubTokenInput,
+                saveSettingsButton, reloadButton, clearTokenButton]
                 .forEach(element => {
                     element.disabled = !!disabled;
                     if (element.tagName === 'INPUT' && element.type !== 'checkbox') {
-                        element.classList.toggle('disabled', !!disabled);
+                        element.classList.toggle('disabled', !!disabled && element !== githubTokenInput);
                     }
                 });
         }
@@ -1831,7 +1857,7 @@
             if (!values || values.length === 0) {
                 const hint = document.createElement('span');
                 hint.className = 'empty-hint';
-                hint.textContent = 'Henüz eklenmedi.';
+                hint.textContent = 'HenÃ¼z eklenmedi.';
                 container.appendChild(hint);
                 return;
             }
@@ -1843,8 +1869,8 @@
                 chip.textContent = value;
                 const removeBtn = document.createElement('button');
                 removeBtn.type = 'button';
-                removeBtn.textContent = '×';
-                removeBtn.setAttribute('aria-label', `${value} kaydını sil`);
+                removeBtn.textContent = 'Ã—';
+                removeBtn.setAttribute('aria-label', `${value} kaydÄ±nÄ± sil`);
                 removeBtn.addEventListener('click', () => onRemove(value));
                 chip.appendChild(removeBtn);
                 container.appendChild(chip);
@@ -1953,11 +1979,11 @@
         }
 
         function populateSettingsForm() {
-            // GitHub'dan yüklenen appSettings'i kullan
-            console.log('?? populateSettingsForm - appSettings:', appSettings);
-            settingsDraft = buildSettingsDraft(); // appSettings'den oluştur
+            // GitHub'dan yÃ¼klenen appSettings'i kullan
+            console.log('ğŸ“¥ populateSettingsForm - appSettings:', appSettings);
+            settingsDraft = buildSettingsDraft(); // appSettings'den oluÅŸtur
             
-            console.log('? settingsDraft oluşturuldu:', {
+            console.log('âœ… settingsDraft oluÅŸturuldu:', {
                 scoringMode: settingsDraft.scoringMode,
                 badgeVisibility: settingsDraft.badgeVisibility,
                 scoreCriteria: settingsDraft.scoreCriteria
@@ -1971,9 +1997,9 @@
             rotationEnabledInput.checked = settingsDraft.rotation.enabled;
             rotationChunkSizeInput.value = settingsDraft.rotation.chunkSize;
             rotationResetDayInput.value = settingsDraft.rotation.resetDay === '' ? '' : settingsDraft.rotation.resetDay;
-            // githubTokenInput removed - using Supabase only
+            githubTokenInput.value = getStoredToken();
 
-            // Diyet Formül Ayarlarını Doldur
+            // Diyet FormÃ¼l AyarlarÄ±nÄ± Doldur
             if (settingsDraft.dietFormulas) {
                 ketoCarb.value = settingsDraft.dietFormulas.ketojenik.carb;
                 ketoProtein.value = settingsDraft.dietFormulas.ketojenik.protein;
@@ -1991,7 +2017,7 @@
                 activity5.value = settingsDraft.dietFormulas.activityMultipliers[5];
             }
 
-            // Filtreleme Kriterleri Ayarlarını Doldur
+            // Filtreleme Kriterleri AyarlarÄ±nÄ± Doldur
             if (settingsDraft.filterCriteria) {
                 criteriaRoleVisible.checked = settingsDraft.filterCriteria.role?.visible ?? true;
                 criteriaRoleMode.value = settingsDraft.filterCriteria.role?.mode ?? 'optional';
@@ -2014,9 +2040,9 @@
                 criteriaMealTypeDefault.value = settingsDraft.filterCriteria.mealType?.defaultState ?? 'inactive';
             }
 
-            // Rozet Gösterimi Ayarlarını Doldur - GitHub'dan gelen değerleri kullan
+            // Rozet GÃ¶sterimi AyarlarÄ±nÄ± Doldur - GitHub'dan gelen deÄŸerleri kullan
             if (settingsDraft.badgeVisibility) {
-                // Nullish coalescing kullanma - GitHub'daki false değerleri korumak için
+                // Nullish coalescing kullanma - GitHub'daki false deÄŸerleri korumak iÃ§in
                 document.getElementById('badgeRoleVisible').checked = settingsDraft.badgeVisibility.role === true;
                 document.getElementById('badgeDietTypeVisible').checked = settingsDraft.badgeVisibility.dietType === true;
                 document.getElementById('badgeCategoryVisible').checked = settingsDraft.badgeVisibility.category === true;
@@ -2024,7 +2050,7 @@
                 document.getElementById('badgeMealTypeVisible').checked = settingsDraft.badgeVisibility.mealType === true;
                 document.getElementById('badgeTagsVisible').checked = settingsDraft.badgeVisibility.tags === true;
             } else {
-                // badgeVisibility yoksa tüm rozetleri kapat
+                // badgeVisibility yoksa tÃ¼m rozetleri kapat
                 document.getElementById('badgeRoleVisible').checked = false;
                 document.getElementById('badgeDietTypeVisible').checked = false;
                 document.getElementById('badgeCategoryVisible').checked = false;
@@ -2033,14 +2059,14 @@
                 document.getElementById('badgeTagsVisible').checked = false;
             }
             
-            // Özellik Görünürlüğü Ayarlarını Doldur
+            // Ã–zellik GÃ¶rÃ¼nÃ¼rlÃ¼ÄŸÃ¼ AyarlarÄ±nÄ± Doldur
             if (settingsDraft.featureVisibility) {
                 document.getElementById('pdfExportVisible').checked = settingsDraft.featureVisibility.pdfExportButton === true;
             } else {
-                document.getElementById('pdfExportVisible').checked = true; // Varsayılan açık
+                document.getElementById('pdfExportVisible').checked = true; // VarsayÄ±lan aÃ§Ä±k
             }
 
-            // Benzerlik Skoru Kriterleri Ayarlarını Doldur
+            // Benzerlik Skoru Kriterleri AyarlarÄ±nÄ± Doldur
             if (settingsDraft.scoreCriteria && Array.isArray(settingsDraft.scoreCriteria.activeByDefault)) {
                 const activeScoreCriteria = settingsDraft.scoreCriteria.activeByDefault;
                 scoreCriteriaCalories.checked = activeScoreCriteria.includes('calories');
@@ -2048,14 +2074,14 @@
                 scoreCriteriaCarbs.checked = activeScoreCriteria.includes('carbs');
                 scoreCriteriaFat.checked = activeScoreCriteria.includes('fat');
             } else {
-                // Varsayılan: protein ve fat aktif
+                // VarsayÄ±lan: protein ve fat aktif
                 scoreCriteriaCalories.checked = false;
                 scoreCriteriaProtein.checked = true;
                 scoreCriteriaCarbs.checked = false;
                 scoreCriteriaFat.checked = true;
             }
             
-            // Benzerlik Hesaplama Modu Ayarlarını Doldur
+            // Benzerlik Hesaplama Modu AyarlarÄ±nÄ± Doldur
             const scoringModeSimple = document.getElementById('scoringModeSimple');
             const scoringModeAdvanced = document.getElementById('scoringModeAdvanced');
             const sensitivitySlider = document.getElementById('sensitivityDivider');
@@ -2076,7 +2102,7 @@
                 sensitivityValueSpan.textContent = dividerValue;
             }
             
-            // Sensitivity container görünürlüğünü güncelle
+            // Sensitivity container gÃ¶rÃ¼nÃ¼rlÃ¼ÄŸÃ¼nÃ¼ gÃ¼ncelle
             const sensitivityContainer = document.getElementById('sensitivityContainer');
             if (sensitivityContainer) {
                 sensitivityContainer.style.display = mode === 'advanced' ? 'block' : 'none';
@@ -2124,7 +2150,7 @@
             settingsDraft.rotation.chunkSize = Number.isFinite(parsedChunk) && parsedChunk > 0 ? parsedChunk : settingsDraft.defaultAlternativeCount;
             settingsDraft.rotation.resetDay = Number.isFinite(parsedReset) && parsedReset >= 0 && parsedReset <= 6 ? parsedReset : '';
 
-            // Filtreleme Kriterleri Güncelle
+            // Filtreleme Kriterleri GÃ¼ncelle
             settingsDraft.filterCriteria.role.visible = criteriaRoleVisible.checked;
             settingsDraft.filterCriteria.role.mode = criteriaRoleMode.value;
             settingsDraft.filterCriteria.role.defaultState = criteriaRoleDefault.value;
@@ -2145,7 +2171,7 @@
             settingsDraft.filterCriteria.mealType.mode = criteriaMealTypeMode.value;
             settingsDraft.filterCriteria.mealType.defaultState = criteriaMealTypeDefault.value;
 
-            // Benzerlik Skoru Kriterleri Güncelle
+            // Benzerlik Skoru Kriterleri GÃ¼ncelle
             const activeScoreCriteria = [];
             if (scoreCriteriaCalories.checked) activeScoreCriteria.push('calories');
             if (scoreCriteriaProtein.checked) activeScoreCriteria.push('protein');
@@ -2155,7 +2181,7 @@
                 activeByDefault: activeScoreCriteria
             };
             
-            // Benzerlik Hesaplama Modu Güncelle
+            // Benzerlik Hesaplama Modu GÃ¼ncelle
             const scoringModeSimple = document.getElementById('scoringModeSimple');
             const scoringModeAdvanced = document.getElementById('scoringModeAdvanced');
             const sensitivitySlider = document.getElementById('sensitivityDivider');
@@ -2163,7 +2189,7 @@
             settingsDraft.scoringMode = scoringModeAdvanced && scoringModeAdvanced.checked ? 'advanced' : 'simple';
             settingsDraft.sensitivityDivider = sensitivitySlider ? parseInt(sensitivitySlider.value, 10) : 10;
 
-            // Diyet Formülleri Güncelle
+            // Diyet FormÃ¼lleri GÃ¼ncelle
             settingsDraft.dietFormulas.ketojenik.carb = parseFloat(ketoCarb.value) || 0.3;
             settingsDraft.dietFormulas.ketojenik.protein = parseFloat(ketoProtein.value) || 0.8;
             settingsDraft.dietFormulas.ketojenik.fat = parseFloat(ketoFat.value) || 1.2;
@@ -2187,7 +2213,7 @@
                 rotationPayload.resetDay = settingsDraft.rotation.resetDay;
             }
 
-            // Rozet Görünürlük Ayarlarını Topla
+            // Rozet GÃ¶rÃ¼nÃ¼rlÃ¼k AyarlarÄ±nÄ± Topla
             const badgeVisibilityPayload = {
                 role: document.getElementById('badgeRoleVisible')?.checked ?? true,
                 dietType: document.getElementById('badgeDietTypeVisible')?.checked ?? true,
@@ -2198,34 +2224,45 @@
             };
 
             return {
-                defaultAlternatives: settingsDraft.defaultAlternativeCount,
-                defaultAlternativeCount: settingsDraft.defaultAlternativeCount,  // Both formats for compatibility
+                ...appSettings,
+                defaultAlternativeCount: settingsDraft.defaultAlternativeCount,
                 enableTagFilter: settingsDraft.enableTagFilter,
-                calorieTolerance: settingsDraft.calorieTolerancePercent,
-                calorieTolerancePercent: settingsDraft.calorieTolerancePercent,  // Both formats
+                calorieTolerancePercent: settingsDraft.calorieTolerancePercent,
                 templateReuseWeeks: settingsDraft.templateReuseWeeks,
                 tagExclusions: sanitizeStringList(settingsDraft.tagExclusions),
                 tagExemptions: {
                     roles: sanitizeStringList(settingsDraft.tagExemptions.roles),
                     categories: sanitizeStringList(settingsDraft.tagExemptions.categories)
                 },
-                rotationEnabled: rotationPayload.enabled,
-                rotationDailyAlternatives: rotationPayload.chunkSize,
-                rotationResetDay: rotationPayload.resetDay,
-                rotation: rotationPayload,  // Keep nested object too
+                rotation: rotationPayload,
                 filterCriteria: settingsDraft.filterCriteria,
                 scoreCriteria: settingsDraft.scoreCriteria,
                 scoringMode: settingsDraft.scoringMode || 'simple',
                 sensitivityDivider: settingsDraft.sensitivityDivider || 10,
                 dietFormulas: settingsDraft.dietFormulas,
-                activityMultipliers: settingsDraft.dietFormulas.activityMultipliers,
                 badgeVisibility: badgeVisibilityPayload,
-                featureVisibility: appSettings.featureVisibility || { pdfButton: true },  // Keep existing feature visibility
                 updatedAt: new Date().toISOString()
             };
         }
 
-        // GitHub token functions removed - using Supabase only
+        function getStoredToken() {
+            try {
+                return window.localStorage ? (window.localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY) || '') : '';
+            } catch (error) {
+                console.warn('âš ï¸ Token okunamadÄ±:', error);
+                return '';
+            }
+        }
+
+        function persistToken(token) {
+            try {
+                if (!window.localStorage) return;
+                if (token) window.localStorage.setItem(LOCAL_STORAGE_TOKEN_KEY, token);
+                else window.localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
+            } catch (error) {
+                console.warn('âš ï¸ Token kaydedilemedi:', error);
+            }
+        }
 
         function updateRotationFieldStates() {
             const isEnabled = rotationEnabledInput.checked;
@@ -2269,7 +2306,7 @@
             const sensitivitySlider = document.getElementById('sensitivityDivider');
             const sensitivityValueSpan = document.getElementById('sensitivityValue');
             
-            // Mode değişince sensitivity container'ı göster/gizle
+            // Mode deÄŸiÅŸince sensitivity container'Ä± gÃ¶ster/gizle
             function updateSensitivityVisibility() {
                 if (scoringModeAdvanced && scoringModeAdvanced.checked) {
                     sensitivityContainer.style.display = 'block';
@@ -2285,14 +2322,14 @@
                 scoringModeAdvanced.addEventListener('change', updateSensitivityVisibility);
             }
             
-            // Slider değeri değişince göster
+            // Slider deÄŸeri deÄŸiÅŸince gÃ¶ster
             if (sensitivitySlider && sensitivityValueSpan) {
                 sensitivitySlider.addEventListener('input', () => {
                     sensitivityValueSpan.textContent = sensitivitySlider.value;
                 });
             }
             
-            // İlk yükleme
+            // Ä°lk yÃ¼kleme
             updateSensitivityVisibility();
         }
 
@@ -2326,57 +2363,39 @@
             }
         }
 
-        async function loadSettings() {
+        async function loadSettingsFromGitHub() {
             setLoadingState(true);
-            showStatus('Ayarlar yükleniyor...', 'info');
+            showStatus('Ayarlar yÃ¼kleniyor...', 'info');
+            settingsSha = null;
             
             try {
-                // ?? Supabase'den ayarları yükle
+                // ğŸ’¾ Supabase'den ayarlarÄ± yÃ¼kle
                 const supabaseSettings = await DAL.getSettings();
                 
                 if (supabaseSettings && Object.keys(supabaseSettings).length > 0) {
-                    // Check if it's already in camelCase format (from localStorage)
-                    // or needs conversion from snake_case (from Supabase columns)
-                    const hasSnakeCase = 'default_alternatives' in supabaseSettings || 
-                                        'enable_tag_filter' in supabaseSettings;
+                    // Supabase'den gelen veriyi appSettings formatÄ±na dÃ¶nÃ¼ÅŸtÃ¼r
+                    appSettings = {
+                        defaultAlternatives: supabaseSettings.default_alternatives,
+                        enableTagFilter: supabaseSettings.enable_tag_filter,
+                        calorieTolerance: supabaseSettings.calorie_tolerance,
+                        templateReuseWeeks: supabaseSettings.template_reuse_weeks,
+                        dietFormulas: supabaseSettings.diet_formulas,
+                        activityMultipliers: supabaseSettings.activity_multipliers,
+                        tagExclusions: supabaseSettings.tag_exclusions,
+                        tagExemptions: supabaseSettings.tag_exemptions,
+                        rotationEnabled: supabaseSettings.rotation_enabled,
+                        rotationDailyAlternatives: supabaseSettings.rotation_daily_alternatives,
+                        rotationResetDay: supabaseSettings.rotation_reset_day,
+                        filterCriteria: supabaseSettings.filter_criteria,
+                        scoreCriteria: supabaseSettings.score_criteria,
+                        scoringMode: supabaseSettings.scoring_mode,
+                        sensitivityDivider: supabaseSettings.sensitivity_divider,
+                        badgeVisibility: supabaseSettings.badge_visibility,
+                        featureVisibility: supabaseSettings.feature_visibility
+                    };
                     
-                    if (hasSnakeCase) {
-                        // Convert from snake_case (Supabase columns)
-                        appSettings = {
-                            defaultAlternatives: supabaseSettings.default_alternatives,
-                            defaultAlternativeCount: supabaseSettings.default_alternatives,  // Both names for compatibility
-                            enableTagFilter: supabaseSettings.enable_tag_filter,
-                            calorieTolerance: supabaseSettings.calorie_tolerance,
-                            calorieTolerancePercent: supabaseSettings.calorie_tolerance,  // Both names
-                            templateReuseWeeks: supabaseSettings.template_reuse_weeks,
-                            dietFormulas: supabaseSettings.diet_formulas,
-                            activityMultipliers: supabaseSettings.activity_multipliers,
-                            tagExclusions: supabaseSettings.tag_exclusions,
-                            tagExemptions: supabaseSettings.tag_exemptions,
-                            rotationEnabled: supabaseSettings.rotation_enabled,
-                            rotationDailyAlternatives: supabaseSettings.rotation_daily_alternatives,
-                            rotationResetDay: supabaseSettings.rotation_reset_day,
-                            filterCriteria: supabaseSettings.filter_criteria,
-                            scoreCriteria: supabaseSettings.score_criteria,
-                            scoringMode: supabaseSettings.scoring_mode,
-                            sensitivityDivider: supabaseSettings.sensitivity_divider,
-                            badgeVisibility: supabaseSettings.badge_visibility,
-                            featureVisibility: supabaseSettings.feature_visibility
-                        };
-                    } else {
-                        // Already in camelCase (from localStorage), use as-is
-                        appSettings = supabaseSettings;
-                        
-                        // Ensure both property name variants exist for compatibility
-                        appSettings.defaultAlternativeCount = appSettings.defaultAlternativeCount || appSettings.defaultAlternatives || 3;
-                        appSettings.defaultAlternatives = appSettings.defaultAlternatives || appSettings.defaultAlternativeCount || 3;
-                        appSettings.calorieTolerancePercent = appSettings.calorieTolerancePercent || appSettings.calorieTolerance || 5;
-                        appSettings.calorieTolerance = appSettings.calorieTolerance || appSettings.calorieTolerancePercent || 5;
-                    }
-                    
-                    // ?? DEBUG: Supabase'den yüklenen veri
-                    console.log('?? Supabase settings loaded:', {
-                        defaultAlternatives: appSettings.defaultAlternatives,
+                    // ğŸ” DEBUG: Supabase'den yÃ¼klenen veri
+                    console.log('ğŸ“¥ Supabase settings loaded:', {
                         scoringMode: appSettings.scoringMode,
                         sensitivityDivider: appSettings.sensitivityDivider,
                         badgeVisibility: appSettings.badgeVisibility,
@@ -2390,25 +2409,25 @@
                         categories: sanitizeStringList(appSettings.tagExemptions?.categories)
                     };
                     
-                    showStatus('? Ayarlar Supabase\'den yüklendi.', 'success');
+                    showStatus('âœ… Ayarlar Supabase\'den yÃ¼klendi.', 'success');
                 } else {
                     // Fallback to defaults
                     appSettings = { ...defaultSettings };
-                    showStatus('?? Ayarlar bulunamadı. Varsayılanlar kullanılıyor.', 'info');
+                    showStatus('âš ï¸ Ayarlar bulunamadÄ±. VarsayÄ±lanlar kullanÄ±lÄ±yor.', 'info');
                 }
             } catch (error) {
-                console.error('? Ayarlar yüklenirken hata:', error);
+                console.error('âŒ Ayarlar yÃ¼klenirken hata:', error);
                 appSettings = { ...defaultSettings };
-                showStatus('? Ayarlar yüklenemedi. Varsayılan değerler kullanılıyor.', 'error');
+                showStatus('âŒ Ayarlar yÃ¼klenemedi. VarsayÄ±lan deÄŸerler kullanÄ±lÄ±yor.', 'error');
             } finally {
                 setLoadingState(false);
                 populateSettingsForm();
             }
         }
 
-        async function saveSettings(payload) {
-            // ?? Supabase'e kaydet
-            // payload'u Supabase formatına dönüştür
+        async function saveSettingsToGitHub(payload, token) {
+            // ğŸ’¾ Supabase'e kaydet
+            // payload'u Supabase formatÄ±na dÃ¶nÃ¼ÅŸtÃ¼r
             const supabasePayload = {
                 default_alternatives: payload.defaultAlternatives,
                 enable_tag_filter: payload.enableTagFilter,
@@ -2438,15 +2457,15 @@
             return { success: true, message: 'Ayarlar Supabase\'e kaydedildi' };
         }
 
-        // Local dosyayı güncelle (File System Access API - sadece modern tarayıcılarda çalışır)
+        // Local dosyayÄ± gÃ¼ncelle (File System Access API - sadece modern tarayÄ±cÄ±larda Ã§alÄ±ÅŸÄ±r)
         async function saveSettingsLocally(payload) {
-            // Not: Bu sadece kullanıcı dosya erişimi verirse çalışır
-            // Otomatik çalışmaz, bu yüzden hata olursa JSON indirme yoluna geçeriz
+            // Not: Bu sadece kullanÄ±cÄ± dosya eriÅŸimi verirse Ã§alÄ±ÅŸÄ±r
+            // Otomatik Ã§alÄ±ÅŸmaz, bu yÃ¼zden hata olursa JSON indirme yoluna geÃ§eriz
             
             const jsonString = JSON.stringify(payload, null, 4);
             const blob = new Blob([jsonString], { type: 'application/json' });
             
-            // Dosyayı kaydetmek için handle oluştur
+            // DosyayÄ± kaydetmek iÃ§in handle oluÅŸtur
             if ('showSaveFilePicker' in window) {
                 const handle = await window.showSaveFilePicker({
                     suggestedName: 'config.json',
@@ -2458,13 +2477,13 @@
                 const writable = await handle.createWritable();
                 await writable.write(blob);
                 await writable.close();
-                console.log('? Local dosya güncellendi');
+                console.log('âœ… Local dosya gÃ¼ncellendi');
             } else {
                 throw new Error('File System Access API desteklenmiyor');
             }
         }
 
-        // JSON dosyasını indir
+        // JSON dosyasÄ±nÄ± indir
         function downloadConfigJSON(payload) {
             const jsonString = JSON.stringify(payload, null, 4);
             const blob = new Blob([jsonString], { type: 'application/json' });
@@ -2476,7 +2495,7 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            console.log('?? config.json indirildi - lütfen settings/ klasörüne kopyalayın');
+            console.log('ğŸ“¥ config.json indirildi - lÃ¼tfen settings/ klasÃ¶rÃ¼ne kopyalayÄ±n');
         }
 
         async function fetchSuggestions() {
@@ -2500,7 +2519,7 @@
                 }
                 updateSuggestionPanels();
             } catch (error) {
-                console.warn('?? Rol/kategori önerileri alınamadı:', error.message);
+                console.warn('âš ï¸ Rol/kategori Ã¶nerileri alÄ±namadÄ±:', error.message);
             }
         }
 
@@ -2522,21 +2541,21 @@
             saveSettingsButton.addEventListener('click', async () => {
                 if (isSaving) return;
                 const payload = collectPayloadFromForm();
-                console.log('?? AYARLAR KAYDEDİLİYOR:');
-                console.log('   ?? Badge Visibility:', payload.badgeVisibility);
-                console.log('   ?? Filter Criteria:', payload.filterCriteria);
-                console.log('   ?? Tam Payload:', payload);
+                console.log('ğŸ”µ AYARLAR KAYDEDÄ°LÄ°YOR:');
+                console.log('   ğŸ“Š Badge Visibility:', payload.badgeVisibility);
+                console.log('   ğŸ¯ Filter Criteria:', payload.filterCriteria);
+                console.log('   ğŸ“ Tam Payload:', payload);
                 try {
                     setSavingState(true);
                     saveSettingsButton.textContent = 'Kaydediliyor...';
-                    showStatus('Supabase veritabanına kaydediliyor...', 'info');
+                    showStatus('Supabase veritabanÄ±na kaydediliyor...', 'info');
                     
                     // Supabase'e kaydet
-                    const result = await saveSettings(payload);
-                    console.log('? Supabase\'e başarıyla kaydedildi!');
-                    console.log('   ??? Rozet Ayarları:', payload.badgeVisibility);
+                    const result = await saveSettingsToGitHub(payload);
+                    console.log('âœ… Supabase\'e baÅŸarÄ±yla kaydedildi!');
+                    console.log('   ğŸ·ï¸ Rozet AyarlarÄ±:', payload.badgeVisibility);
                     
-                    // Rozet ayarlarının durumunu göster
+                    // Rozet ayarlarÄ±nÄ±n durumunu gÃ¶ster
                     const enabledBadges = Object.entries(payload.badgeVisibility)
                         .filter(([key, value]) => value)
                         .map(([key]) => key);
@@ -2544,15 +2563,15 @@
                         .filter(([key, value]) => !value)
                         .map(([key]) => key);
                     
-                    console.log('   ? Aktif Rozetler:', enabledBadges);
-                    console.log('   ? Kapalı Rozetler:', disabledBadges);
+                    console.log('   âœ… Aktif Rozetler:', enabledBadges);
+                    console.log('   âŒ KapalÄ± Rozetler:', disabledBadges);
                     appSettings = payload;
                     
-                    // ? Supabase'e kaydedildi
-                    showStatus('Ayarlar Supabase veritabanına kaydedildi.', 'success');
+                    // âœ… Supabase'e kaydedildi
+                    showStatus('Ayarlar Supabase veritabanÄ±na kaydedildi.', 'success');
                     
                 } catch (error) {
-                    console.error('? Ayarlar kaydedilemedi:', error);
+                    console.error('âŒ Ayarlar kaydedilemedi:', error);
                     showStatus(error.message || 'Ayarlar kaydedilemedi.', 'error');
                 } finally {
                     setSavingState(false);
@@ -2562,32 +2581,32 @@
 
             reloadButton.addEventListener('click', () => {
                 if (isSaving) return;
-                loadSettings();
+                loadSettingsFromGitHub();
             });
 
-            // clearTokenButton - Artık Supabase kullanıldığı için devre dışı
-            // Token yönetimi artık gerekli değil
+            // clearTokenButton - ArtÄ±k Supabase kullanÄ±ldÄ±ÄŸÄ± iÃ§in devre dÄ±ÅŸÄ±
+            // Token yÃ¶netimi artÄ±k gerekli deÄŸil
 
             // Template Upload Functionality
             uploadTemplatesButton.addEventListener('click', async () => {
                 const files = templateFileInput.files;
                 if (!files || files.length === 0) {
-                    showStatus('? Lütfen en az bir JSON dosyası seçin.', 'error');
+                    showStatus('âŒ LÃ¼tfen en az bir JSON dosyasÄ± seÃ§in.', 'error');
                     return;
                 }
 
                 // Validate all files are JSON
                 for (let file of files) {
                     if (!file.name.endsWith('.json')) {
-                        showStatus(`? "${file.name}" JSON dosyası değil. Lütfen sadece .json dosyaları yükleyin.`, 'error');
+                        showStatus(`âŒ "${file.name}" JSON dosyasÄ± deÄŸil. LÃ¼tfen sadece .json dosyalarÄ± yÃ¼kleyin.`, 'error');
                         return;
                     }
                 }
 
                 try {
                     uploadTemplatesButton.disabled = true;
-                    uploadTemplatesButton.textContent = `? ${files.length} dosya yükleniyor...`;
-                    showStatus(`?? ${files.length} dosya okunuyor...`, 'info');
+                    uploadTemplatesButton.textContent = `â³ ${files.length} dosya yÃ¼kleniyor...`;
+                    showStatus(`ğŸ“¥ ${files.length} dosya okunuyor...`, 'info');
 
                     let allTemplates = [];
 
@@ -2596,7 +2615,7 @@
                         const fileContent = await new Promise((resolve, reject) => {
                             const reader = new FileReader();
                             reader.onload = (e) => resolve(e.target.result);
-                            reader.onerror = () => reject(new Error(`Dosya okunamadı: ${file.name}`));
+                            reader.onerror = () => reject(new Error(`Dosya okunamadÄ±: ${file.name}`));
                             reader.readAsText(file, 'UTF-8');
                         });
 
@@ -2610,24 +2629,24 @@
                         } else if (parsedData.id && parsedData.ogunler) {
                             allTemplates.push(parsedData);
                         } else {
-                            console.warn(`[Upload] "${file.name}" beklenmeyen format, atlanıyor`);
+                            console.warn(`[Upload] "${file.name}" beklenmeyen format, atlanÄ±yor`);
                         }
                     }
 
-                    showStatus('?? Şablonlar Supabase\'e kaydediliyor...', 'info');
+                    showStatus('ğŸ“¤ Åablonlar Supabase\'e kaydediliyor...', 'info');
 
-                    // ?? Bulk save templates to Supabase
+                    // ğŸ’¾ Bulk save templates to Supabase
                     const result = await DAL.bulkSaveTemplates(allTemplates);
                     
                     // Show detailed success message
-                    let message = `? Şablon yükleme işlemi başarıyla tamamlandı!<br><br>?? ÖZET:<br>`;
-                    message += `?? ${files.length} dosya okundu<br>`;
-                    message += `?? ${allTemplates.length} şablon bulundu<br>`;
-                    message += `? ${result.added} yeni şablon eklendi<br>`;
-                    message += `?? ${result.skipped} şablon (zaten mevcut) atlandı<br>`;
+                    let message = `âœ… Åablon yÃ¼kleme iÅŸlemi baÅŸarÄ±yla tamamlandÄ±!<br><br>ğŸ“Š Ã–ZET:<br>`;
+                    message += `ğŸ“ ${files.length} dosya okundu<br>`;
+                    message += `ğŸ“¥ ${allTemplates.length} ÅŸablon bulundu<br>`;
+                    message += `âœ… ${result.added} yeni ÅŸablon eklendi<br>`;
+                    message += `â­ï¸ ${result.skipped} ÅŸablon (zaten mevcut) atlandÄ±<br>`;
                     
                     if (result.errors && result.errors.length > 0) {
-                        message += `?? ${result.errors.length} şablonda hata oluştu<br>`;
+                        message += `âš ï¸ ${result.errors.length} ÅŸablonda hata oluÅŸtu<br>`;
                         console.error('Template upload errors:', result.errors);
                     }
                     
@@ -2637,26 +2656,26 @@
                     templateFileInput.value = '';
 
                 } catch (error) {
-                    console.error('? Şablon yükleme hatası:', error);
-                    showStatus(`? Hata: ${error.message}`, 'error');
+                    console.error('âŒ Åablon yÃ¼kleme hatasÄ±:', error);
+                    showStatus(`âŒ Hata: ${error.message}`, 'error');
                 } finally {
                     uploadTemplatesButton.disabled = false;
-                    uploadTemplatesButton.textContent = '?? Şablonları Yükle ve Birleştir';
+                    uploadTemplatesButton.textContent = 'ğŸ“¥ ÅablonlarÄ± YÃ¼kle ve BirleÅŸtir';
                 }
             });
         }
 
         // init and addLogoutButton already defined in <head>
 
-        // PWA Service Worker ve Manifest Kaydı
+        // PWA Service Worker ve Manifest KaydÄ±
         if ('serviceWorker' in navigator) {
             const isSecureOrigin = ['https:', 'http:'].includes(window.location.protocol) || window.location.protocol === 'chrome-extension:';
             const isGitHubPages = /\.github\.io$/i.test(window.location.hostname);
             if (isSecureOrigin && !isGitHubPages) {
                 const CACHE_NAME = 'admin-settings-v1';
                 const manifest = {
-                    "short_name": "Yönetici Ayarları",
-                    "name": "Yönetici Ayarları Paneli",
+                    "short_name": "YÃ¶netici AyarlarÄ±",
+                    "name": "YÃ¶netici AyarlarÄ± Paneli",
                     "start_url": ".",
                     "display": "standalone",
                     "background_color": "#667eea",
@@ -2781,4 +2800,3 @@
     </script>
 </body>
 </html>
-

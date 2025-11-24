@@ -445,4 +445,3 @@ const DeviceManager = {
 
 // Global erişim için
 window.DeviceManager = DeviceManager;
-

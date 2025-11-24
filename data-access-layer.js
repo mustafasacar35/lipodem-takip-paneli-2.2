@@ -296,20 +296,9 @@ class DataAccessLayer {
             // 1) Primary dene
             let { data, error } = await tryFetch(primaryColumn, patientId);
             if (!error && data) {
-                // ✅ FIX: JSONB kolonunu düzgün merge et (data veya patient_data olabilir)
-                const jsonbData = data.patient_data || data.data;
-                
-                if (jsonbData && typeof jsonbData === 'object') {
-                    // Top-level alanları koru, JSONB içindekilerle birleştir
-                    const merged = {
-                        ...data,                      // patient_id, username, status, etc.
-                        patient_data: {
-                            ...jsonbData,             // JSONB içeriği (data veya patient_data'dan)
-                            personalInfo: jsonbData.personalInfo || {},
-                            weeks: jsonbData.weeks || [],
-                            isAdmin: jsonbData.isAdmin || false
-                        }
-                    };
+                // Eğer patient_data JSONB'de tüm veri varsa, onu merge et
+                if (data.patient_data && typeof data.patient_data === 'object') {
+                    const merged = { ...data.patient_data, ...data };
                     // Snake_case kolonları camelCase'e normalize et
                     if (merged.max_devices !== undefined) merged.maxDevices = merged.max_devices;
                     if (merged.session_days !== undefined) merged.sessionDays = merged.session_days;
@@ -1139,50 +1128,17 @@ class DataAccessLayer {
         }
         
         try {
-            // Get settings from Supabase with setting_key = 'admin_settings'
-            let { data, error } = await client
+            const { data, error } = await client
                 .from('app_settings')
-                .select('value')
-                .eq('setting_key', 'admin_settings')
+                .select('*')
+                .eq('id', '00000000-0000-0000-0000-000000000001')
                 .single();
             
-            if (error) {
-                // If no record exists, return defaults (will be created on first save)
-                if (error.code === 'PGRST116') {
-                    this.log('⚠️ No settings record yet, using defaults');
-                    return this.getDefaultSettings();
-                }
-                this.log('⚠️ Settings table error, using defaults:', error.message);
-                return this.getDefaultSettings();
-            }
-            
-            // If we have value JSONB column, use it
-            if (data?.value) {
-                this.log('✅ Settings loaded from Supabase (JSONB)');
-                // Also backup to localStorage for offline access
-                try {
-                    localStorage.setItem('app_settings_backup', JSON.stringify(data.value));
-                } catch (e) {
-                    // Ignore localStorage errors
-                }
-                return data.value;
-            }
-            
-            // No settings found, return defaults
-            this.log('⚠️ No settings in database, using defaults');
-            return this.getDefaultSettings();
+            if (error) throw error;
+            this.log('✅ Settings loaded from Supabase');
+            return data || this.getDefaultSettings();
         } catch (error) {
             console.error('❌ Supabase settings load error:', error);
-            // Try to load from localStorage backup as last resort
-            const localBackup = localStorage.getItem('app_settings_backup');
-            if (localBackup) {
-                try {
-                    this.log('⚠️ Using localStorage backup (offline mode)');
-                    return JSON.parse(localBackup);
-                } catch (e) {
-                    // Ignore
-                }
-            }
             return this.getDefaultSettings();
         }
     }
@@ -1201,43 +1157,20 @@ class DataAccessLayer {
         }
         
         try {
-            // Prepare payload with setting_key and value
-            const payload = {
-                setting_key: 'admin_settings',
-                value: settings,
-                description: 'Admin panel settings (filters, badges, formulas, etc.)',
-                updated_at: new Date().toISOString()
-            };
-            
-            // Use upsert to insert or update based on setting_key
-            const { error } = await client
+            const { error} = await client
                 .from('app_settings')
-                .upsert(payload, { 
-                    onConflict: 'setting_key',
-                    ignoreDuplicates: false 
+                .upsert({
+                    id: '00000000-0000-0000-0000-000000000001',
+                    ...settings,
+                    updated_at: new Date().toISOString()
                 });
             
             if (error) throw error;
-            
-            // Also backup to localStorage for offline access
-            try {
-                localStorage.setItem('app_settings_backup', JSON.stringify(settings));
-            } catch (e) {
-                console.warn('Could not backup to localStorage:', e);
-            }
-            
-            this.log('✅ Settings saved to Supabase (JSONB)');
+            this.log('✅ Settings saved to Supabase');
             return true;
         } catch (error) {
             console.error('❌ Supabase settings save error:', error);
-            // Still try to save to localStorage as fallback
-            try {
-                localStorage.setItem('app_settings_backup', JSON.stringify(settings));
-                this.log('⚠️ Settings saved to localStorage backup only (offline)');
-                return true;
-            } catch (e) {
-                return false;
-            }
+            return false;
         }
     }
     
@@ -2356,7 +2289,6 @@ class DataAccessLayer {
 window.DAL = new DataAccessLayer();
 
 console.log('✅ DataAccessLayer loaded. Use window.DAL to access data.');
-
 
 
 
