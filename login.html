@@ -372,6 +372,9 @@
                             params.append(column, value);
                         });
                     }
+                    if (this._order) {
+                        params.append('order', this._order.column + (this._order.ascending === false ? '.desc' : '.asc'));
+                    }
                     url += '?' + params.toString();
                     const options = { method: method, headers: this.client.headers };
                     if (body && (method === 'POST' || method === 'PATCH')) {
@@ -412,6 +415,10 @@
                 }
             }
             async delete() { return await this._execute('DELETE'); }
+            order(column, options = {}) {
+                this._order = { column, ...options };
+                return this;
+            }
         }
         window.supabase = {
             createClient: function(url, key) {
