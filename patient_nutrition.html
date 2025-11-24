@@ -13824,8 +13824,8 @@
             // Öğün tipleri (boş array bile ekle - JSON formatı için gerekli)
             yeniYemek.mealType = mealTypes;
             
-            // Diyet tipleri (boş array bile ekle)
-            if (dietTypes.length > 0) yeniYemek.dietTypes = dietTypes;
+            // Diyet tipleri (HER ZAMAN EKLE - boş bile olsa, aksi halde eski değer silinmez!)
+            yeniYemek.dietTypes = dietTypes;
             
             // Boolean özellikler (her zaman ekle - JSON formatı için gerekli)
             yeniYemek.keto = ozelOzellikler.keto;
@@ -13840,12 +13840,12 @@
             yeniYemek.compatibilityTags = compatibilityTags;
             yeniYemek.incompatibilityTags = incompatibilityTags;
             
-            // Sezon range (varsa ekle)
-            if (seasonRange) yeniYemek.seasonRange = seasonRange;
+            // Sezon range (her zaman ekle - boş bile olsa)
+            yeniYemek.seasonRange = seasonRange || "[1,12]";
             
-            // Notlar (varsa ekle)
+            // Notlar (her zaman ekle - boş string bile olsa, aksi halde eski not silinmez)
             const notes = document.getElementById('admin_db_ekle_notes').value.trim();
-            if (notes) yeniYemek.notes = notes;
+            yeniYemek.notes = notes;
             
             console.log('➕ Yeni Yemek (food_list.json formatı):', JSON.stringify(yeniYemek, null, 2));
             
