@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "lastUpdated": "2025-11-19T08:02:45.597Z",
+  "lastUpdated": "2025-11-17T07:29:21.208Z",
   "patients": [
     {
       "id": "patient_001",
@@ -41,7 +41,7 @@
       "name": "Suzan",
       "surname": "SACAR",
       "createdAt": "2025-11-02T15:35:12.792Z",
-      "maxDevices": 5
+      "maxDevices": 1
     },
     {
       "id": "patient_1762151674616",
@@ -52,7 +52,7 @@
       "name": "Mustafa",
       "surname": "SACAR",
       "createdAt": "2025-11-03T06:34:34.617Z",
-      "maxDevices": 5
+      "maxDevices": 1
     },
     {
       "id": "patient_1762176120684",

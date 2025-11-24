@@ -1,80 +1,63 @@
 {
-  "version": "2.0-supabase",
-  "lastUpdated": "2025-11-22T21:15:56.032Z",
+  "version": "1.0",
+  "lastUpdated": "2025-11-11T20:15:49.657Z",
   "blacklist": [
     {
+      "id": "bl_1762890294462_u89vfm5xh",
       "mainFood": "Ketojenik Tost (Tahin Ekmeği + Kaşar)",
       "bannedAlternatives": [
         "Somonlu Roka ve Avokado Salatası",
         "Karnabahar Püreli Bonfile"
       ],
-      "id": 2,
-      "addedBy": "admin",
-      "addedDate": "2025-11-11T00:00:00+00:00",
-      "bidirectional": false
+      "addedBy": "msacar",
+      "addedDate": "2025-11-11",
+      "lastUpdated": "2025-11-11T19:59:21.185Z",
+      "lastUpdatedBy": "msacar"
     },
     {
+      "id": "bl_1762891233387_28m1xjenc",
       "mainFood": "Tavuk Fajita",
       "bannedAlternatives": [
         "Yoğurtlu Tavuk Salatası",
         "Tavuklu Brüksel Lahanası Yemeği",
         "Brokoli Çorbası"
       ],
-      "id": 4,
-      "addedBy": "admin",
-      "addedDate": "2025-11-11T00:00:00+00:00",
-      "bidirectional": false
+      "addedBy": "msacar",
+      "addedDate": "2025-11-11",
+      "lastUpdated": "2025-11-11T20:01:08.468Z",
+      "lastUpdatedBy": "msacar"
     },
     {
+      "id": "bl_1762891233387_w6cjn0dmq",
       "mainFood": "Yoğurtlu Tavuk Salatası",
       "bannedAlternatives": [
         "Tavuk Fajita"
       ],
-      "id": 7,
-      "addedBy": "admin",
-      "addedDate": "2025-11-11T00:00:00+00:00",
-      "bidirectional": false
+      "addedBy": "msacar",
+      "addedDate": "2025-11-11",
+      "lastUpdated": "2025-11-11T20:00:33.387Z",
+      "bidirectional": true
     },
     {
+      "id": "bl_1762891233387_y8qcjduqx",
       "mainFood": "Tavuklu Brüksel Lahanası Yemeği",
       "bannedAlternatives": [
         "Tavuk Fajita"
       ],
-      "id": 8,
-      "addedBy": "admin",
-      "addedDate": "2025-11-11T00:00:00+00:00",
-      "bidirectional": false
+      "addedBy": "msacar",
+      "addedDate": "2025-11-11",
+      "lastUpdated": "2025-11-11T20:00:33.387Z",
+      "bidirectional": true
     },
     {
+      "id": "bl_1762892149657_otm2clc3m",
       "mainFood": "Yeşillikler (Marul, Roka, Maydanoz)",
       "bannedAlternatives": [
         "Avokadolu Roka Salatası"
       ],
-      "id": 9,
-      "addedBy": "admin",
-      "addedDate": "2025-11-11T00:00:00+00:00",
-      "bidirectional": false
-    },
-    {
-      "id": "bl_1763846156032_vaby7fcxh",
-      "mainFood": "Tavuk Çorbası",
-      "bannedAlternatives": [
-        "Tavuk Döner (100 gram)"
-      ],
       "addedBy": "msacar",
-      "addedDate": "2025-11-22",
-      "lastUpdated": "2025-11-22T21:15:56.032Z"
-    },
-    {
-      "id": "bl_1763846156032_tumd8ie9b",
-      "mainFood": "Tavuk Döner (100 gram)",
-      "bannedAlternatives": [
-        "Tavuk Çorbası"
-      ],
-      "addedBy": "msacar",
-      "addedDate": "2025-11-22",
-      "lastUpdated": "2025-11-22T21:15:56.032Z",
-      "bidirectional": true
+      "addedDate": "2025-11-11",
+      "lastUpdated": "2025-11-11T20:15:49.657Z"
     }
   ]
 }
