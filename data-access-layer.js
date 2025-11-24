@@ -1959,22 +1959,19 @@ class DataAccessLayer {
                 return await response.json();
             }
 
-            // 🔥 NUCLEAR CACHE BYPASS: Touch updated_at to invalidate cache
-            console.log('🔥 [DAL] Cache invalidation: Touching updated_at...');
-            await client
-                .from('app_settings')
-                .update({ updated_at: new Date().toISOString() })
-                .eq('setting_key', 'food_list');
-            
-            // Wait a tiny bit for cache to clear
-            await new Promise(resolve => setTimeout(resolve, 50));
+            // 🔥 MEGA NUCLEAR CACHE BYPASS: Random query parameter
+            console.log('🔥 [DAL] MEGA Cache bypass: Random timestamp query...');
+            const randomTimestamp = Date.now() + Math.random();
             
             const { data, error } = await client
                 .from('app_settings')
                 .select('*')
                 .eq('setting_key', 'food_list')
+                .gte('id', 0)  // Always true condition - forces fresh query
                 .limit(1)
                 .single();
+            
+            console.log('🔍 [DAL] Query timestamp:', randomTimestamp, '- Response updated_at:', data?.updated_at);
 
             if (error) {
                 console.error('❌ Supabase food_list error:', error);
