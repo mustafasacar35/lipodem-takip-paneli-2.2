@@ -1,0 +1,1221 @@
+config.js:127 🏠 LOCAL-ONLY DEVELOPMENT MODE
+config.js:128 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+config.js:129 📍 Environment: development-local
+config.js:130 🏠 Local Only: true
+config.js:131 🗄️ Supabase URL: https://qvpeqxzaprgesgrgzmuo.supabase.co
+config.js:132 📁 GitHub: ❌ Disabled
+config.js:133 📊 Storage Strategy:
+config.js:134   - Local JSON: ❌
+config.js:135   - Supabase: ✅
+config.js:136   - GitHub: ❌
+config.js:137   - Dual Mode: ❌
+config.js:138 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+config.js:142 ⚠️ GitHub bağlantısı KAPALI. Hiçbir veri GitHub'a gitmeyecek.
+(anonymous) @ config.js:142
+config.js:145 ⚠️ Local-only mode. Tüm veriler bu bilgisayarda kalacak.
+(anonymous) @ config.js:145
+config.js:148 ⚠️ Düzenli yedekleme yapmanız önerilir.
+(anonymous) @ config.js:148
+patient_nutrition.html:43 ✅ Supabase client başlatıldı (patient_nutrition.html)
+data-access-layer.js:35 [DAL] 📦 DataAccessLayer initialized {environment: 'development-local', useJSON: undefined, useSupabase: true, dualMode: false}
+data-access-layer.js:2347 ✅ DataAccessLayer loaded. Use window.DAL to access data.
+onesignal_config.js:36 OneSignal Config yüklendi: ✅ APP_ID mevcut
+patient_nutrition.html:3366 ✅ UTF-8 encoding helper yüklendi
+patient_nutrition.html:3414 ✅ Global admin fonksiyonları yüklendi
+patient_nutrition.html:6022 🚀 Başlatılıyor...
+patient_nutrition.html:3576 📥 Admin config yükleniyor...
+patient_nutrition.html:79 🔔 OneSignal v16 yapılandırması başlatılıyor (HASTA)...
+patient_nutrition.html:80 🔍 DEBUG: OneSignal init VERSION 3.0 (LOCALHOST + PATIENT + AUTO PROMPT)
+patient_nutrition.html:81 🔔 OneSignal App ID: 45686db4-9813-42ef-939d-1402fe1622f7 (Domain: mustafasacar35.github.io)
+patient_nutrition.html:82 🌐 Localhost mode: false
+patient_nutrition.html:3584 ✅ Admin config yüklendi: {adminCount: 3, patientAdminCount: 1}
+patient_nutrition.html:3911 📥 Admin ayarları Supabase'den yükleniyor...
+data-access-layer.js:1827 [DAL] 📥 Loading app settings from Supabase...
+data-access-layer.js:35 [DAL] ✅ Supabase client reused from window.supabase
+A bad HTTP response code (404) was received when fetching the script.
+Log.ts:34 [Service Worker Installation] Installing service worker failed TypeError: Failed to register a ServiceWorker for scope ('https://mustafasacar35.github.io/') with script ('https://mustafasacar35.github.io/OneSignalSDKWorker.js?appId=45686db4-9813-42ef-939d-1402fe1622f7&sdkVersion=160510'): A bad HTTP response code (404) was received when fetching the script.
+(anonymous) @ Log.ts:34
+be @ ServiceWorkerManager.ts:421
+await in be
+(anonymous) @ init.ts:23
+e @ OneSignal.ts:196
+await in e
+Ne @ OneSignal.ts:203
+init @ OneSignal.ts:165
+await in init
+(anonymous) @ patient_nutrition.html:85
+(anonymous) @ OneSignal.ts:302
+push @ OneSignal.ts:267
+(anonymous) @ pageSdkInit.ts:21
+(anonymous) @ pageSdkInit.ts:50
+(anonymous) @ pageSdkInit.ts:60
+(anonymous) @ pageSdkInit.ts:60
+data-access-layer.js:1851 ✅ App settings loaded from Supabase
+patient_nutrition.html:3924 📥 Supabase config.json yüklendi: {scoringMode: 'advanced', sensitivityDivider: 10, badgeVisibility: {…}, scoreCriteria: {…}}
+patient_nutrition.html:3932 🏷️ Hasta paneli - Rozet ayarları yüklendi: {role: false, tags: false, season: false, category: false, dietType: false, …}
+patient_nutrition.html:3940    ✅ Aktif rozetler: []
+patient_nutrition.html:3941    ❌ Kapalı rozetler: (6) ['role', 'tags', 'season', 'category', 'dietType', 'mealType']
+patient_nutrition.html:4010 ✅ scoreBy admin ayarlarından yüklendi: (2) ['protein', 'fat']
+patient_nutrition.html:4015 ✅ Admin ayarları yüklendi: {scoringMode: 'advanced', dietFormulas: {…}, scoreCriteria: {…}, filterCriteria: {…}, badgeVisibility: {…}, …}
+patient_nutrition.html:4016 ✅ Match kriterleri: {role: true, dietType: true, category: true, season: false, mealType: true}
+patient_nutrition.html:4017 ✅ Benzerlik skoru kriterleri (scoreBy): (2) ['protein', 'fat']
+patient_nutrition.html:6036 ❌ PDF Export butonu gizli
+patient_nutrition.html:4069 📥 Manuel eşleştirmeler Supabase'den yükleniyor (food_matchings)...
+logo.png:1  GET https://mustafasacar35.github.io/logo.png 404 (Not Found)
+patient_nutrition.html:1 Error while trying to use the following icon from the Manifest: https://mustafasacar35.github.io/logo.png (Download error or resource isn't a valid image)
+patient_nutrition.html:15943 ✅ Service Worker v12 kaydedildi: https://mustafasacar35.github.io/lipodem-takip-paneli-2.2/
+service-worker.js?v=1763994763842:36 🔧 Service Worker v19 (PWA Cache Only - Push -> OneSignal) kuruluyor...
+patient_nutrition.html:15947 📱 iOS Safe Area Top: Yok
+service-worker.js?v=1763994763842:40 ✅ Cache açıldı: lipodem-takip-v19-NO-PUSH
+A bad HTTP response code (404) was received when fetching the script.
+chat_manager.js:601 ✅ Session bulundu (patient_session), chat başlatılıyor...
+chat_manager.js:14 🚀 initializeChat() başlatıldı...
+chat_manager.js:23 ✅ Chat Supabase client alındı (window.supabase)
+chat_manager.js:26 📌 Hasta ID kaynakları kontrol ediliyor...
+chat_manager.js:27    sessionStorage.currentPatientId: null
+chat_manager.js:28    localStorage.currentPatientId: null
+chat_manager.js:79 🔍 Auth sisteminden hasta ID aranıyor...
+chat_manager.js:88    Kontrol ediliyor: patient_session = VAR
+chat_manager.js:93    patient_session parse edildi: {patientId: 'patient_1762151674616', username: 'msacar', name: 'Bilinmeyen Hasta', surname: '', loginTime: '2025-11-24T14:32:41.529Z', …}
+chat_manager.js:96 ✅ Auth sisteminden hasta ID alındı (patient_session): patient_1762151674616
+chat_manager.js:34 🆔 Belirlenen currentPatientId: patient_1762151674616
+chat_manager.js:50 ✅ Chat widget görünür yapıldı
+chat_manager.js:53 ✅ Chat başlatıldı. Hasta ID: patient_1762151674616
+chat_manager.js:722 🔔 Hasta OneSignal başlatılıyor...
+chat_manager.js:61 📥 loadMessages() çağrılıyor...
+chat_manager.js:65 🔴 subscribeToMessages() çağrılıyor...
+chat_manager.js:355 🔔 Realtime subscription başlatılıyor. Patient ID: patient_1762151674616
+chat_manager.js:74 ✅ initializeChat() tamamlandı!
+chat_manager.js:726 📱 Mevcut izin durumu: true
+chat_manager.js:729 🔔 Bildirim izni isteniyor...
+patient_nutrition.html:10722 ❌ Admin yetkisi bulunamadı
+patient_nutrition.html:10735 👤 Normal kullanıcı - Admin özellikleri gizli
+patient_nutrition.html:3661 🔒 Admin özellikleri gizli
+patient_nutrition.html:4119 ✅ Supabase: Manuel eşleştirmeler yüklendi (food_matchings): 2 yemek
+data-access-layer.js:35 [DAL] 🚫 getFoodBlacklist()
+ServiceWorkerManager.ts:474  GET https://mustafasacar35.github.io/OneSignalSDK.sw.js?appId=45686db4-9813-42ef-939d-1402fe1622f7&sdkVersion=160510 404 (Not Found)
+me @ ServiceWorkerManager.ts:474
+await in me
+be @ ServiceWorkerManager.ts:424
+await in be
+(anonymous) @ init.ts:23
+e @ OneSignal.ts:196
+await in e
+Ne @ OneSignal.ts:203
+init @ OneSignal.ts:165
+await in init
+(anonymous) @ patient_nutrition.html:85
+(anonymous) @ OneSignal.ts:302
+push @ OneSignal.ts:267
+(anonymous) @ pageSdkInit.ts:21
+(anonymous) @ pageSdkInit.ts:50
+(anonymous) @ pageSdkInit.ts:60
+(anonymous) @ pageSdkInit.ts:60
+patient_nutrition.html:235 ❌ OneSignal init hatası (HASTA): Y: Registration of a Service Worker failed.
+    at Vs.me (ServiceWorkerManager.ts:476:15)
+    at async Vs.be (ServiceWorkerManager.ts:424:7)
+    at async init.ts:20:14
+    at async e (OneSignal.ts:195:13)
+    at async t.Ne (OneSignal.ts:201:16)
+    at async t.init (OneSignal.ts:159:22)
+    at async patient_nutrition.html:85:17
+    at async pageSdkInit.ts:20:5
+(anonymous) @ patient_nutrition.html:235
+await in (anonymous)
+(anonymous) @ OneSignal.ts:302
+push @ OneSignal.ts:267
+(anonymous) @ pageSdkInit.ts:21
+(anonymous) @ pageSdkInit.ts:50
+(anonymous) @ pageSdkInit.ts:60
+(anonymous) @ pageSdkInit.ts:60
+service-worker.js?v=1763994763842:1 Uncaught (in promise) TypeError: Failed to execute 'addAll' on 'Cache': Request failed
+Promise.then
+(anonymous) @ service-worker.js?v=1763994763842:41
+Promise.then
+(anonymous) @ service-worker.js?v=1763994763842:39
+chat_manager.js:847 🟢 Heartbeat gönderildi: patient_1762151674616
+patient_nutrition.html:4145 ✅ Supabase: Yasak kuralları yüklendi (tarif kartları): 18
+data-access-layer.js:1934 [DAL] 📥 Loading food database mappings from Supabase (JSONB)...
+data-access-layer.js:1956 ✅ Loaded 4 food database mappings
+patient_nutrition.html:4155 ✅ Supabase: Yemek veritabanı eşleştirmeleri yüklendi: 4
+chat_manager.js:411 🔔 Subscription durumu: SUBSCRIBED
+chat_manager.js:413 ✅ Realtime dinleme aktif!
+patient_nutrition.html:4235 ✅ Tarif kartları list.json ile yüklendi: 322
+patient_nutrition.html:4270 📥 Yemek veritabanı yükleniyor (DAL - Supabase/Local)...
+data-access-layer.js:1970 [DAL] 📥 Loading food list from Supabase (JSONB)...
+data-access-layer.js:2005 ✅ Loaded 22 categories with 694 foods from Supabase
+patient_nutrition.html:4291 ✅ Yemek veritabanı yüklendi: 694 yemek
+patient_nutrition.html:4295 📋 İlk 3 yemek: (3) ['kurşun geçirmez kahve', '1 tatlı kaşığı Tereyağı', '1 tatlı kaşığı kaymak (10 gram)']
+patient_nutrition.html:4297 🔍 Mercimek içeren yemekler (8): (8) ['Yeşil mercimek yemeği', 'Yeşil Mercimekli Kabak Sandal (1 porsiyon)', 'Yeşil Mercimekli Tuzlu Kek (1 dilim)', 'Yeşil Mercimek Köftesi (Yulaf Unlu)', 'Yoğurtlu Yeşil Mercimek Salatası', 'Mercimek Çorbası', 'Yeşil Mercimekli Poğaça', 'Yeşil Mercimekli Tuzlu Kek']
+patient_nutrition.html:6063 ✅ Session bulundu: {patientId: 'patient_1762151674616', username: 'msacar', name: 'Bilinmeyen Hasta', surname: '', loginTime: '2025-11-24T14:32:41.529Z', …}
+patient_nutrition.html:6197 🔍 Hasta verisi yükleniyor (Supabase): patient_1762151674616
+data-access-layer.js:35 [DAL] 👤 getPatient(): patient_1762151674616
+data-access-layer.js:35 [DAL] 🗄️ Getting patient from Supabase: patient_1762151674616
+patient_nutrition.html:6207 ✅ Hasta bilgileri Supabase'den yüklendi: {patient_id: 'patient_1762151674616', updated_at: '2025-11-24T14:23:55.219+00:00', patient_data: {…}, id: 25, username: 'msacar', …}
+patient_nutrition.html:6237 👤 Admin yetkisi YOK
+patient_nutrition.html:6242 📅 Hafta verileri Supabase nutrition_weeks'den çekiliyor...
+supabase.min.js:7  GET https://qvpeqxzaprgesgrgzmuo.supabase.co/rest/v1/nutrition_weeks?select=*&patient_id=eq.patient_1762151674616&order=week_number.asc 404 (Not Found)
+(anonymous) @ supabase.min.js:7
+(anonymous) @ supabase.min.js:7
+o @ supabase.min.js:7
+Promise.then
+c @ supabase.min.js:7
+(anonymous) @ supabase.min.js:7
+(anonymous) @ supabase.min.js:7
+(anonymous) @ supabase.min.js:7
+then @ supabase.min.js:7
+patient_nutrition.html:6272 ❌ Hafta fetch hatası: {code: 'PGRST205', details: null, hint: "Perhaps you meant the table 'public.patient_weeks'", message: "Could not find the table 'public.nutrition_weeks' in the schema cache"}
+loadPatientData @ patient_nutrition.html:6272
+await in loadPatientData
+init @ patient_nutrition.html:6106
+patient_nutrition.html:6291 📊 Varsayılan scoreBy kullanılıyor: (2) ['protein', 'fat']
+patient_nutrition.html:3661 🔒 Admin özellikleri gizli
+patient_nutrition.html:3554 ✅ Settings hasta verilerinden güncellendi: {dietType: 'ketojenik', targetCalories: 1000, minCalories: 950, maxCalories: 1050, dislikedFoods: Array(0), …}
+patient_nutrition.html:6108 🔍 DEBUG: loadTemplates() öncesi - DAL mevcut mu? object function
+patient_nutrition.html:6455 🔍 [LOADTEMPLATES] Başlatılıyor...
+patient_nutrition.html:6458 📥 Şablonlar Supabase'den yükleniyor...
+patient_nutrition.html:6459 🔍 [LOADTEMPLATES] window.DAL var mı? object
+patient_nutrition.html:6460 🔍 [LOADTEMPLATES] window.DAL.getDayTemplates var mı? function
+patient_nutrition.html:6465 🔍 [LOADTEMPLATES] getDayTemplates() çağrılıyor...
+data-access-layer.js:35 [DAL] 📥 Loading day templates from Supabase...
+data-access-layer.js:35 [DAL] ✅ Loaded 999 day templates from Supabase
+data-access-layer.js:1709 🔍 İLK SUPABASE ŞABLON (HAM VERİ): {name: 'Menü 1', kalori_hedefi: undefined, protein_hedefi: undefined, ogunler: 'VAR', ogunSayisi: 2, …}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 1): {kalori: 1164, protein: 62, karb: 13, yag: 96}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 10): {kalori: 859, protein: 68, karb: 14, yag: 59}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 100): {kalori: 1827, protein: 97, karb: 29, yag: 147}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 1000): {kalori: 1127, protein: 69, karb: 35, yag: 79}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 101): {kalori: 1187, protein: 75, karb: 17, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 102): {kalori: 1881, protein: 101, karb: 25, yag: 153}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 103): {kalori: 1722, protein: 93, karb: 27, yag: 138}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 104): {kalori: 1665, protein: 114, karb: 22, yag: 123.5}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 105): {kalori: 1164, protein: 62, karb: 13, yag: 96}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 106): {kalori: 1291, protein: 85, karb: 24, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 107): {kalori: 1194, protein: 82, karb: 23, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 108): {kalori: 1150, protein: 78, karb: 16, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 109): {kalori: 1153, protein: 57, karb: 22, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 11): {kalori: 1215, protein: 66, karb: 33, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 110): {kalori: 1238, protein: 82, karb: 25, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 111): {kalori: 1076, protein: 58, karb: 13, yag: 88}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 112): {kalori: 1114, protein: 61, karb: 15, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 113): {kalori: 1506, protein: 96, karb: 25, yag: 112.5}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 114): {kalori: 2251.2, protein: 122, karb: 35.8, yag: 180}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 115): {kalori: 1492, protein: 87.5, karb: 29, yag: 114}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 116): {kalori: 1571, protein: 74, karb: 37.5, yag: 125}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 117): {kalori: 1449, protein: 99, karb: 22.5, yag: 107}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 118): {kalori: 1327, protein: 76, karb: 33, yag: 99}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 119): {kalori: 1472, protein: 88, karb: 38, yag: 108}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 12): {kalori: 991.4, protein: 53, karb: 26.1, yag: 75}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 120): {kalori: 1179, protein: 64, karb: 17, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 121): {kalori: 1364, protein: 87, karb: 29, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 122): {kalori: 1174, protein: 75, karb: 16, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 123): {kalori: 1299, protein: 93, karb: 18, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 124): {kalori: 1413, protein: 102, karb: 34, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 125): {kalori: 1159.4, protein: 85, karb: 18.1, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 126): {kalori: 1007, protein: 70, karb: 13, yag: 75}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 127): {kalori: 1068.4, protein: 66, karb: 21.1, yag: 80}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 128): {kalori: 1114.4, protein: 56, karb: 29.1, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 129): {kalori: 1154.6, protein: 64, karb: 10.9, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 13): {kalori: 1263, protein: 66, karb: 27, yag: 99}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 130): {kalori: 1215, protein: 69, karb: 16.5, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 131): {kalori: 1210, protein: 61, karb: 21, yag: 98}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 132): {kalori: 915, protein: 62, karb: 18, yag: 65.5}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 133): {kalori: 1213, protein: 53, karb: 14, yag: 105}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 134): {kalori: 1008, protein: 53, karb: 19, yag: 80}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 135): {kalori: 811, protein: 60, karb: 10, yag: 59}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 136): {kalori: 1054, protein: 52, karb: 15, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 137): {kalori: 1260.4, protein: 72, karb: 18.1, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 138): {kalori: 866, protein: 47, karb: 7.5, yag: 72}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 139): {kalori: 1050, protein: 62, karb: 11.5, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 140): {kalori: 1294, protein: 82, karb: 25.5, yag: 96}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 141): {kalori: 1127.2, protein: 57, karb: 17.8, yag: 92}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 142): {kalori: 1256, protein: 57, karb: 23, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 143): {kalori: 1343, protein: 84, karb: 15.5, yag: 105}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 144): {kalori: 1223, protein: 58, karb: 20.5, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 145): {kalori: 1535, protein: 81, karb: 26, yag: 123}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 146): {kalori: 1218, protein: 74, karb: 19, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 147): {kalori: 1046, protein: 67, karb: 19, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 148): {kalori: 1147, protein: 74, karb: 17, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 149): {kalori: 1142, protein: 68, karb: 24, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 15): {kalori: 1841, protein: 91, karb: 25, yag: 153}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 150): {kalori: 1068, protein: 70, karb: 8, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 151): {kalori: 1152.4, protein: 72, karb: 27.1, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 152): {kalori: 870, protein: 55, karb: 14, yag: 66}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 153): {kalori: 1114, protein: 76, karb: 27, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 154): {kalori: 1186.4, protein: 73, karb: 21.1, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 155): {kalori: 1046, protein: 53, karb: 19.5, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 156): {kalori: 1721, protein: 84, karb: 29, yag: 141}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 157): {kalori: 1099, protein: 77, karb: 29, yag: 75}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 158): {kalori: 1353, protein: 68, karb: 25, yag: 109}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 159): {kalori: 1259, protein: 71, karb: 22, yag: 97.5}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 16): {kalori: 1141, protein: 80, karb: 14, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 160): {kalori: 1827, protein: 97, karb: 29, yag: 147}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 161): {kalori: 1019, protein: 80, karb: 15, yag: 71}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 162): {kalori: 1881, protein: 101, karb: 25, yag: 153}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 163): {kalori: 1896, protein: 114, karb: 36, yag: 144}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 164): {kalori: 1661, protein: 105, karb: 20, yag: 129}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 165): {kalori: 1164, protein: 62, karb: 13, yag: 96}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 166): {kalori: 1098, protein: 70, karb: 20, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 167): {kalori: 1209, protein: 82, karb: 20, yag: 89}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 168): {kalori: 1150, protein: 78, karb: 16, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 169): {kalori: 1113, protein: 47, karb: 22, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 17): {kalori: 1386, protein: 76, karb: 23, yag: 110}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 170): {kalori: 1020, protein: 80, karb: 13, yag: 72}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 171): {kalori: 1079, protein: 58, karb: 16, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 172): {kalori: 950, protein: 65, karb: 15, yag: 70}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 173): {kalori: 1230, protein: 46, karb: 32, yag: 102}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 174): {kalori: 2113.2, protein: 112, karb: 33.8, yag: 170}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 175): {kalori: 1492, protein: 87.5, karb: 29, yag: 114}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 176): {kalori: 1503, protein: 80, karb: 28, yag: 119}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 177): {kalori: 1591, protein: 100, karb: 25.5, yag: 121}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 178): {kalori: 1354, protein: 75, karb: 34, yag: 102}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 179): {kalori: 1441, protein: 88, karb: 28, yag: 109}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 18): {kalori: 1484, protein: 91, karb: 19, yag: 116}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 180): {kalori: 1179, protein: 64, karb: 17, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 181): {kalori: 1270, protein: 83, karb: 23, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 182): {kalori: 1156, protein: 65, karb: 17, yag: 92}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 183): {kalori: 1259, protein: 83, karb: 18, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 184): {kalori: 1157, protein: 81, karb: 18, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 185): {kalori: 1119.4, protein: 75, karb: 18.1, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 186): {kalori: 1020, protein: 57, karb: 18, yag: 80}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 187): {kalori: 1303, protein: 90, karb: 22, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 188): {kalori: 1345.4, protein: 90, karb: 28.1, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 189): {kalori: 1241, protein: 69, karb: 23, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 19): {kalori: 1340, protein: 61, karb: 31, yag: 108}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 190): {kalori: 1761, protein: 94, karb: 29, yag: 141}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 191): {kalori: 1182, protein: 90, karb: 30, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 192): {kalori: 1347, protein: 83, karb: 31, yag: 99}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 193): {kalori: 963, protein: 64, karb: 17, yag: 71}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 194): {kalori: 915, protein: 53, karb: 16, yag: 71}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 195): {kalori: 1191.2, protein: 83.2, karb: 19.9, yag: 85.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 196): {kalori: 1395, protein: 94, karb: 23, yag: 103}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 197): {kalori: 1483.2, protein: 88, karb: 21.8, yag: 116}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 198): {kalori: 1257, protein: 75, karb: 21, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 199): {kalori: 1245, protein: 68, karb: 25, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 2): {kalori: 1098, protein: 70, karb: 20, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 20): {kalori: 2164.2, protein: 120, karb: 31.8, yag: 173}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 200): {kalori: 1053, protein: 47, karb: 11.5, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 201): {kalori: 899, protein: 46, karb: 14.5, yag: 73}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 202): {kalori: 1215, protein: 68, karb: 40, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 203): {kalori: 1215, protein: 68, karb: 40, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 204): {kalori: 1070, protein: 71, karb: 12, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 205): {kalori: 989, protein: 76, karb: 16, yag: 69}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 206): {kalori: 1070, protein: 71, karb: 12, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 207): {kalori: 989, protein: 76, karb: 16, yag: 69}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 208): {kalori: 1366, protein: 81, karb: 22, yag: 106}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 209): {kalori: 1347, protein: 69, karb: 18, yag: 111}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 21): {kalori: 1195, protein: 95, karb: 17, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 210): {kalori: 1057, protein: 76, karb: 15, yag: 77}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 211): {kalori: 1101.4, protein: 78, karb: 24.1, yag: 77}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 212): {kalori: 1125.4, protein: 60, karb: 30.1, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 213): {kalori: 1138.6, protein: 76, karb: 12.9, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 214): {kalori: 1346, protein: 82, karb: 25, yag: 102}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 215): {kalori: 1446, protein: 102, karb: 48, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 216): {kalori: 1195, protein: 90, karb: 42, yag: 73.5}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 217): {kalori: 905, protein: 72, karb: 17, yag: 61}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 218): {kalori: 1395.2, protein: 82, karb: 32.8, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 219): {kalori: 1019.4, protein: 73, karb: 31.1, yag: 67}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 22): {kalori: 1841, protein: 91, karb: 25, yag: 153}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 220): {kalori: 1064, protein: 78, karb: 12.5, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 221): {kalori: 1708, protein: 112, karb: 27, yag: 128}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 222): {kalori: 1515, protein: 79, karb: 23, yag: 123}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 223): {kalori: 1044, protein: 59, karb: 13, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 224): {kalori: 1372, protein: 66, karb: 29.5, yag: 110}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 225): {kalori: 1290.2, protein: 90, karb: 14.3, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 226): {kalori: 1225, protein: 65, karb: 27.5, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 227): {kalori: 1597, protein: 103, karb: 34, yag: 117}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 228): {kalori: 1336, protein: 80, karb: 33.5, yag: 98}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 229): {kalori: 1101, protein: 58, karb: 17, yag: 89}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 23): {kalori: 1141, protein: 80, karb: 14, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 230): {kalori: 1173, protein: 81, karb: 21, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 231): {kalori: 1132, protein: 79, karb: 16, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 232): {kalori: 1190.4, protein: 86, karb: 28.1, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 233): {kalori: 922, protein: 58, karb: 15, yag: 70}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 234): {kalori: 1325, protein: 100, karb: 31, yag: 89}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 235): {kalori: 1195.4, protein: 73, karb: 21.1, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 236): {kalori: 1086, protein: 63, karb: 19.5, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 237): {kalori: 1730, protein: 84, karb: 29, yag: 142}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 238): {kalori: 1139, protein: 87, karb: 29, yag: 75}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 239): {kalori: 1362, protein: 68, karb: 25, yag: 110}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 24): {kalori: 1386, protein: 76, karb: 23, yag: 110}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 240): {kalori: 1073, protein: 62, karb: 19.5, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 241): {kalori: 1164.2, protein: 72.2, karb: 21.9, yag: 86.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 242): {kalori: 1395, protein: 94, karb: 23, yag: 103}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 243): {kalori: 1345.2, protein: 78, karb: 19.8, yag: 106}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 244): {kalori: 1227, protein: 77, karb: 25, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 245): {kalori: 1288, protein: 62, karb: 26, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 246): {kalori: 1485, protein: 80, karb: 29, yag: 117}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 247): {kalori: 1130, protein: 47, karb: 25, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 248): {kalori: 1323, protein: 68, karb: 31, yag: 103}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 249): {kalori: 1262, protein: 66, karb: 20, yag: 102}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 25): {kalori: 1085.4, protein: 61, karb: 19.1, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 250): {kalori: 1248, protein: 53, karb: 16, yag: 108}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 251): {kalori: 1381, protein: 92, karb: 17, yag: 105}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 252): {kalori: 1664, protein: 78, karb: 23, yag: 140}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 253): {kalori: 1118, protein: 66, karb: 20, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 254): {kalori: 989, protein: 76, karb: 16, yag: 69}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 255): {kalori: 1342, protein: 46, karb: 15, yag: 122}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 256): {kalori: 1336, protein: 76, karb: 24, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 257): {kalori: 1272, protein: 65, karb: 28, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 258): {kalori: 1377, protein: 100, karb: 17, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 259): {kalori: 1290, protein: 82, karb: 21, yag: 96.5}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 26): {kalori: 997.5999999999999, protein: 71, karb: 11.9, yag: 74}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 260): {kalori: 1118, protein: 66, karb: 20, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 261): {kalori: 989, protein: 76, karb: 16, yag: 69}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 262): {kalori: 1019.4, protein: 73, karb: 31.1, yag: 67}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 263): {kalori: 926, protein: 68, karb: 10.5, yag: 68}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 264): {kalori: 1620, protein: 108, karb: 27, yag: 120}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 265): {kalori: 1383, protein: 75, karb: 21, yag: 111}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 266): {kalori: 1225, protein: 65, karb: 27.5, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 267): {kalori: 1190.4, protein: 86, karb: 28.1, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 268): {kalori: 927, protein: 47, karb: 20.5, yag: 73}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 269): {kalori: 1162, protein: 91, karb: 24, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 27): {kalori: 1231, protein: 68, karb: 17, yag: 99}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 270): {kalori: 1045.4, protein: 74, karb: 14.1, yag: 77}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 271): {kalori: 1083, protein: 56, karb: 10, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 272): {kalori: 1641, protein: 81, karb: 30, yag: 133}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 273): {kalori: 1245, protein: 100, karb: 20, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 274): {kalori: 1534, protein: 93, karb: 25, yag: 118}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 275): {kalori: 1245, protein: 73, karb: 33.5, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 276): {kalori: 1326.2, protein: 85.2, karb: 35.9, yag: 92.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 277): {kalori: 1360, protein: 93, karb: 22, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 278): {kalori: 1399, protein: 88, karb: 39, yag: 99}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 279): {kalori: 1460, protein: 73, karb: 40, yag: 112}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 28): {kalori: 1250, protein: 80, karb: 21, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 280): {kalori: 1403, protein: 79, karb: 24.5, yag: 109}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 281): {kalori: 1323, protein: 68, karb: 31, yag: 103}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 282): {kalori: 1182, protein: 51, karb: 15, yag: 102}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 283): {kalori: 1664, protein: 78, karb: 23, yag: 140}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 284): {kalori: 1154, protein: 74, karb: 21, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 285): {kalori: 1063, protein: 55, karb: 15, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 286): {kalori: 1264, protein: 77, karb: 32, yag: 92}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 287): {kalori: 1484, protein: 64, karb: 38, yag: 120}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 288): {kalori: 1383, protein: 66, karb: 30, yag: 111}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 289): {kalori: 1577, protein: 95, karb: 27, yag: 121}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 29): {kalori: 1042, protein: 62, karb: 18.5, yag: 80}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 290): {kalori: 1056, protein: 56, karb: 19, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 291): {kalori: 1497, protein: 74, karb: 28, yag: 121}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 292): {kalori: 1102, protein: 55, karb: 18, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 293): {kalori: 1217, protein: 52, karb: 26, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 294): {kalori: 1352, protein: 65, karb: 39, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 295): {kalori: 1577, protein: 95, karb: 27, yag: 121}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 296): {kalori: 1056, protein: 56, karb: 19, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 297): {kalori: 1265, protein: 86, karb: 23, yag: 91.5}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 298): {kalori: 1017, protein: 52, karb: 20, yag: 81}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 299): {kalori: 755, protein: 53, karb: 12, yag: 55}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 3): {kalori: 1209, protein: 82, karb: 20, yag: 89}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 30): {kalori: 964, protein: 67, karb: 12, yag: 72}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 300): {kalori: 1260.4, protein: 72, karb: 18.1, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 301): {kalori: 1004, protein: 57, karb: 9.5, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 302): {kalori: 1025, protein: 66, karb: 12.5, yag: 79}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 303): {kalori: 1228, protein: 77, karb: 18.5, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 304): {kalori: 1370.2, protein: 91, karb: 15.3, yag: 105}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 305): {kalori: 1223, protein: 58, karb: 20.5, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 306): {kalori: 1179.4, protein: 71, karb: 28.1, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 307): {kalori: 870, protein: 55, karb: 14, yag: 66}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 308): {kalori: 1380, protein: 80, karb: 31, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 309): {kalori: 1046, protein: 53, karb: 19.5, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 31): {kalori: 1022.4, protein: 67, karb: 22.1, yag: 74}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 310): {kalori: 1099, protein: 77, karb: 29, yag: 75}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 311): {kalori: 1353, protein: 68, karb: 25, yag: 109}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 312): {kalori: 1159, protein: 69, karb: 16, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 313): {kalori: 1191, protein: 69, karb: 24, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 314): {kalori: 1141.2, protein: 72.2, karb: 16.9, yag: 87.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 315): {kalori: 1229, protein: 65, karb: 33, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 316): {kalori: 1196, protein: 61, karb: 31, yag: 92}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 317): {kalori: 1119, protein: 70, karb: 32, yag: 79}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 318): {kalori: 1381.2, protein: 84, karb: 22.8, yag: 106}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 319): {kalori: 1757, protein: 108, karb: 23, yag: 137}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 32): {kalori: 1085.4, protein: 61, karb: 19.1, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 320): {kalori: 1257, protein: 67, karb: 20, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 321): {kalori: 1611, protein: 73, karb: 26, yag: 135}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 322): {kalori: 1403, protein: 66, karb: 26, yag: 115}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 323): {kalori: 1253, protein: 64, karb: 22, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 324): {kalori: 1593, protein: 78, karb: 21, yag: 133}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 325): {kalori: 1487, protein: 80, karb: 24, yag: 119}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 326): {kalori: 1056, protein: 56, karb: 19, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 327): {kalori: 1109, protein: 70, karb: 20.5, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 328): {kalori: 988, protein: 57, karb: 19, yag: 76}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 329): {kalori: 1109, protein: 70, karb: 20.5, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 33): {kalori: 997.5999999999999, protein: 71, karb: 11.9, yag: 74}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 330): {kalori: 988, protein: 57, karb: 19, yag: 76}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 331): {kalori: 1292, protein: 78, karb: 20, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 332): {kalori: 1192, protein: 53, karb: 20, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 333): {kalori: 1609, protein: 84, karb: 46, yag: 121}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 334): {kalori: 1313.4, protein: 67, karb: 16.1, yag: 109}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 335): {kalori: 1143, protein: 75, karb: 25, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 336): {kalori: 1435.6, protein: 76, karb: 21.9, yag: 116}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 337): {kalori: 1280, protein: 62, karb: 24, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 338): {kalori: 1215, protein: 68, karb: 40, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 339): {kalori: 1076, protein: 68, karb: 12, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 34): {kalori: 1231, protein: 68, karb: 17, yag: 99}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 340): {kalori: 1082, protein: 77, karb: 18, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 341): {kalori: 1107, protein: 64, karb: 17, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 342): {kalori: 1096, protein: 76, karb: 18, yag: 80}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 343): {kalori: 934, protein: 69, karb: 16, yag: 66}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 344): {kalori: 955.4, protein: 67, karb: 12.1, yag: 71}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 345): {kalori: 1195, protein: 69, karb: 20.5, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 346): {kalori: 1199, protein: 75, karb: 20, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 347): {kalori: 1223.6, protein: 83, karb: 25.9, yag: 88}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 348): {kalori: 1007, protein: 48, karb: 12.5, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 349): {kalori: 1499, protein: 95, karb: 21, yag: 115}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 35): {kalori: 1262, protein: 43, karb: 16, yag: 114}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 350): {kalori: 1098, protein: 71, karb: 28, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 351): {kalori: 888, protein: 40, karb: 20, yag: 72}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 352): {kalori: 1427, protein: 91, karb: 25, yag: 107}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 353): {kalori: 728, protein: 47, karb: 13.5, yag: 54}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 354): {kalori: 1126.2, protein: 61.2, karb: 30.9, yag: 84.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 355): {kalori: 1145, protein: 49, karb: 28, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 356): {kalori: 1206, protein: 78, karb: 21, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 357): {kalori: 1012, protein: 59, karb: 23, yag: 76}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 358): {kalori: 947, protein: 50, karb: 18, yag: 75}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 359): {kalori: 1316, protein: 75, karb: 29, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 36): {kalori: 1190, protein: 72, karb: 23, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 360): {kalori: 1138, protein: 50, karb: 23, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 361): {kalori: 1328, protein: 69, karb: 20, yag: 108}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 362): {kalori: 1303, protein: 73, karb: 21, yag: 103}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 363): {kalori: 1358, protein: 61, karb: 22, yag: 114}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 364): {kalori: 1171, protein: 59, karb: 20, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 365): {kalori: 1082, protein: 79, karb: 25, yag: 74}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 366): {kalori: 1532.2, protein: 104, karb: 15.8, yag: 117}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 367): {kalori: 832, protein: 31, karb: 15, yag: 72}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 368): {kalori: 1347, protein: 81, karb: 19.5, yag: 105}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 369): {kalori: 1245, protein: 58, karb: 27, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 37): {kalori: 1457, protein: 53, karb: 30, yag: 125}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 370): {kalori: 1196, protein: 51, karb: 23, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 371): {kalori: 1367, protein: 66, karb: 17, yag: 115}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 372): {kalori: 1099, protein: 57, karb: 22, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 373): {kalori: 1240, protein: 76, karb: 19, yag: 94.5}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 374): {kalori: 1375.6, protein: 98, karb: 20.9, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 375): {kalori: 1215, protein: 68, karb: 40, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 376): {kalori: 1791, protein: 104, karb: 22, yag: 143}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 377): {kalori: 1076, protein: 68, karb: 12, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 378): {kalori: 1055, protein: 74, karb: 12, yag: 79}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 379): {kalori: 1085, protein: 80, karb: 9, yag: 81}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 38): {kalori: 1337, protein: 90, karb: 17, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 380): {kalori: 955.4, protein: 67, karb: 12.1, yag: 71}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 381): {kalori: 1193, protein: 68, karb: 25.5, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 382): {kalori: 1199, protein: 75, karb: 20, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 383): {kalori: 1339.6, protein: 86, karb: 23.9, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 384): {kalori: 1064, protein: 91, karb: 22, yag: 68}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 385): {kalori: 888, protein: 40, karb: 20, yag: 72}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 386): {kalori: 1145, protein: 74, karb: 21, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 387): {kalori: 1078, protein: 63, karb: 26.5, yag: 80}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 388): {kalori: 1179.2, protein: 71.2, karb: 31.9, yag: 85.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 389): {kalori: 1290, protein: 89, karb: 22, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 39): {kalori: 890, protein: 52, karb: 14, yag: 68.5}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 390): {kalori: 1262, protein: 56, karb: 21, yag: 106}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 391): {kalori: 1078, protein: 70, karb: 24, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 392): {kalori: 1280, protein: 62, karb: 24, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 393): {kalori: 1412, protein: 77, karb: 33, yag: 108}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 394): {kalori: 1364, protein: 75, karb: 32, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 395): {kalori: 1337, protein: 73, karb: 25, yag: 105}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 396): {kalori: 1399, protein: 75, karb: 25, yag: 111}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 397): {kalori: 1421, protein: 99, karb: 20, yag: 105}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 398): {kalori: 1096, protein: 77, karb: 26, yag: 76}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 399): {kalori: 1532.2, protein: 104, karb: 15.8, yag: 117}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 4): {kalori: 1150, protein: 78, karb: 16, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 40): {kalori: 1013, protein: 67, karb: 13, yag: 77}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 400): {kalori: 923, protein: 35, karb: 18, yag: 79}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 401): {kalori: 1438, protein: 85, karb: 22.5, yag: 112}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 402): {kalori: 1362, protein: 75, karb: 27, yag: 106}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 403): {kalori: 1372, protein: 85, karb: 15, yag: 108}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 404): {kalori: 978, protein: 57, karb: 21, yag: 74}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 405): {kalori: 1164, protein: 62, karb: 13, yag: 96}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 406): {kalori: 1209, protein: 82, karb: 20, yag: 89}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 407): {kalori: 1484, protein: 91, karb: 19, yag: 116}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 408): {kalori: 1354, protein: 75, karb: 34, yag: 102}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 409): {kalori: 1119.4, protein: 75, karb: 18.1, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 41): {kalori: 1392, protein: 72, karb: 24, yag: 112}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 410): {kalori: 1212, protein: 90, karb: 24, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 411): {kalori: 1115, protein: 53, karb: 21, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 412): {kalori: 1721, protein: 84, karb: 29, yag: 141}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 413): {kalori: 1118, protein: 74, karb: 21, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 414): {kalori: 1263.2, protein: 94.2, karb: 20.9, yag: 89.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 415): {kalori: 1360, protein: 93, karb: 22, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 416): {kalori: 1257, protein: 75, karb: 21, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 417): {kalori: 1205, protein: 58, karb: 25, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 418): {kalori: 1130, protein: 56, karb: 25, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 419): {kalori: 1248, protein: 53, karb: 16, yag: 108}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 42): {kalori: 792, protein: 64, karb: 17, yag: 52}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 420): {kalori: 858, protein: 82, karb: 11, yag: 54}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 421): {kalori: 1780, protein: 104, karb: 26, yag: 140}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 422): {kalori: 1332, protein: 66.5, karb: 19, yag: 110}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 423): {kalori: 1286.4, protein: 72.9, karb: 16.5, yag: 103.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 424): {kalori: 1069, protein: 75, karb: 10, yag: 81}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 425): {kalori: 1088, protein: 62, karb: 21, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 426): {kalori: 1612, protein: 96, karb: 28, yag: 124}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 427): {kalori: 1276.4, protein: 77, karb: 17.1, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 428): {kalori: 1630, protein: 74, karb: 32, yag: 134}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 429): {kalori: 1089.4, protein: 73.9, karb: 22.5, yag: 78.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 43): {kalori: 825, protein: 36, karb: 15, yag: 69}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 430): {kalori: 1245, protein: 83, karb: 19, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 431): {kalori: 882, protein: 47, karb: 16, yag: 70}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 432): {kalori: 1577, protein: 92, karb: 30, yag: 121}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 433): {kalori: 1100.4, protein: 69, karb: 17.1, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 434): {kalori: 1855, protein: 88, karb: 27, yag: 155}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 435): {kalori: 849, protein: 52, karb: 14, yag: 65}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 436): {kalori: 1358, protein: 93, karb: 17, yag: 102}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 437): {kalori: 1019, protein: 59, karb: 18, yag: 79}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 438): {kalori: 1310, protein: 100, karb: 16, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 439): {kalori: 1253, protein: 90, karb: 14, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 44): {kalori: 1173, protein: 62, karb: 31, yag: 89}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 440): {kalori: 1281, protein: 83, karb: 28, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 441): {kalori: 1186, protein: 76, karb: 18, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 442): {kalori: 1394, protein: 87, karb: 23, yag: 106}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 443): {kalori: 1239, protein: 67, karb: 20, yag: 99}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 444): {kalori: 1738, protein: 99, karb: 25, yag: 138}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 445): {kalori: 1246.6, protein: 89, karb: 17.9, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 446): {kalori: 1722, protein: 103, karb: 26, yag: 134}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 447): {kalori: 1516, protein: 96.5, karb: 26, yag: 114}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 448): {kalori: 1015, protein: 75, karb: 19, yag: 71}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 449): {kalori: 1660, protein: 100, karb: 27, yag: 128}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 45): {kalori: 1147, protein: 64, karb: 18, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 450): {kalori: 1109, protein: 67, karb: 19, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 451): {kalori: 1298.2, protein: 94.2, karb: 22.9, yag: 92.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 452): {kalori: 827, protein: 59, karb: 10.5, yag: 61}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 453): {kalori: 1485, protein: 102, karb: 24, yag: 109}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 454): {kalori: 1472, protein: 76, karb: 40, yag: 112}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 455): {kalori: 1000, protein: 58, karb: 21, yag: 76}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 456): {kalori: 1265.2, protein: 89.2, karb: 26.4, yag: 89.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 457): {kalori: 1506, protein: 95, karb: 25, yag: 114}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 458): {kalori: 1359, protein: 50, karb: 32, yag: 115}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 459): {kalori: 1256, protein: 66, karb: 23, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 46): {kalori: 946.4, protein: 50, karb: 11.1, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 460): {kalori: 1682, protein: 96, karb: 32, yag: 130}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 461): {kalori: 1200, protein: 74, karb: 24.5, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 462): {kalori: 1299, protein: 94, karb: 17, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 463): {kalori: 1314, protein: 66, karb: 24, yag: 106}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 464): {kalori: 1387, protein: 78, karb: 19, yag: 111}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 465): {kalori: 1903, protein: 89, karb: 38, yag: 155}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 466): {kalori: 1129, protein: 61, karb: 21, yag: 89}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 467): {kalori: 1795, protein: 99, karb: 41.5, yag: 137}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 468): {kalori: 2263, protein: 118, karb: 46, yag: 179}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 469): {kalori: 1828, protein: 84, karb: 40, yag: 148}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 47): {kalori: 776, protein: 58, karb: 20, yag: 52}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 470): {kalori: 1331, protein: 81, karb: 20, yag: 103}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 471): {kalori: 1832, protein: 107, karb: 27, yag: 144}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 472): {kalori: 1810, protein: 87, karb: 28, yag: 150}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 473): {kalori: 1149.4, protein: 66.9, karb: 17.5, yag: 90.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 474): {kalori: 907, protein: 66, karb: 10, yag: 67}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 475): {kalori: 754, protein: 45, karb: 13, yag: 58}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 476): {kalori: 1373, protein: 92, karb: 42, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 477): {kalori: 1316.4, protein: 87, karb: 17.1, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 478): {kalori: 1367, protein: 92, karb: 18, yag: 103}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 479): {kalori: 1549, protein: 81, karb: 34, yag: 121}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 48): {kalori: 1068.6, protein: 59, karb: 16.9, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 480): {kalori: 1370, protein: 85, karb: 19, yag: 106}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 481): {kalori: 1286, protein: 90, karb: 20, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 482): {kalori: 1604, protein: 78, karb: 17, yag: 136}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 483): {kalori: 978, protein: 82, karb: 14, yag: 66}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 484): {kalori: 1326, protein: 81, karb: 21, yag: 102}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 485): {kalori: 1145.6, protein: 66, karb: 26.9, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 486): {kalori: 1022.3, protein: 64, karb: 18.1, yag: 77.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 487): {kalori: 1326, protein: 81, karb: 21, yag: 102}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 488): {kalori: 1242, protein: 67, karb: 41, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 489): {kalori: 1068.6, protein: 59, karb: 16.9, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 49): {kalori: 1308, protein: 62, karb: 26.5, yag: 106}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 490): {kalori: 1040, protein: 41, karb: 12, yag: 92}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 491): {kalori: 1004.9, protein: 55, karb: 25, yag: 76.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 492): {kalori: 1096, protein: 76, karb: 18, yag: 80}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 493): {kalori: 955.4, protein: 67, karb: 12.1, yag: 71}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 494): {kalori: 1010, protein: 48, karb: 15.5, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 495): {kalori: 888, protein: 40, karb: 20, yag: 72}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 496): {kalori: 1145, protein: 74, karb: 21, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 497): {kalori: 998, protein: 60, karb: 18.5, yag: 76}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 498): {kalori: 1149.2, protein: 74.2, karb: 25.9, yag: 83.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 499): {kalori: 1290, protein: 89, karb: 22, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 5): {kalori: 1113, protein: 47, karb: 22, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 50): {kalori: 911, protein: 52, karb: 16, yag: 71}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 500): {kalori: 1204, protein: 63, karb: 22, yag: 96}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 501): {kalori: 1082, protein: 71, karb: 24, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 502): {kalori: 1284, protein: 63, karb: 24, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 503): {kalori: 1480, protein: 78, karb: 31, yag: 116}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 504): {kalori: 1432, protein: 72, karb: 25, yag: 116}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 505): {kalori: 1275, protein: 66, karb: 21, yag: 103}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 506): {kalori: 1099, protein: 77, karb: 29, yag: 75}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 507): {kalori: 978, protein: 57, karb: 21, yag: 74}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 508): {kalori: 1396, protein: 72, karb: 25, yag: 112}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 509): {kalori: 1106, protein: 86, karb: 15, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 51): {kalori: 1559, protein: 72, karb: 32, yag: 127}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 510): {kalori: 1040, protein: 63, karb: 17, yag: 80}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 511): {kalori: 1381, protein: 75, karb: 25, yag: 109}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 512): {kalori: 1241.4, protein: 76, karb: 16.1, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 513): {kalori: 1350, protein: 103, karb: 41, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 514): {kalori: 1474, protein: 73, karb: 39, yag: 114}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 515): {kalori: 1428, protein: 71, karb: 52, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 516): {kalori: 1385, protein: 86, karb: 42, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 517): {kalori: 1446, protein: 70, karb: 44, yag: 110}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 518): {kalori: 1028, protein: 68, karb: 36, yag: 68}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 519): {kalori: 1393, protein: 90, karb: 22, yag: 105}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 52): {kalori: 1058, protein: 63, karb: 17, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 520): {kalori: 1236, protein: 110, karb: 19, yag: 80}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 521): {kalori: 1881, protein: 101, karb: 25, yag: 153}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 522): {kalori: 2589, protein: 168, karb: 36, yag: 197}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 523): {kalori: 998, protein: 59, karb: 15, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 524): {kalori: 1098, protein: 70, karb: 20, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 525): {kalori: 1059, protein: 77, karb: 19, yag: 75}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 526): {kalori: 1079, protein: 58, karb: 16, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 527): {kalori: 867, protein: 66, karb: 18, yag: 59}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 528): {kalori: 1456, protein: 85, karb: 27, yag: 112}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 529): {kalori: 1962.2, protein: 102, karb: 30.8, yag: 159}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 53): {kalori: 990, protein: 46, karb: 12.5, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 530): {kalori: 1263, protein: 68, karb: 25, yag: 99}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 531): {kalori: 1354, protein: 75, karb: 34, yag: 102}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 532): {kalori: 1441, protein: 88, karb: 28, yag: 109}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 533): {kalori: 1228, protein: 80, karb: 20, yag: 92}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 534): {kalori: 1119.4, protein: 75, karb: 18.1, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 535): {kalori: 1212, protein: 90, karb: 24, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 536): {kalori: 1345.4, protein: 90, karb: 28.1, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 537): {kalori: 1721, protein: 84, karb: 29, yag: 141}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 538): {kalori: 1090, protein: 73, karb: 24, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 539): {kalori: 1351, protein: 67, karb: 21, yag: 111}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 54): {kalori: 1275, protein: 79, karb: 17, yag: 99}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 540): {kalori: 1222, protein: 70, karb: 15, yag: 98}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 541): {kalori: 1659, protein: 90, karb: 30, yag: 131}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 542): {kalori: 1635.4, protein: 98.1, karb: 25, yag: 127}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 543): {kalori: 1299, protein: 94, karb: 17, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 544): {kalori: 1353, protein: 63, karb: 21, yag: 113}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 545): {kalori: 1481, protein: 78, karb: 20, yag: 121}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 546): {kalori: 1391, protein: 79, karb: 24.5, yag: 109}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 547): {kalori: 1130, protein: 56, karb: 25, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 548): {kalori: 1453, protein: 72, karb: 37, yag: 113}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 549): {kalori: 1262, protein: 66, karb: 20, yag: 102}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 55): {kalori: 1215, protein: 68, karb: 40, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 550): {kalori: 1248, protein: 53, karb: 16, yag: 108}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 551): {kalori: 1673, protein: 85, karb: 25, yag: 137}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 552): {kalori: 1329.2, protein: 78.2, karb: 30.9, yag: 99.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 553): {kalori: 1563, protein: 81, karb: 33, yag: 123}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 554): {kalori: 1330, protein: 77, karb: 44, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 555): {kalori: 1528.2, protein: 107.2, karb: 44.9, yag: 102.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 556): {kalori: 1163, protein: 67, karb: 37, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 557): {kalori: 1054, protein: 75, karb: 40, yag: 66}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 558): {kalori: 1329.2, protein: 78.2, karb: 30.9, yag: 99.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 559): {kalori: 1563, protein: 81, karb: 33, yag: 123}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 56): {kalori: 1771.2, protein: 108, karb: 19.8, yag: 140}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 560): {kalori: 1330, protein: 77, karb: 44, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 561): {kalori: 1528.2, protein: 107.2, karb: 44.9, yag: 102.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 562): {kalori: 1163, protein: 67, karb: 37, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 563): {kalori: 1079, protein: 58, karb: 16, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 564): {kalori: 1354, protein: 75, karb: 34, yag: 102}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 565): {kalori: 1119.4, protein: 75, karb: 18.1, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 566): {kalori: 1118, protein: 74, karb: 21, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 567): {kalori: 1118, protein: 74, karb: 21, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 568): {kalori: 1664, protein: 78, karb: 23, yag: 140}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 569): {kalori: 1346, protein: 82, karb: 25, yag: 102}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 57): {kalori: 1369, protein: 86, karb: 21, yag: 103.5}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 570): {kalori: 1057, protein: 76, karb: 15, yag: 77}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 571): {kalori: 1119.3, protein: 72, karb: 23.1, yag: 82.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 572): {kalori: 1154.4, protein: 66, karb: 29.1, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 573): {kalori: 1347, protein: 69, karb: 18, yag: 111}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 574): {kalori: 1225, protein: 65, karb: 27.5, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 575): {kalori: 1217.2, protein: 79.2, karb: 28.9, yag: 87.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 576): {kalori: 1132, protein: 60, karb: 25, yag: 88}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 577): {kalori: 1379, protein: 65, karb: 30, yag: 111}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 578): {kalori: 1299, protein: 56, karb: 28, yag: 107}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 579): {kalori: 1664, protein: 78, karb: 23, yag: 140}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 58): {kalori: 2164.2, protein: 120, karb: 31.8, yag: 173}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 580): {kalori: 1020, protein: 58, karb: 17, yag: 80}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 581): {kalori: 1436, protein: 62, karb: 37, yag: 116}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 582): {kalori: 1197, protein: 60, karb: 30, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 583): {kalori: 1056, protein: 56, karb: 19, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 584): {kalori: 1057, protein: 76, karb: 15, yag: 77}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 585): {kalori: 1347, protein: 69, karb: 18, yag: 111}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 586): {kalori: 1347, protein: 69, karb: 18, yag: 111}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 587): {kalori: 820.4, protein: 62, karb: 17.1, yag: 56}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 588): {kalori: 1290.2, protein: 90, karb: 14.3, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 589): {kalori: 1225, protein: 65, karb: 27.5, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 59): {kalori: 1195, protein: 95, karb: 17, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 590): {kalori: 1190.4, protein: 86, karb: 28.1, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 591): {kalori: 1152, protein: 61, karb: 20, yag: 92}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 592): {kalori: 1171, protein: 80, karb: 26, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 593): {kalori: 1534, protein: 93, karb: 25, yag: 118}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 594): {kalori: 1189.2, protein: 74.2, karb: 26.9, yag: 87.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 595): {kalori: 1261, protein: 62, karb: 26, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 596): {kalori: 1453, protein: 72, karb: 37, yag: 113}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 597): {kalori: 1317, protein: 58, karb: 26, yag: 109}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 598): {kalori: 1664, protein: 78, karb: 23, yag: 140}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 599): {kalori: 1056, protein: 56, karb: 19, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 6): {kalori: 1145, protein: 73, karb: 22, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 60): {kalori: 1835, protein: 96, karb: 32, yag: 147}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 600): {kalori: 1054, protein: 75, karb: 40, yag: 66}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 601): {kalori: 1265, protein: 83, karb: 28.5, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 602): {kalori: 1294, protein: 61, karb: 60, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 603): {kalori: 1257, protein: 65, karb: 31, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 604): {kalori: 1508, protein: 88, karb: 37, yag: 112}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 605): {kalori: 1260, protein: 80, karb: 28, yag: 92}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 606): {kalori: 1090, protein: 63, karb: 34, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 607): {kalori: 1033.4, protein: 69, karb: 25.1, yag: 73}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 608): {kalori: 2548, protein: 153, karb: 34, yag: 200}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 609): {kalori: 1164, protein: 62, karb: 13, yag: 96}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 61): {kalori: 978, protein: 63, karb: 15, yag: 74}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 610): {kalori: 1078, protein: 64, karb: 21, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 611): {kalori: 1297, protein: 86, karb: 20, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 612): {kalori: 1198, protein: 72, karb: 16, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 613): {kalori: 1251, protein: 57, karb: 24, yag: 103}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 614): {kalori: 1118, protein: 80, karb: 15, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 615): {kalori: 1217, protein: 68, karb: 18, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 616): {kalori: 950, protein: 65, karb: 15, yag: 70}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 617): {kalori: 1193, protein: 68, karb: 21, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 618): {kalori: 2035, protein: 99, karb: 34, yag: 167}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 619): {kalori: 1354, protein: 75, karb: 34, yag: 102}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 62): {kalori: 1503, protein: 91, karb: 26, yag: 115}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 620): {kalori: 1228, protein: 81, karb: 28, yag: 88}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 621): {kalori: 1304, protein: 77, karb: 33, yag: 96}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 622): {kalori: 1413, protein: 62, karb: 38, yag: 113}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 623): {kalori: 1358, protein: 61, karb: 31, yag: 110}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 624): {kalori: 1056, protein: 56, karb: 19, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 625): {kalori: 1163, protein: 67, karb: 37, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 626): {kalori: 1333, protein: 90, karb: 29.5, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 627): {kalori: 1362, protein: 68, karb: 61, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 628): {kalori: 1325, protein: 72, karb: 32, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 629): {kalori: 1576, protein: 95, karb: 38, yag: 116}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 63): {kalori: 1120, protein: 64, karb: 18, yag: 88}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 630): {kalori: 1328, protein: 87, karb: 29, yag: 96}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 631): {kalori: 1274, protein: 83, karb: 33, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 632): {kalori: 1101.4, protein: 76, karb: 26.1, yag: 77}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 633): {kalori: 1240, protein: 76, karb: 19, yag: 94.5}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 634): {kalori: 1392, protein: 72, karb: 24, yag: 112}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 635): {kalori: 1068.6, protein: 59, karb: 16.9, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 636): {kalori: 1004.9, protein: 55, karb: 25, yag: 76.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 637): {kalori: 955.4, protein: 67, karb: 12.1, yag: 71}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 638): {kalori: 1459, protein: 68, karb: 38, yag: 115}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 639): {kalori: 1416, protein: 79, karb: 41, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 64): {kalori: 1076, protein: 71, karb: 18, yag: 80}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 640): {kalori: 1455.3, protein: 71.1, karb: 45, yag: 110.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 641): {kalori: 1103, protein: 53, karb: 36, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 642): {kalori: 1626.3, protein: 82.1, karb: 43, yag: 125.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 643): {kalori: 1444, protein: 79, karb: 39, yag: 108}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 644): {kalori: 1595, protein: 92, karb: 48, yag: 115}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 645): {kalori: 1244, protein: 48, karb: 38, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 646): {kalori: 1048, protein: 67, karb: 33, yag: 72}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 647): {kalori: 961.4, protein: 73, karb: 25.6, yag: 63}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 648): {kalori: 980, protein: 67, karb: 29.5, yag: 66}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 649): {kalori: 858, protein: 49, karb: 30.5, yag: 60}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 65): {kalori: 1089, protein: 79, karb: 11, yag: 81}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 650): {kalori: 1178, protein: 78, karb: 36.5, yag: 80}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 651): {kalori: 1157, protein: 53, karb: 54, yag: 81}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 652): {kalori: 1009, protein: 59, karb: 38, yag: 69}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 653): {kalori: 932, protein: 75, karb: 32, yag: 56}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 654): {kalori: 983, protein: 60, karb: 30.5, yag: 69}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 655): {kalori: 1311, protein: 77, karb: 19, yag: 103}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 656): {kalori: 1301, protein: 68, karb: 48, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 657): {kalori: 1163, protein: 73, karb: 28, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 658): {kalori: 1260.2, protein: 66, karb: 30.8, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 659): {kalori: 1270, protein: 55, karb: 33, yag: 102}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 66): {kalori: 1346.2, protein: 94, karb: 19.8, yag: 99}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 660): {kalori: 856, protein: 77, karb: 29, yag: 48}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 661): {kalori: 1357, protein: 87, karb: 34, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 662): {kalori: 1275.4, protein: 61.9, karb: 22.5, yag: 104.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 663): {kalori: 1509, protein: 84, karb: 25.5, yag: 119}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 664): {kalori: 978, protein: 57, karb: 21, yag: 74}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 665): {kalori: 1363, protein: 76, karb: 33, yag: 103}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 666): {kalori: 1239, protein: 75, karb: 21, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 667): {kalori: 1229, protein: 67, karb: 22, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 668): {kalori: 1076, protein: 76, karb: 22, yag: 76}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 669): {kalori: 990.2, protein: 73.2, karb: 29.9, yag: 64.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 67): {kalori: 1310.2, protein: 64, karb: 22.8, yag: 107}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 670): {kalori: 1290, protein: 89, karb: 22, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 671): {kalori: 1331.2, protein: 70, karb: 19.8, yag: 108}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 672): {kalori: 1284, protein: 63, karb: 24, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 673): {kalori: 1240, protein: 76, karb: 19, yag: 94.5}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 674): {kalori: 1392, protein: 72, karb: 24, yag: 112}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 675): {kalori: 1068.6, protein: 59, karb: 16.9, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 676): {kalori: 1004.9, protein: 55, karb: 25, yag: 76.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 677): {kalori: 955.4, protein: 67, karb: 12.1, yag: 71}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 678): {kalori: 888, protein: 40, karb: 20, yag: 72}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 679): {kalori: 1284, protein: 63, karb: 24, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 68): {kalori: 1047, protein: 80, karb: 13, yag: 75}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 680): {kalori: 1446, protein: 79, karb: 35, yag: 110}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 681): {kalori: 1371, protein: 74, karb: 28, yag: 107}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 682): {kalori: 1303, protein: 74, karb: 29, yag: 99}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 683): {kalori: 921, protein: 73, karb: 20, yag: 61}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 684): {kalori: 982, protein: 57, karb: 22, yag: 74}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 685): {kalori: 1485, protein: 73, karb: 44, yag: 113}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 686): {kalori: 1447.3, protein: 70.1, karb: 44, yag: 110.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 687): {kalori: 1245.3, protein: 48.1, karb: 38, yag: 100.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 688): {kalori: 961.4, protein: 73, karb: 25.6, yag: 63}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 689): {kalori: 1283.3, protein: 55.1, karb: 36, yag: 102.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 69): {kalori: 1032, protein: 62, karb: 16, yag: 80}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 690): {kalori: 872, protein: 77, karb: 33, yag: 48}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 691): {kalori: 1357, protein: 87, karb: 34, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 692): {kalori: 1357, protein: 87, karb: 34, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 693): {kalori: 1172.3, protein: 63.1, karb: 38.5, yag: 85.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 694): {kalori: 904, protein: 57, karb: 34, yag: 60}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 695): {kalori: 1031.3, protein: 67.1, karb: 33, yag: 70.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 696): {kalori: 886, protein: 47, karb: 26, yag: 66}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 697): {kalori: 1139.3, protein: 70.1, karb: 39, yag: 78.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 698): {kalori: 1160, protein: 75, karb: 39.5, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 699): {kalori: 1284, protein: 73, karb: 41, yag: 92}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 7): {kalori: 1206, protein: 83, karb: 16, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 70): {kalori: 1315, protein: 101, karb: 14, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 700): {kalori: 820.4, protein: 62, karb: 17.1, yag: 56}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 701): {kalori: 1030, protein: 55, karb: 13.5, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 702): {kalori: 1645, protein: 100, karb: 30, yag: 125}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 703): {kalori: 1325, protein: 83, karb: 12, yag: 105}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 704): {kalori: 1162, protein: 56, karb: 14, yag: 98}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 705): {kalori: 1285, protein: 63, karb: 22, yag: 105}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 706): {kalori: 1370.2, protein: 91, karb: 15.3, yag: 105}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 707): {kalori: 1318, protein: 67, karb: 28.5, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 708): {kalori: 1187.4, protein: 86, karb: 24.1, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 709): {kalori: 1099, protein: 77, karb: 29, yag: 75}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 71): {kalori: 1289, protein: 90, karb: 14, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 710): {kalori: 1353, protein: 68, karb: 25, yag: 109}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 711): {kalori: 1261, protein: 62, karb: 26, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 712): {kalori: 1664, protein: 78, karb: 23, yag: 140}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 713): {kalori: 1467, protein: 75, karb: 33, yag: 115}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 714): {kalori: 1272, protein: 52, karb: 32, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 715): {kalori: 1056, protein: 56, karb: 19, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 716): {kalori: 1295.3, protein: 61.1, karb: 60, yag: 90.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 717): {kalori: 1508.4, protein: 88.1, karb: 37, yag: 112}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 718): {kalori: 1274, protein: 83, karb: 33, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 719): {kalori: 1033.4, protein: 69, karb: 25.1, yag: 73}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 72): {kalori: 1307, protein: 85, karb: 28, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 720): {kalori: 1008, protein: 64, karb: 30.5, yag: 70}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 721): {kalori: 951.3, protein: 54.1, karb: 21.5, yag: 72.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 722): {kalori: 1007.3, protein: 66.1, karb: 32.5, yag: 68.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 723): {kalori: 1133, protein: 65, karb: 27, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 724): {kalori: 1121, protein: 68, karb: 39, yag: 77}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 725): {kalori: 1108, protein: 99, karb: 34, yag: 64}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 726): {kalori: 1030, protein: 61, karb: 30, yag: 74}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 727): {kalori: 1284, protein: 73, karb: 41, yag: 92}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 728): {kalori: 1112.3, protein: 74.1, karb: 35, yag: 75.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 729): {kalori: 1554, protein: 74, karb: 58, yag: 114}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 73): {kalori: 1345, protein: 99, karb: 28, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 730): {kalori: 1209, protein: 65, karb: 37, yag: 89}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 731): {kalori: 1185, protein: 66, karb: 30, yag: 89}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 732): {kalori: 1267.3, protein: 69.1, karb: 63, yag: 82.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 733): {kalori: 1121.3, protein: 76.1, karb: 33, yag: 76.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 734): {kalori: 1120, protein: 52, karb: 30, yag: 88}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 735): {kalori: 1163, protein: 76, karb: 19, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 736): {kalori: 905, protein: 72, karb: 17, yag: 61}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 737): {kalori: 820.4, protein: 62, karb: 17.1, yag: 56}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 738): {kalori: 1088, protein: 62, karb: 16.5, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 739): {kalori: 1099, protein: 61, karb: 13.5, yag: 89}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 74): {kalori: 1182, protein: 75, karb: 18, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 740): {kalori: 1457, protein: 87, karb: 14, yag: 117}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 741): {kalori: 1162, protein: 56, karb: 14, yag: 98}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 742): {kalori: 1370.2, protein: 91, karb: 15.3, yag: 105}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 743): {kalori: 1318, protein: 67, karb: 28.5, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 744): {kalori: 1187.4, protein: 86, karb: 24.1, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 745): {kalori: 913, protein: 58, karb: 15, yag: 69}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 746): {kalori: 1255, protein: 93, karb: 25, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 747): {kalori: 1229.4, protein: 76, karb: 22.1, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 748): {kalori: 1158, protein: 56, karb: 22, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 749): {kalori: 1721, protein: 84, karb: 29, yag: 141}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 75): {kalori: 1411, protein: 83, karb: 20, yag: 111}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 750): {kalori: 1142, protein: 80, karb: 30, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 751): {kalori: 1517, protein: 71, karb: 27, yag: 125}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 752): {kalori: 963, protein: 64, karb: 17, yag: 71}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 753): {kalori: 915, protein: 53, karb: 16, yag: 71}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 754): {kalori: 1205, protein: 58, karb: 25, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 755): {kalori: 1388, protein: 79, karb: 20.5, yag: 110}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 756): {kalori: 1375, protein: 81, karb: 22, yag: 107}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 757): {kalori: 1317, protein: 58, karb: 26, yag: 109}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 758): {kalori: 1381, protein: 92, karb: 17, yag: 105}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 759): {kalori: 1664, protein: 78, karb: 23, yag: 140}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 76): {kalori: 1252, protein: 68, karb: 20, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 760): {kalori: 1264, protein: 77, karb: 32, yag: 92}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 761): {kalori: 1393, protein: 52, karb: 33, yag: 117}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 762): {kalori: 1322, protein: 60, karb: 32, yag: 106}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 763): {kalori: 1577, protein: 95, karb: 27, yag: 121}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 764): {kalori: 1630, protein: 74, karb: 32, yag: 134}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 765): {kalori: 1089.4, protein: 73.9, karb: 22.5, yag: 78.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 766): {kalori: 1245, protein: 83, karb: 19, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 767): {kalori: 1577, protein: 92, karb: 30, yag: 121}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 768): {kalori: 1100.4, protein: 69, karb: 17.1, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 769): {kalori: 1350, protein: 103, karb: 41, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 77): {kalori: 1262, protein: 43, karb: 16, yag: 114}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 770): {kalori: 1459, protein: 68, karb: 38, yag: 115}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 771): {kalori: 1393, protein: 73, karb: 39, yag: 105}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 772): {kalori: 1455.3, protein: 71.1, karb: 45, yag: 110.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 773): {kalori: 1344, protein: 77, karb: 38.5, yag: 98}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 774): {kalori: 1033.4, protein: 69, karb: 25.1, yag: 73}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 775): {kalori: 980, protein: 67, karb: 29.5, yag: 66}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 776): {kalori: 951.3, protein: 54.1, karb: 21.5, yag: 72.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 777): {kalori: 1120.3, protein: 81.1, karb: 34.5, yag: 73.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 778): {kalori: 1065, protein: 58, karb: 26, yag: 81}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 779): {kalori: 1053, protein: 61, karb: 38, yag: 73}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 78): {kalori: 1190, protein: 72, karb: 23, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 780): {kalori: 972, protein: 85, karb: 32, yag: 56}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 781): {kalori: 976, protein: 44, karb: 29, yag: 76}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 782): {kalori: 1177.3, protein: 61.1, karb: 39.5, yag: 86.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 783): {kalori: 1056, protein: 66, karb: 36, yag: 72}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 784): {kalori: 940.3, protein: 63.1, karb: 30, yag: 63.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 785): {kalori: 1038, protein: 56, karb: 28, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 786): {kalori: 1284, protein: 73, karb: 41, yag: 92}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 787): {kalori: 1825, protein: 105, karb: 34, yag: 141}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 788): {kalori: 1351, protein: 75, karb: 22, yag: 107}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 789): {kalori: 1509, protein: 95, karb: 19, yag: 117}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 79): {kalori: 1457, protein: 53, karb: 30, yag: 125}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 790): {kalori: 1542, protein: 115, karb: 32, yag: 106}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 791): {kalori: 1186, protein: 88, karb: 24, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 792): {kalori: 1485, protein: 88, karb: 20, yag: 117}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 793): {kalori: 1643, protein: 91, karb: 25, yag: 131}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 794): {kalori: 1733, protein: 97, karb: 28, yag: 137}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 795): {kalori: 1147.4, protein: 51, karb: 22.1, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 796): {kalori: 1686, protein: 97, karb: 23, yag: 134}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 797): {kalori: 1015, protein: 75, karb: 19, yag: 71}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 798): {kalori: 1373, protein: 64.5, karb: 29, yag: 111}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 799): {kalori: 1591, protein: 82, karb: 30, yag: 127}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 8): {kalori: 1491, protein: 99, karb: 51, yag: 99}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 80): {kalori: 1337, protein: 90, karb: 17, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 800): {kalori: 1188, protein: 68, karb: 22, yag: 92}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 801): {kalori: 1249, protein: 59, karb: 35, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 802): {kalori: 971, protein: 53, karb: 25.5, yag: 73}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 803): {kalori: 1224, protein: 82, karb: 26, yag: 88}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 804): {kalori: 1061, protein: 33, karb: 32, yag: 89}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 805): {kalori: 1021, protein: 59, karb: 23, yag: 77}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 806): {kalori: 1265.2, protein: 89.2, karb: 26.4, yag: 89.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 807): {kalori: 2252.2, protein: 122.2, karb: 48.9, yag: 174.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 808): {kalori: 1477, protein: 77, karb: 29, yag: 117}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 809): {kalori: 890, protein: 45, karb: 11, yag: 74}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 81): {kalori: 890, protein: 52, karb: 14, yag: 68.5}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 810): {kalori: 1629, protein: 77, karb: 31, yag: 133}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 811): {kalori: 1299, protein: 94, karb: 17, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 812): {kalori: 1184, protein: 49, karb: 26.5, yag: 98}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 813): {kalori: 1010, protein: 59, karb: 18, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 814): {kalori: 1502, protein: 79, karb: 22, yag: 122}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 815): {kalori: 1801, protein: 86, karb: 38, yag: 145}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 816): {kalori: 1122, protein: 40, karb: 29, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 817): {kalori: 1837, protein: 98, karb: 39.5, yag: 143}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 818): {kalori: 1525, protein: 99, karb: 19, yag: 117}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 819): {kalori: 1319, protein: 67, karb: 31, yag: 103}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 82): {kalori: 1013, protein: 67, karb: 13, yag: 77}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 820): {kalori: 1832, protein: 107, karb: 27, yag: 144}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 821): {kalori: 1697, protein: 88, karb: 28, yag: 137}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 822): {kalori: 1268, protein: 67, karb: 16, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 823): {kalori: 754, protein: 45, karb: 13, yag: 58}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 824): {kalori: 1351, protein: 94, karb: 39, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 825): {kalori: 1498.4, protein: 84, karb: 25.1, yag: 118}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 826): {kalori: 1417, protein: 82, karb: 27, yag: 109}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 827): {kalori: 1433, protein: 79, karb: 16, yag: 117}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 828): {kalori: 869, protein: 87, karb: 11, yag: 53}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 829): {kalori: 1513, protein: 74, karb: 32, yag: 121}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 83): {kalori: 1392, protein: 72, karb: 24, yag: 112}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 830): {kalori: 1637, protein: 90, karb: 29, yag: 129}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 831): {kalori: 1491.4, protein: 76, karb: 20.1, yag: 123}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 832): {kalori: 1567.2, protein: 111.2, karb: 43.9, yag: 105.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 833): {kalori: 1525, protein: 69, karb: 49, yag: 117}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 834): {kalori: 1414, protein: 80.5, karb: 39, yag: 104}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 835): {kalori: 985.3, protein: 69.1, karb: 33, yag: 64.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 836): {kalori: 1175, protein: 67, karb: 31, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 837): {kalori: 1497.2, protein: 109.2, karb: 32.9, yag: 103.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 838): {kalori: 1233, protein: 77, karb: 31, yag: 89}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 839): {kalori: 1125.3, protein: 50.1, karb: 42, yag: 84.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 84): {kalori: 792, protein: 64, karb: 17, yag: 52}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 840): {kalori: 1628, protein: 75, karb: 44, yag: 128}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 841): {kalori: 1871.4, protein: 121.1, karb: 43, yag: 135}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 842): {kalori: 1445.3, protein: 80.1, karb: 38, yag: 108.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 843): {kalori: 1389.4, protein: 83.1, karb: 37, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 844): {kalori: 1046.4, protein: 57, karb: 47.1, yag: 70}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 845): {kalori: 1385.3, protein: 84.1, karb: 55, yag: 92.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 846): {kalori: 1064.4, protein: 66.9, karb: 43.5, yag: 69.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 847): {kalori: 1349.3, protein: 88.1, karb: 51, yag: 88.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 848): {kalori: 1167.5, protein: 67.1, karb: 37.8, yag: 83.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 849): {kalori: 1129.3, protein: 73.1, karb: 29, yag: 80.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 85): {kalori: 825, protein: 36, karb: 15, yag: 69}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 850): {kalori: 1156, protein: 88, karb: 30, yag: 76}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 851): {kalori: 1709, protein: 83, karb: 36, yag: 137}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 852): {kalori: 1112.3, protein: 74.1, karb: 35, yag: 75.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 853): {kalori: 1554, protein: 74, karb: 58, yag: 114}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 854): {kalori: 931, protein: 59, karb: 32, yag: 63}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 855): {kalori: 1300, protein: 80, karb: 29, yag: 96}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 856): {kalori: 1371.3, protein: 63.1, karb: 41, yag: 106.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 857): {kalori: 1121.3, protein: 76.1, karb: 33, yag: 76.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 858): {kalori: 1120, protein: 52, karb: 30, yag: 88}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 859): {kalori: 1035, protein: 69, karb: 12, yag: 79}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 86): {kalori: 1173, protein: 62, karb: 31, yag: 89}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 860): {kalori: 1141.4, protein: 48, karb: 19.1, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 861): {kalori: 1082, protein: 58, karb: 19, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 862): {kalori: 1432, protein: 97, karb: 18, yag: 108}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 863): {kalori: 1042, protein: 64, karb: 21, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 864): {kalori: 806, protein: 61, karb: 19, yag: 54}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 865): {kalori: 1182, protein: 70, karb: 14, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 866): {kalori: 1355, protein: 74, karb: 33, yag: 103}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 867): {kalori: 1099, protein: 73, karb: 15, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 868): {kalori: 1187.4, protein: 86, karb: 24.1, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 869): {kalori: 1109, protein: 76, karb: 19, yag: 81}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 87): {kalori: 1147, protein: 64, karb: 18, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 870): {kalori: 1158, protein: 56, karb: 22, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 871): {kalori: 1438, protein: 67, karb: 27, yag: 118}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 872): {kalori: 1242.2, protein: 74, karb: 31.8, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 873): {kalori: 1205, protein: 58, karb: 25, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 874): {kalori: 1415, protein: 64, karb: 31, yag: 115}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 875): {kalori: 1664, protein: 78, karb: 23, yag: 140}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 876): {kalori: 1124, protein: 67, karb: 16, yag: 88}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 877): {kalori: 1241, protein: 54, karb: 20, yag: 105}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 878): {kalori: 1322, protein: 60, karb: 32, yag: 106}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 879): {kalori: 1474, protein: 95, karb: 17, yag: 114}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 88): {kalori: 946.4, protein: 50, karb: 11.1, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 880): {kalori: 1056, protein: 56, karb: 19, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 881): {kalori: 1609, protein: 89, karb: 23, yag: 129}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 882): {kalori: 1089.4, protein: 73.9, karb: 22.5, yag: 78.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 883): {kalori: 1142, protein: 83, karb: 18, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 884): {kalori: 1464, protein: 77, karb: 28, yag: 116}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 885): {kalori: 1564.3, protein: 81.1, karb: 33, yag: 123.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 886): {kalori: 1323, protein: 79, karb: 56, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 887): {kalori: 1163, protein: 67, karb: 37, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 888): {kalori: 1230, protein: 65, karb: 40, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 889): {kalori: 1208, protein: 64, karb: 31, yag: 92}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 89): {kalori: 776, protein: 58, karb: 20, yag: 52}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 890): {kalori: 1159, protein: 68, karb: 26, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 891): {kalori: 1033.4, protein: 69, karb: 25.1, yag: 73}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 892): {kalori: 1087, protein: 61, karb: 33, yag: 79}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 893): {kalori: 918.3, protein: 53.1, karb: 21, yag: 69.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 894): {kalori: 984.3, protein: 66.1, karb: 38, yag: 63.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 895): {kalori: 1149, protein: 73, karb: 32, yag: 81}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 896): {kalori: 1053, protein: 61, karb: 38, yag: 73}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 897): {kalori: 990, protein: 92, karb: 34, yag: 54}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 898): {kalori: 894, protein: 49, karb: 35, yag: 62}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 899): {kalori: 1249, protein: 60, karb: 43, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 9): {kalori: 1126, protein: 85, karb: 32, yag: 72.5}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 90): {kalori: 1068.6, protein: 59, karb: 16.9, yag: 85}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 900): {kalori: 1188, protein: 78, karb: 34.5, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 901): {kalori: 1284, protein: 73, karb: 41, yag: 92}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 902): {kalori: 1090.3, protein: 79.1, karb: 29, yag: 73.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 903): {kalori: 1554, protein: 74, karb: 58, yag: 114}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 904): {kalori: 926, protein: 53, karb: 30, yag: 66}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 905): {kalori: 1155.3, protein: 70.1, karb: 34, yag: 82.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 906): {kalori: 1161.3, protein: 87.1, karb: 32, yag: 76.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 907): {kalori: 1120, protein: 52, karb: 30, yag: 88}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 908): {kalori: 1181.4, protein: 47, karb: 21.1, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 909): {kalori: 1082, protein: 58, karb: 19, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 91): {kalori: 1308, protein: 62, karb: 26.5, yag: 106}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 910): {kalori: 768, protein: 53, karb: 13, yag: 56}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 911): {kalori: 1042, protein: 64, karb: 21, yag: 78}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 912): {kalori: 1415, protein: 96, karb: 17, yag: 107}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 913): {kalori: 1182, protein: 70, karb: 14, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 914): {kalori: 1550, protein: 76, karb: 19, yag: 130}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 915): {kalori: 883.4, protein: 70.9, karb: 14.5, yag: 60.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 916): {kalori: 802, protein: 76, karb: 12, yag: 50}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 917): {kalori: 1268.2, protein: 76, karb: 13.8, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 918): {kalori: 1578, protein: 87, karb: 24, yag: 126}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 919): {kalori: 1169, protein: 70, karb: 13, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 92): {kalori: 1215, protein: 68, karb: 40, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 920): {kalori: 997, protein: 48, karb: 19, yag: 81}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 921): {kalori: 1016, protein: 67, karb: 16, yag: 76}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 922): {kalori: 1506, protein: 71, karb: 40, yag: 118}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 923): {kalori: 1280, protein: 79, karb: 16, yag: 100}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 924): {kalori: 1840, protein: 104, karb: 23, yag: 148}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 925): {kalori: 1605, protein: 78, karb: 33, yag: 129}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 926): {kalori: 1088.4, protein: 67, karb: 16.1, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 927): {kalori: 1564.3, protein: 81.1, karb: 33, yag: 123.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 928): {kalori: 1524.6, protein: 107.30000000000001, karb: 43.9, yag: 102.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 929): {kalori: 912, protein: 72, karb: 30, yag: 56}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 93): {kalori: 1559, protein: 72, karb: 32, yag: 127}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 930): {kalori: 1295.3, protein: 61.1, karb: 60, yag: 90.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 931): {kalori: 1285, protein: 65, karb: 38, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 932): {kalori: 1033.4, protein: 69, karb: 25.1, yag: 73}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 933): {kalori: 909, protein: 61, karb: 29, yag: 61}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 934): {kalori: 790.3, protein: 44.1, karb: 20.5, yag: 59.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 935): {kalori: 1108.3, protein: 72.1, karb: 36, yag: 75.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 936): {kalori: 1184, protein: 62, karb: 36, yag: 88}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 937): {kalori: 938, protein: 55, karb: 26.5, yag: 68}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 938): {kalori: 1395, protein: 77, karb: 40, yag: 103}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 939): {kalori: 1429.2, protein: 72, karb: 37.8, yag: 110}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 94): {kalori: 1058, protein: 63, karb: 17, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 940): {kalori: 1306.3, protein: 48.1, karb: 42, yag: 105.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 941): {kalori: 873.3, protein: 77.1, karb: 33, yag: 48.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 942): {kalori: 1357, protein: 87, karb: 34, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 943): {kalori: 1054, protein: 66, karb: 40, yag: 70}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 944): {kalori: 1344.3, protein: 74.1, karb: 66, yag: 87.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 945): {kalori: 1121.3, protein: 76.1, karb: 33, yag: 76.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 946): {kalori: 1120, protein: 52, karb: 30, yag: 88}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 947): {kalori: 1007, protein: 54, karb: 11, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 948): {kalori: 1460, protein: 75, karb: 20, yag: 120}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 949): {kalori: 1502, protein: 77, karb: 24, yag: 122}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 95): {kalori: 990, protein: 46, karb: 12.5, yag: 84}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 950): {kalori: 1082, protein: 65, karb: 21, yag: 82}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 951): {kalori: 1309, protein: 79, karb: 21, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 952): {kalori: 1134, protein: 72, karb: 18, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 953): {kalori: 1546, protein: 89, karb: 27.5, yag: 120}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 954): {kalori: 1578, protein: 75, karb: 36, yag: 126}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 955): {kalori: 1840, protein: 104, karb: 23, yag: 148}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 956): {kalori: 1285, protein: 65, karb: 38, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 957): {kalori: 1033.4, protein: 69, karb: 25.1, yag: 73}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 958): {kalori: 938, protein: 55, karb: 26.5, yag: 68}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 959): {kalori: 938, protein: 55, karb: 26.5, yag: 68}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 96): {kalori: 1275, protein: 79, karb: 17, yag: 99}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 960): {kalori: 1357, protein: 87, karb: 34, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 961): {kalori: 1120, protein: 52, karb: 30, yag: 88}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 962): {kalori: 806, protein: 61, karb: 19, yag: 54}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 963): {kalori: 1432, protein: 97, karb: 18, yag: 108}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 964): {kalori: 1182, protein: 70, karb: 14, yag: 94}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 965): {kalori: 883.4, protein: 70.9, karb: 14.5, yag: 60.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 966): {kalori: 1083, protein: 79, karb: 14, yag: 79}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 967): {kalori: 1268.2, protein: 76, karb: 13.8, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 968): {kalori: 1521, protein: 82, karb: 26, yag: 121}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 969): {kalori: 1129, protein: 60, karb: 13, yag: 93}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 97): {kalori: 911, protein: 52, karb: 16, yag: 71}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 970): {kalori: 846, protein: 44, karb: 10, yag: 70}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 971): {kalori: 1501, protein: 70, karb: 24, yag: 125}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 972): {kalori: 1105, protein: 72, karb: 22, yag: 81}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 973): {kalori: 1239, protein: 77, karb: 19, yag: 95}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 974): {kalori: 1094, protein: 62, karb: 18, yag: 86}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 975): {kalori: 1069, protein: 79, karb: 33, yag: 69}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 976): {kalori: 1127, protein: 77, karb: 31.5, yag: 77}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 977): {kalori: 900, protein: 47, karb: 16, yag: 72}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 978): {kalori: 1207, protein: 61, karb: 18, yag: 99}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 979): {kalori: 1169, protein: 43, karb: 22, yag: 101}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 98): {kalori: 1803, protein: 110, karb: 28, yag: 139}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 980): {kalori: 911, protein: 72, karb: 14, yag: 63}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 981): {kalori: 1085, protein: 65, karb: 19.5, yag: 83}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 982): {kalori: 989, protein: 61, karb: 22, yag: 73}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 983): {kalori: 1085, protein: 57, karb: 14, yag: 89}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 984): {kalori: 1226, protein: 78, karb: 26, yag: 90}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 985): {kalori: 1121, protein: 53, karb: 22.5, yag: 91}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 986): {kalori: 1276, protein: 84, karb: 19, yag: 96}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 987): {kalori: 1258.9, protein: 86, karb: 35, yag: 86.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 988): {kalori: 962.3, protein: 60.1, karb: 25, yag: 69.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 989): {kalori: 972, protein: 55, karb: 21.5, yag: 74}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 99): {kalori: 1296, protein: 81, karb: 19, yag: 98.5}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 990): {kalori: 1332.3, protein: 96.1, karb: 32, yag: 91.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 991): {kalori: 1189.4, protein: 67.9, karb: 35.5, yag: 86.2}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 992): {kalori: 1171.3, protein: 76.1, karb: 41, yag: 78.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 993): {kalori: 889, protein: 69, karb: 29.5, yag: 55}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 994): {kalori: 1416, protein: 82, karb: 51.5, yag: 98}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 995): {kalori: 1039.3, protein: 71.1, karb: 40, yag: 66.1}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 996): {kalori: 1183, protein: 63, karb: 37, yag: 87}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 997): {kalori: 1313, protein: 72, karb: 38, yag: 97}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 998): {kalori: 1026, protein: 63, karb: 27, yag: 74}
+data-access-layer.js:1748 🔍 HESAPLANAN MAKROLAR (Menü 999): {kalori: 1137.9, protein: 89, karb: 22, yag: 77.1}
+patient_nutrition.html:6467 🔍 [LOADTEMPLATES] Supabase yanıtı: 999 şablon
+patient_nutrition.html:6469 ✅ Gün şablonları Supabase'den yüklendi: 999 şablon
+patient_nutrition.html:6500 🔍 [LOADTEMPLATES] getMealTemplates() çağrılıyor...
+data-access-layer.js:35 [DAL] 📥 Loading meal templates from Supabase...
+data-access-layer.js:35 [DAL] ✅ Loaded 0 meal templates from Supabase
+patient_nutrition.html:6502 🔍 [LOADTEMPLATES] Meal Supabase yanıtı: 0 şablon
+patient_nutrition.html:6504 ✅ Öğün şablonları Supabase'den yüklendi: 0 şablon
+patient_nutrition.html:6515 ✅ Şablonlar yüklendi (Supabase): {gunSablonlari: 999, ogunSablonlari: 0}
+patient_nutrition.html:6526 💾 Gün şablonları cache'e kaydedildi (30/999)
+patient_nutrition.html:6113 🔍 DEBUG: loadTemplates() sonrası - dayTemplates uzunluğu: 999
+patient_nutrition.html:6419 🔄 GitHub'dan veriler yükleniyor...
+patient_nutrition.html:6425 ⚠️ Hafta verisi bulunamadı, varsayılan hafta oluşturuluyor
+patient_nutrition.html:6851 🔄 Haftalık planlar Supabase'e kaydediliyor...
+patient_nutrition.html:6854 🔍 currentPatient: {id: 'patient_1762151674616', name: 'Bilinmeyen Hasta', username: 'msacar', isAdmin: false}
+patient_nutrition.html:6864 🔍 Kullanılacak patientId: patient_1762151674616
+data-access-layer.js:35 [DAL] 👤 getPatient(): patient_1762151674616
+data-access-layer.js:35 [DAL] 🗄️ Getting patient from Supabase: patient_1762151674616
+patient_nutrition.html:6888 📦 Kaydedilecek veri: {patient_id: 'patient_1762151674616', weeks_count: 1, patient_data_keys: Array(5)}
+data-access-layer.js:35 [DAL] 💾 savePatient(): patient_1762151674616
+data-access-layer.js:35 [DAL] 💾 Saving patient to Supabase: patient_1762151674616
+data-access-layer.js:402 📝 Hasta kaydediliyor: {patient_id: 'patient_1762151674616', name: '', surname: '', hasData: true}
+data-access-layer.js:429 🔍 DAL Save - Before column mapping:
+data-access-layer.js:430   patientData.session_days: undefined
+data-access-layer.js:431   patientData.sessionDays: undefined
+data-access-layer.js:432   patientData.max_devices: undefined
+data-access-layer.js:433   patientData.maxDevices: undefined
+data-access-layer.js:451 📦 Supabase'e gönderilecek veri: {patient_id: 'patient_1762151674616', name: 'İsimsiz', surname: '', updated_at: '2025-11-24T14:32:47.492Z', patient_data: {…}}
+data-access-layer.js:468 🔄 Mevcut kayıt bulundu (id: 25 ), güncelleniyor...
+data-access-layer.js:489 ✅ Patient saved to Supabase: [{…}]
+patient_nutrition.html:6902 ✅ Haftalık planlar Supabase'e kaydedildi
+patient_nutrition.html:6573 🔍 applySettingsToForm çalıştırılıyor, patientData: {id: 'patient_1762151674616', username: 'msacar', personalInfo: {…}, weeks: Array(1), notes: '', …}
+patient_nutrition.html:6579 📋 PersonalInfo: {}
+patient_nutrition.html:6580 ⚙️ Settings: {}
+patient_nutrition.html:6591 ✅ Form dolduruldu - Ad:  Soyad:  Yaş: 35
+patient_nutrition.html:6611 📝 Kullanıcı adı ayarlara yüklendi: msacar
+patient_nutrition.html:6437 ✅ Veriler başarıyla yüklendi
+patient_nutrition.html:10722 ❌ Admin yetkisi bulunamadı
+patient_nutrition.html:10735 👤 Normal kullanıcı - Admin özellikleri gizli
+patient_nutrition.html:3661 🔒 Admin özellikleri gizli
+patient_nutrition.html:7586 ℹ️ Boş hafta için büyük butonlar gösteriliyor

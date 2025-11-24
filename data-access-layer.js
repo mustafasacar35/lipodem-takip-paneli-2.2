@@ -296,16 +296,18 @@ class DataAccessLayer {
             // 1) Primary dene
             let { data, error } = await tryFetch(primaryColumn, patientId);
             if (!error && data) {
-                // ✅ FIX: patient_data JSONB kolonunu düzgün merge et
-                if (data.patient_data && typeof data.patient_data === 'object') {
+                // ✅ FIX: JSONB kolonunu düzgün merge et (data veya patient_data olabilir)
+                const jsonbData = data.patient_data || data.data;
+                
+                if (jsonbData && typeof jsonbData === 'object') {
                     // Top-level alanları koru, JSONB içindekilerle birleştir
                     const merged = {
                         ...data,                      // patient_id, username, status, etc.
                         patient_data: {
-                            ...data.patient_data,     // JSONB içeriği
-                            personalInfo: data.patient_data.personalInfo || {},
-                            weeks: data.patient_data.weeks || [],
-                            isAdmin: data.patient_data.isAdmin || false
+                            ...jsonbData,             // JSONB içeriği (data veya patient_data'dan)
+                            personalInfo: jsonbData.personalInfo || {},
+                            weeks: jsonbData.weeks || [],
+                            isAdmin: jsonbData.isAdmin || false
                         }
                     };
                     // Snake_case kolonları camelCase'e normalize et
