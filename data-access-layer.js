@@ -1959,14 +1959,21 @@ class DataAccessLayer {
                 return await response.json();
             }
 
-            // ⚠️ CACHE BYPASS: .gte() filter ekleyerek her sorguyu unique yap!
-            const cacheBypass = new Date(Date.now() - 86400000).toISOString(); // 24 saat önce
+            // 🔥 NUCLEAR CACHE BYPASS: Touch updated_at to invalidate cache
+            console.log('🔥 [DAL] Cache invalidation: Touching updated_at...');
+            await client
+                .from('app_settings')
+                .update({ updated_at: new Date().toISOString() })
+                .eq('setting_key', 'food_list');
+            
+            // Wait a tiny bit for cache to clear
+            await new Promise(resolve => setTimeout(resolve, 50));
             
             const { data, error } = await client
                 .from('app_settings')
                 .select('*')
                 .eq('setting_key', 'food_list')
-                .gte('updated_at', cacheBypass)  // ← CACHE BYPASS!
+                .limit(1)
                 .single();
 
             if (error) {
