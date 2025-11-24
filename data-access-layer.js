@@ -440,9 +440,19 @@ class DataAccessLayer {
                 updated_at: new Date().toISOString()
             };
             
-            // Tüm hasta verisini patient_data JSONB alanına kaydet
-            // (settings, weeks, personalInfo, devices, ipLogs vb. tüm yapı)
-            upsertData.patient_data = patientData;
+            // Tüm hasta verisini 'data' JSONB alanına kaydet (patient_data değil!)
+            // personalInfo, weeks, notes, ipLogs, devices, settings vb. tüm yapı
+            upsertData.data = {
+                id: patientId,
+                personalInfo: patientData.personalInfo || patientData.patient_data?.personalInfo || {},
+                weeks: patientData.weeks || patientData.patient_data?.weeks || [],
+                notes: patientData.notes || patientData.patient_data?.notes || '',
+                ipLogs: patientData.ipLogs || patientData.patient_data?.ipLogs || [],
+                devices: patientData.devices || patientData.patient_data?.devices || {},
+                settings: patientData.settings || patientData.patient_data?.settings || {},
+                isAdmin: patientData.isAdmin || patientData.patient_data?.isAdmin || false,
+                status: patientData.status || 'active'
+            };
             
             // Şifre varsa ekle
             if (patientData.password_hash || patientData.passwordHash) {
@@ -474,6 +484,7 @@ class DataAccessLayer {
             }
             if (patientData.username) upsertData.username = patientData.username;
             
+            console.log('🚨 GÜNCEL KOD ÇALIŞIYOR - upsertData.data var mı?:', !!upsertData.data);
             console.log('📦 Supabase\'e gönderilecek veri:', upsertData);
             
             // Önce mevcut kayıt var mı kontrol et
