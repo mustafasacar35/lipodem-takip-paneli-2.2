@@ -12845,9 +12845,12 @@
                     <input type="text" id="admin_manuel_yemek_adi" readonly style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; background: #fff; margin-bottom: 20px;">
                     
                     <label style="display: block; margin-bottom: 10px; font-weight: 600;">Tarif Kartındaki Yemek Adı (Eşleştirilecek):</label>
-                    <input type="text" id="admin_manuel_tarif_adi" placeholder="Örn: Kuru Fasulye" style="width: 100%; padding: 12px; border: 2px solid #667eea; border-radius: 6px; font-size: 16px; margin-bottom: 20px;">
+                    <div style="position: relative;">
+                        <input type="text" id="admin_manuel_tarif_adi" placeholder="Yazmaya başlayın... (Örn: Kuru Fasulye)" oninput="searchManuelTarifCards(this.value)" autocomplete="off" style="width: 100%; padding: 12px; border: 2px solid #667eea; border-radius: 6px; font-size: 16px; margin-bottom: 10px;">
+                        <div id="admin_manuel_search_results" style="display: none; position: absolute; top: 50px; left: 0; right: 0; max-height: 300px; overflow-y: auto; background: white; border: 2px solid #667eea; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000;"></div>
+                    </div>
                     
-                    <button onclick="saveManuelEslestirme()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 30px; font-size: 16px; cursor: pointer; border-radius: 6px; width: 100%; font-weight: 600;">
+                    <button onclick="saveManuelEslestirme()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 30px; font-size: 16px; cursor: pointer; border-radius: 6px; width: 100%; font-weight: 600; margin-top: 10px;">
                         💾 Manuel Eşleştirmeyi Kaydet
                     </button>
                 </div>
@@ -12892,9 +12895,12 @@
                     <input type="text" id="admin_db_yemek_adi" readonly style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; background: #fff; margin-bottom: 20px;">
                     
                     <label style="display: block; margin-bottom: 10px; font-weight: 600;">Veritabanındaki Yemek Adı (food_list.json):</label>
-                    <input type="text" id="admin_db_eslestirme_adi" placeholder="Örn: Kuru Fasulye (Zeytinyağlı)" style="width: 100%; padding: 12px; border: 2px solid #4caf50; border-radius: 6px; font-size: 16px; margin-bottom: 20px;">
+                    <div style="position: relative;">
+                        <input type="text" id="admin_db_eslestirme_adi" placeholder="Yazmaya başlayın... (Örn: Kuru Fasulye)" oninput="searchDbFoods(this.value)" autocomplete="off" style="width: 100%; padding: 12px; border: 2px solid #4caf50; border-radius: 6px; font-size: 16px; margin-bottom: 10px;">
+                        <div id="admin_db_search_results" style="display: none; position: absolute; top: 50px; left: 0; right: 0; max-height: 300px; overflow-y: auto; background: white; border: 2px solid #4caf50; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000;"></div>
+                    </div>
                     
-                    <button onclick="saveDbEslestirme()" style="background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%); color: white; border: none; padding: 15px 30px; font-size: 16px; cursor: pointer; border-radius: 6px; width: 100%; font-weight: 600;">
+                    <button onclick="saveDbEslestirme()" style="background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%); color: white; border: none; padding: 15px 30px; font-size: 16px; cursor: pointer; border-radius: 6px; width: 100%; font-weight: 600; margin-top: 10px;">
                         💾 Veritabanı Eşleştirmesini Kaydet
                     </button>
                 </div>
@@ -13379,6 +13385,116 @@
             
             // TODO: GitHub API ile data/yemek_veritabani_eslestirme.json'a kaydet
         }
+        
+        // ===== AKıLLI SEARCH FONKSİYONLARI =====
+        
+        /**
+         * Tab 1: Manuel eşleştirme için tarif kartlarında akıllı arama
+         */
+        function searchManuelTarifCards(query) {
+            const resultsDiv = document.getElementById('admin_manuel_search_results');
+            
+            if (!query || query.trim().length < 2) {
+                resultsDiv.style.display = 'none';
+                return;
+            }
+            
+            // tarifKartlari dizisinde ara (normalizeText kullanarak)
+            const normalizedQuery = normalizeText(query);
+            const results = tarifKartlari.filter(tarif => {
+                const normalizedName = normalizeText(tarif.title || tarif.name || '');
+                return normalizedName.includes(normalizedQuery);
+            }).slice(0, 10); // İlk 10 sonucu göster
+            
+            if (results.length === 0) {
+                resultsDiv.innerHTML = '<div style="padding: 12px; color: #999; text-align: center;">Sonuç bulunamadı</div>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+            
+            // Sonuçları render et
+            let html = '';
+            results.forEach(tarif => {
+                const name = tarif.title || tarif.name || 'İsimsiz';
+                html += `
+                    <div onclick="selectManuelTarif('${name.replace(/'/g, "\\'")}')" 
+                         style="padding: 12px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.2s;"
+                         onmouseover="this.style.background='#f5f5f5'"
+                         onmouseout="this.style.background='white'">
+                        <strong>${name}</strong>
+                    </div>
+                `;
+            });
+            
+            resultsDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+        }
+        
+        /**
+         * Tab 1: Seçilen tarif kartını input'a yaz
+         */
+        function selectManuelTarif(tarifName) {
+            document.getElementById('admin_manuel_tarif_adi').value = tarifName;
+            document.getElementById('admin_manuel_search_results').style.display = 'none';
+        }
+        
+        /**
+         * Tab 3: Veritabanı eşleştirme için food_list.json'da akıllı arama
+         */
+        function searchDbFoods(query) {
+            const resultsDiv = document.getElementById('admin_db_search_results');
+            
+            if (!query || query.trim().length < 2) {
+                resultsDiv.style.display = 'none';
+                return;
+            }
+            
+            // foodData dizisinde ara (normalizeText kullanarak)
+            const normalizedQuery = normalizeText(query);
+            const results = foodData.filter(food => {
+                const normalizedName = normalizeText(food.name || '');
+                return normalizedName.includes(normalizedQuery);
+            }).slice(0, 15); // İlk 15 sonucu göster
+            
+            if (results.length === 0) {
+                resultsDiv.innerHTML = '<div style="padding: 12px; color: #999; text-align: center;">Sonuç bulunamadı</div>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+            
+            // Sonuçları render et
+            let html = '';
+            results.forEach(food => {
+                const name = food.name || 'İsimsiz';
+                const category = food.category || '';
+                const macros = `${food.calories || 0} kcal, P:${food.protein || 0}g, C:${food.carbs || 0}g, F:${food.fat || 0}g`;
+                
+                html += `
+                    <div onclick="selectDbFood('${name.replace(/'/g, "\\'")}')" 
+                         style="padding: 12px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.2s;"
+                         onmouseover="this.style.background='#f5f5f5'"
+                         onmouseout="this.style.background='white'">
+                        <div style="font-weight: 600; color: #333;">${name}</div>
+                        <div style="font-size: 12px; color: #666; margin-top: 4px;">
+                            ${category} • ${macros}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            resultsDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+        }
+        
+        /**
+         * Tab 3: Seçilen yemeği input'a yaz
+         */
+        function selectDbFood(foodName) {
+            document.getElementById('admin_db_eslestirme_adi').value = foodName;
+            document.getElementById('admin_db_search_results').style.display = 'none';
+        }
+        
+        // ===== /AKILLI SEARCH FONKSİYONLARI =====
         
         function saveDbYasakKurali() {
             const menuYemek = document.getElementById('admin_db_yasak_yemek_adi').value;
