@@ -1959,10 +1959,14 @@ class DataAccessLayer {
                 return await response.json();
             }
 
+            // ⚠️ CACHE BYPASS: .gte() filter ekleyerek her sorguyu unique yap!
+            const cacheBypass = new Date(Date.now() - 86400000).toISOString(); // 24 saat önce
+            
             const { data, error } = await client
                 .from('app_settings')
                 .select('*')
                 .eq('setting_key', 'food_list')
+                .gte('updated_at', cacheBypass)  // ← CACHE BYPASS!
                 .single();
 
             if (error) {
