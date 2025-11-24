@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #667eea;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .success {
+            color: #10b981;
+            font-weight: bold;
+        }
+        .error {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        pre {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>🧪 Supabase Bağlantı Testi</h1>
+        <p>Development Supabase bağlantısını test et</p>
+        
+        <hr style="margin: 20px 0;">
+        
+        <h3>Bilgiler:</h3>
+        <p><strong>URL:</strong> https://qvpeqxzaprgesgrgzmuo.supabase.co</p>
+        <p><strong>Key:</strong> eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</p>
+        
+        <hr style="margin: 20px 0;">
+        
+        <button onclick="testConnection()">🔌 Bağlantıyı Test Et</button>
+        <button onclick="listTables()">📋 Tabloları Listele</button>
+        <button onclick="checkConfig()">⚙️ Config Kontrolü</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <!-- Config.js -->
+    <script src="./config.js"></script>
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        const SUPABASE_URL = 'https://qvpeqxzaprgesgrgzmuo.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2cGVxeHphcHJnZXNncmd6bXVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NjAzNjYsImV4cCI6MjA3OTAzNjM2Nn0.4Mo-9pgAk9vBHT48yVunuijSzqQX6cX07fCfDF48hLk';
+        
+        let client = null;
+        
+        function showResult(message, isError = false) {
+            const result = document.getElementById('result');
+            result.innerHTML = `<p class="${isError ? 'error' : 'success'}">${message}</p>`;
+        }
+        
+        function showData(title, data) {
+            const result = document.getElementById('result');
+            result.innerHTML = `
+                <p class="success">${title}</p>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+        }
+        
+        async function testConnection() {
+            try {
+                showResult('🔄 Test ediliyor...', false);
+                
+                // Supabase kontrolü
+                if (typeof supabase === 'undefined') {
+                    showResult('❌ Supabase kütüphanesi yüklenmedi!', true);
+                    return;
+                }
+                
+                // Client oluştur
+                client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                showResult('✅ Supabase client oluşturuldu!', false);
+                
+                // Basit test
+                const { data, error } = await client.from('messages').select('count');
+                
+                if (error && error.code !== 'PGRST116') {
+                    showResult(`❌ Hata: ${error.message}`, true);
+                    return;
+                }
+                
+                showResult('✅ Bağlantı başarılı! Supabase çalışıyor.', false);
+                
+            } catch (err) {
+                showResult(`❌ Hata: ${err.message}`, true);
+            }
+        }
+        
+        async function listTables() {
+            try {
+                if (!client) {
+                    client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                }
+                
+                showResult('🔄 Tablolar sorgulanıyor...', false);
+                
+                // Her tabloyu kontrol et
+                const tables = [
+                    'messages',
+                    'patients', 
+                    'patient_weeks',
+                    'patient_days',
+                    'foods',
+                    'templates',
+                    'food_matches',
+                    'devices',
+                    'progress_log'
+                ];
+                
+                const results = [];
+                
+                for (const table of tables) {
+                    const { data, error } = await client.from(table).select('count', { count: 'exact', head: true });
+                    
+                    results.push({
+                        table: table,
+                        exists: !error,
+                        error: error ? error.message : null
+                    });
+                }
+                
+                showData('📋 Tablo Durumu:', results);
+                
+            } catch (err) {
+                showResult(`❌ Hata: ${err.message}`, true);
+            }
+        }
+        
+        function checkConfig() {
+            const result = document.getElementById('result');
+            
+            let html = '<p class="success">⚙️ Config Durumu:</p>';
+            
+            // window.APP_CONFIG kontrolü
+            if (typeof window.APP_CONFIG !== 'undefined') {
+                html += `<pre>${JSON.stringify(window.APP_CONFIG, null, 2)}</pre>`;
+            } else {
+                html += '<p class="error">❌ window.APP_CONFIG bulunamadı!</p>';
+            }
+            
+            // Supabase kontrolü
+            html += '<hr>';
+            html += '<p><strong>Supabase Kütüphanesi:</strong> ';
+            html += typeof supabase !== 'undefined' ? '✅ Yüklü' : '❌ Yüklü Değil';
+            html += '</p>';
+            
+            result.innerHTML = html;
+        }
+        
+        // Sayfa yüklendiğinde
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('🏠 Test sayfası yüklendi');
+            console.log('Supabase:', typeof supabase !== 'undefined' ? '✅' : '❌');
+            console.log('Config:', typeof window.APP_CONFIG !== 'undefined' ? '✅' : '❌');
+        });
+    </script>
+</body>
+</html>
