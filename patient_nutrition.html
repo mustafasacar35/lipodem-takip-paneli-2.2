@@ -10826,8 +10826,27 @@
             safeSetValue('admin_db_ekle_kategori', foodData.category || '');
             safeSetValue('admin_db_ekle_rol', foodData.role || '');
             
-            // 🔍 Yemeği food_list.json'da ara (mevcut değerleri yüklemek için)
-            const existingFood = foodData ? foodData : findFoodInDatabase(foodName);
+            // 🔍 Yemeği Supabase'den ara (mevcut değerleri yüklemek için)
+            let existingFood = null;
+            
+            try {
+                console.log('📥 Supabase\'den food_list çekiliyor (modal için)...');
+                const foodListFromDb = await window.DAL.getFoodList();
+                
+                if (foodListFromDb && foodListFromDb.categories) {
+                    // Tüm kategorilerde yemeği ara
+                    for (const category of foodListFromDb.categories) {
+                        const found = category.items.find(item => item.name === foodName);
+                        if (found) {
+                            existingFood = found;
+                            console.log('✅ Yemek Supabase\'den bulundu:', existingFood);
+                            break;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Supabase\'den food_list çekme hatası:', error);
+            }
             
             if (existingFood && existingFood.name) {
                 console.log('📥 Mevcut yemek food_list.json\'dan yükleniyor:', existingFood);
@@ -10843,6 +10862,7 @@
                 safeSetValue('admin_db_ekle_max', existingFood.maxQuantity || 1);
                 safeSetValue('admin_db_ekle_step', existingFood.step || 1);
                 safeSetValue('admin_db_ekle_portion', existingFood.multiplier || 1);
+                safeSetValue('admin_db_ekle_portion2', existingFood.multiplier || 1);
                 safeSetValue('admin_db_ekle_kategori', existingFood.category || '');
                 safeSetValue('admin_db_ekle_rol', existingFood.role || '');
                 
@@ -10861,13 +10881,13 @@
                 safeSetValue('admin_db_ekle_incompat', (existingFood.incompatibilityTags || []).join(', '));
                 safeSetValue('admin_db_ekle_notes', existingFood.notes || '');
                 
-                // Meal types
+                // Meal types (mevcut değerleri koru!)
                 const mealTypes = existingFood.mealType || [];
                 safeSetChecked('admin_mealType_breakfast', mealTypes.includes('breakfast'));
                 safeSetChecked('admin_mealType_lunch', mealTypes.includes('lunch'));
                 safeSetChecked('admin_mealType_dinner', mealTypes.includes('dinner'));
                 
-                // Diet types
+                // Diet types (mevcut değerleri koru!)
                 const dietTypes = existingFood.dietTypes || [];
                 safeSetChecked('admin_dietType_ketojenik', dietTypes.includes('ketojenik'));
                 safeSetChecked('admin_dietType_akdeniz', dietTypes.includes('akdeniz'));
@@ -10875,12 +10895,12 @@
                 safeSetChecked('admin_dietType_glutensiz', dietTypes.includes('glutensiz'));
                 
                 // Boolean özellikleri YÜK (mevcut değerleri koru!)
-                safeSetChecked('admin_keto', existingFood.keto || false);
-                safeSetChecked('admin_lowcarb', existingFood.lowcarb || false);
-                safeSetChecked('admin_portionFixed', existingFood.portionFixed || false);
-                safeSetChecked('admin_fillerLunch', existingFood.fillerLunch || false);
-                safeSetChecked('admin_fillerDinner', existingFood.fillerDinner || false);
-                safeSetChecked('admin_reversedSeason', existingFood.isReversedSeason || false);
+                safeSetChecked('admin_keto', existingFood.keto === true);
+                safeSetChecked('admin_lowcarb', existingFood.lowcarb === true);
+                safeSetChecked('admin_portionFixed', existingFood.portionFixed === true);
+                safeSetChecked('admin_fillerLunch', existingFood.fillerLunch === true);
+                safeSetChecked('admin_fillerDinner', existingFood.fillerDinner === true);
+                safeSetChecked('admin_reversedSeason', existingFood.isReversedSeason === true);
             } else {
                 // Yeni yemek - varsayılan değerler
                 console.log('🆕 Yeni yemek ekleniyor (food_list.json\'da yok)');
