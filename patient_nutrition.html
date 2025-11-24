@@ -13738,6 +13738,8 @@
         }
         
         function saveYeniYemek() {
+            console.log('🔍 ==================== KAYDETME BAŞLIYOR ====================');
+            
             // Tüm form verilerini topla
             const yemekAdi = document.getElementById('admin_db_ekle_yemek_adi').value;
             const kalori = parseFloat(document.getElementById('admin_db_ekle_kalori').value);
@@ -13746,6 +13748,15 @@
             const yag = parseFloat(document.getElementById('admin_db_ekle_yag').value);
             const kategori = document.getElementById('admin_db_ekle_kategori').value;
             const rol = document.getElementById('admin_db_ekle_rol').value;
+            
+            console.log('🔍 TEMEL VERİLER:');
+            console.log('  Yemek Adı:', yemekAdi);
+            console.log('  Kalori:', kalori);
+            console.log('  Protein:', protein);
+            console.log('  Karb:', karb);
+            console.log('  Yağ:', yag);
+            console.log('  Kategori:', kategori);
+            console.log('  Rol:', rol);
             
             // Zorunlu alanları kontrol et (0 değerine izin ver - bazı yemekler doğal olarak 0 protein/karb/yağ içerir)
             if (!yemekAdi || kalori === undefined || isNaN(kalori) || 
@@ -13765,12 +13776,34 @@
             
             // Diyet tipleri
             const dietTypes = [];
-            if (document.getElementById('admin_dietType_ketojenik').checked) dietTypes.push('ketojenik');
-            if (document.getElementById('admin_dietType_akdeniz').checked) dietTypes.push('akdeniz');
+            console.log('🔍 DEBUG - KAYDETME - Checkbox değerleri:');
+            console.log('  ketojenik checkbox:', document.getElementById('admin_dietType_ketojenik')?.checked);
+            console.log('  akdeniz checkbox:', document.getElementById('admin_dietType_akdeniz')?.checked);
+            console.log('  vegan checkbox:', document.getElementById('admin_dietType_vegan')?.checked);
+            console.log('  glutensiz checkbox:', document.getElementById('admin_dietType_glutensiz')?.checked);
+            
+            if (document.getElementById('admin_dietType_ketojenik').checked) {
+                console.log('✅ KETOJENIK işaretli - array\'e ekleniyor');
+                dietTypes.push('ketojenik');
+            }
+            if (document.getElementById('admin_dietType_akdeniz').checked) {
+                console.log('✅ AKDENIZ işaretli - array\'e ekleniyor');
+                dietTypes.push('akdeniz');
+            }
             if (document.getElementById('admin_dietType_vegan').checked) dietTypes.push('vegan');
             if (document.getElementById('admin_dietType_glutensiz').checked) dietTypes.push('glutensiz');
             
+            console.log('🔍 DEBUG - KAYDETME - dietTypes array:', dietTypes);
+            
             // Özel özellikler
+            console.log('🔍 ÖZEL ÖZELLİKLER - Checkbox değerleri:');
+            console.log('  admin_keto:', document.getElementById('admin_keto')?.checked);
+            console.log('  admin_lowcarb:', document.getElementById('admin_lowcarb')?.checked);
+            console.log('  admin_portionFixed:', document.getElementById('admin_portionFixed')?.checked);
+            console.log('  admin_fillerLunch:', document.getElementById('admin_fillerLunch')?.checked);
+            console.log('  admin_fillerDinner:', document.getElementById('admin_fillerDinner')?.checked);
+            console.log('  admin_reversedSeason:', document.getElementById('admin_reversedSeason')?.checked);
+            
             const ozelOzellikler = {
                 keto: document.getElementById('admin_keto').checked,
                 lowcarb: document.getElementById('admin_lowcarb').checked,
@@ -13779,20 +13812,28 @@
                 fillerDinner: document.getElementById('admin_fillerDinner').checked,
                 isReversedSeason: document.getElementById('admin_reversedSeason').checked
             };
+            console.log('🔍 ozelOzellikler objesi:', ozelOzellikler);
             
             // Etiketler
-            const tags = document.getElementById('admin_db_ekle_tags').value
+            const tagsInputValue = document.getElementById('admin_db_ekle_tags').value;
+            console.log('🔍 TAGS INPUT (RAW):', tagsInputValue);
+            const tags = tagsInputValue
                 .split(',')
                 .map(t => t.trim())
                 .filter(t => t);
+            console.log('🔍 TAGS ARRAY (İŞLENMİŞ):', tags);
+            
             const compatibilityTags = document.getElementById('admin_db_ekle_compat').value
                 .split(',')
                 .map(t => t.trim())
                 .filter(t => t);
+            console.log('🔍 COMPATIBILITY TAGS:', compatibilityTags);
+            
             const incompatibilityTags = document.getElementById('admin_db_ekle_incompat').value
                 .split(',')
                 .map(t => t.trim())
                 .filter(t => t);
+            console.log('🔍 INCOMPATIBILITY TAGS:', incompatibilityTags);
             
             // Sezon range
             const seasonMin = parseInt(document.getElementById('admin_db_ekle_season_min').value);
